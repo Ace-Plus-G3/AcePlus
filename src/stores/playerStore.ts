@@ -133,6 +133,32 @@ export const usePlayerStore = defineStore('playerStore', () => {
   const handleLogout = () => {
     setUser(null)
     setToken(null)
+    setPlayers([])
+
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    router.push('/login')
+  }
+  const handlePersistLogin = () => {
+    const userToken = localStorage.getItem('token')
+
+    if (!userToken) {
+      console.log('Token not  fond!')
+      return false
+    }
+
+    // Fetch all players in local storage
+    const foundUser = localStorage.getItem('user')
+    if (!foundUser) {
+      console.log('Player not found!')
+      return false
+    }
+
+    usePlayerStore().setUser(JSON.parse(foundUser))
+    user.value = JSON.parse(foundUser)
+    token.value = JSON.parse(foundUser).id
+    console.log('Persists!')
+    return true
   }
 
   return {
@@ -154,5 +180,6 @@ export const usePlayerStore = defineStore('playerStore', () => {
     handleLogin,
     handleSignup,
     handleLogout,
+    handlePersistLogin,
   }
 })
