@@ -30,6 +30,51 @@ export const usePlayerStore = defineStore('playerStore', () => {
   // * ACTIONS
   const handleSignup = async (formE1: FormInstance | undefined) => {
     if (!formE1) return
+    await formE1.validate((valid, fields) => {
+      if (valid) {
+        const formData = {
+          user_id: String(Math.random() * 10),
+          username: formE1.$props.model?.username,
+          email: formE1.$props.model?.email,
+          password: formE1.$props.model?.password,
+          total_money: formE1.$props.model?.total_money,
+          transaction_history: formE1.$props.model?.transaction_history,
+          created_at: new Date(),
+          updated_at: new Date(),
+        }
+
+        if (!formData) return
+
+        // Get all saves players in local storage
+        const players_in_localstorage = localStorage.getItem('players')
+
+        // If there's no players, create one
+        if (!players_in_localstorage) {
+          const updatedPlayers = JSON.stringify([formData])
+          localStorage.setItem('players', updatedPlayers)
+          console.log('Account created successfully!')
+          router.push('/login')
+          return
+        }
+
+        // If player already exists, return error
+        const foundPlayer = JSON.parse(players_in_localstorage).find(
+          (item: TUser) => item.username === formData.username,
+        )
+
+        if (foundPlayer) {
+          return console.log('User already exists!')
+        }
+
+        // If new player and doesn't exists in local storage, add the new player
+        const updatedPlayers = JSON.stringify([...JSON.parse(players_in_localstorage), formData])
+        localStorage.setItem('players', updatedPlayers)
+        console.log('Account created successfully!')
+        router.push('/login')
+      } else {
+        console.log('error submit!', fields)
+      }
+    })
   }
   const handleLogin = async (formE1: FormInstance | undefined) => {
     if (!formE1) return
