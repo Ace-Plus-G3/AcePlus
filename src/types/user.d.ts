@@ -1,6 +1,6 @@
 export type TUser = {
   user_id: string
-  username: string
+  phoneNumber: string
   email: string
   password: string
 

@@ -34,7 +34,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
       if (valid) {
         const formData = {
           user_id: String(Math.random() * 10),
-          username: formE1.$props.model?.username,
+          phoneNumber: formE1.$props.model?.phoneNumber,
           email: formE1.$props.model?.email,
           password: formE1.$props.model?.password,
           total_money: formE1.$props.model?.total_money,
@@ -57,9 +57,10 @@ export const usePlayerStore = defineStore('playerStore', () => {
           return
         }
 
-        // If player already exists, return error
+        // If player already exists with the same email and phoneNumber, return error
         const foundPlayer = JSON.parse(players_in_localstorage).find(
-          (item: TUser) => item.username === formData.username,
+          (item: TUser) =>
+            item.phoneNumber === formData.phoneNumber || item.email === formData.email,
         )
 
         if (foundPlayer) {
@@ -87,9 +88,9 @@ export const usePlayerStore = defineStore('playerStore', () => {
         // If there's no players[] in local storage, send error
         if (!players) return console.log('Players not found!')
 
-        // Find player trying to log in  via username
+        // Find player trying to log in  via email
         const foundPlayer: TUser = JSON.parse(players).find(
-          (item: TUser) => item.username === formData.username,
+          (item: TUser) => item.email === formData.email,
         )
 
         // If player not  found, send error
@@ -99,7 +100,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
         usePlayerStore().setToken(foundPlayer.user_id)
         usePlayerStore().setUser({
           user_id: foundPlayer.user_id,
-          username: foundPlayer.username,
+          phoneNumber: foundPlayer.phoneNumber,
           email: foundPlayer.email,
           password: foundPlayer.password,
           total_money: foundPlayer.total_money,
@@ -114,7 +115,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
           'user',
           JSON.stringify({
             user_id: foundPlayer.user_id,
-            username: foundPlayer.username,
+            phoneNumber: foundPlayer.phoneNumber,
             email: foundPlayer.email,
             password: foundPlayer.password,
             total_money: foundPlayer.total_money,
