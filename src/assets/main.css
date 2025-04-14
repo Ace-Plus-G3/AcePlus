@@ -2,6 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 * {
+<<<<<<< HEAD
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+=======
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -11,3 +17,4 @@ body {
   background: var(--primary-black);
   color: var(--primary-white);
 }
+>>>>>>> b52459e9ddb3b7c97bf8957406d70189cc2e3802
