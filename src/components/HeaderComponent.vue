@@ -30,7 +30,7 @@
   align-items: center;
   padding-left: 7%;
   padding-right: 7%;
-  box-shadow: 2px 5px 5px 0px rgba(87, 87, 87, 0.59);
+  box-shadow: 2px 5px 5px 0px rgba(46, 46, 46, 0.59);
   padding-top: 12px;
   padding-bottom: 7px;
 }
