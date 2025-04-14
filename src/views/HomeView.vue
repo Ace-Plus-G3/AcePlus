@@ -1,15 +1,11 @@
 <template>
-<<<<<<< HEAD
-  <div id="homePage">
+  <div id="home-page">
     <headerComponent />
   </div>
-=======
-  <h1>GOME</h1>
->>>>>>> b52459e9ddb3b7c97bf8957406d70189cc2e3802
 </template>
 
 <script setup lang="ts">
-import headerComponent from '@/components/headerComponent.vue'
+import headerComponent from '@/components/HeaderComponent.vue'
 </script>
 
 <style scoped>
