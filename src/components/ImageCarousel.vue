@@ -1,6 +1,6 @@
 <template>
   <div class="carousel-container">
-    <el-carousel height="200px" autoplay class="carousel-item-container">
+    <el-carousel height="500px" autoplay class="carousel-item-container">
       <el-carousel-item> </el-carousel-item>
       <el-carousel-item> </el-carousel-item>
     </el-carousel>
@@ -10,11 +10,11 @@
 <script setup lang="ts"></script>
 
 <style scoped>
-.carousel-container {
+/* .carousel-container {
   padding-left: 60px;
   padding-right: 60px;
   padding-top: 40px;
-}
+} */
 
 /* :deep(.el-carousel) {
   height: 500px;
@@ -26,14 +26,20 @@
 }
 
 .el-carousel__item:nth-child(2n) {
-  background-image: url(../assets/banner_1.png);
+  /* background-image: url(../assets/banner_1.png); */
+  background-color: rgb(156, 128, 128);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
+/* .el-carousel__item {
+  border: 1px solid red;
+} */
+
 .el-carousel__item:nth-child(2n + 1) {
-  background-image: url(../assets/banner_2.png);
+  /* background-image: url(../assets/banner_2.png); */
+  background-color: rgb(164, 164, 194);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -55,10 +61,18 @@
     padding-right: 20px;
     padding-top: 20px;
   }
+
+  .carousel-item-container {
+    height: 200px;
+  }
+
+  /* .el-carousel {
+    height: 200px;
+  } */
 }
 
 /* @media screen and (min-width: 681px) {
-  .carousel-item-container {
+  .carousel-item-container {  
     height: 300px;
   }
 } */

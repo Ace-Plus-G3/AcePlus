@@ -15,13 +15,16 @@
 }
 
 .game-section-container {
-  /* width: 950px;
-  height: 350px; */
+  width: 90%;
+  max-width: 1200px;
+  height: 380px;
   background-color: #d9d9d9;
   border-radius: 20px;
-  /* margin-left: 20%;
-  margin-right: 20%;
-  margin-top: 40px; */
+  margin: 40px auto;
+  padding: 20px;
+  /* background-image: url(''); */
+  background-size: cover;
+  background-position: center;
 }
 
 .play-btn:hover {
@@ -40,7 +43,7 @@
     height: 431px;
     margin-left: 20px;
     margin-right: 20px;
-    margin-top: 40px;
+    /* background-image: url(''); */
   }
   .play-btn {
     width: 115px;
