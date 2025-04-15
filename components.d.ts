@@ -8,9 +8,16 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CustomCard: typeof import('./src/components/CustomCard.vue')['default']
+    CustomCardView: typeof import('./src/components/CustomCardView.vue')['default']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
+    ElContainer: typeof import('element-plus/es')['ElContainer']
+    ElFooter: typeof import('element-plus/es')['ElFooter']
     ElHeader: typeof import('element-plus/es')['ElHeader']
+    ElImage: typeof import('element-plus/es')['ElImage']
+    ElMain: typeof import('element-plus/es')['ElMain']
+    ElText: typeof import('element-plus/es')['ElText']
     GameSection: typeof import('./src/components/GameSection.vue')['default']
     HeaderComponent: typeof import('./src/components/HeaderComponent.vue')['default']
     ImageCarousel: typeof import('./src/components/ImageCarousel.vue')['default']
