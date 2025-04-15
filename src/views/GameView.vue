@@ -27,15 +27,16 @@
 
       <div>
         <img
-          v-if="startGame === 'Pending'"
           @click="handleAnimation"
+          :disabled="true"
           draggable="false"
           src="/game/game_bet.png"
           alt="game_bet"
           fit="cover"
           style="width: 100px; height: 100px; margin-top: 4em"
           class="game-start"
-        /><img
+        />
+        <!-- <img
           v-else
           @click="handleResetCard"
           draggable="false"
@@ -44,7 +45,7 @@
           fit="cover"
           style="width: 100px; height: 100px; margin-top: 4em"
           class="game-start"
-        />
+        /> -->
       </div>
     </el-main>
     <el-footer>FOOTER</el-footer>
