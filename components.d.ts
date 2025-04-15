@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+<<<<<<< HEAD
     AuthModal: typeof import('./src/components/AuthModal.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
@@ -20,6 +21,18 @@ declare module 'vue' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
+=======
+    CustomCard: typeof import('./src/components/CustomCard.vue')['default']
+    CustomCardView: typeof import('./src/components/CustomCardView.vue')['default']
+    ElCarousel: typeof import('element-plus/es')['ElCarousel']
+    ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
+    ElContainer: typeof import('element-plus/es')['ElContainer']
+    ElFooter: typeof import('element-plus/es')['ElFooter']
+    ElHeader: typeof import('element-plus/es')['ElHeader']
+    ElImage: typeof import('element-plus/es')['ElImage']
+    ElMain: typeof import('element-plus/es')['ElMain']
+    ElText: typeof import('element-plus/es')['ElText']
+>>>>>>> d39f446 (added demo game with animation)
     GameSection: typeof import('./src/components/GameSection.vue')['default']
     HeaderComponent: typeof import('./src/components/HeaderComponent.vue')['default']
     HomePageButtons: typeof import('./src/components/HomePageButtons.vue')['default']

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import TransactionHistory from '@/views/TransactionHistoryView.vue'
 import CashTransaction from '@/views/CashTransaction.vue'
+import GameView from '@/views/GameView.vue'
 
 import { usePlayerStore } from '@/stores'
 
@@ -23,6 +24,11 @@ const router = createRouter({
       name: 'cash-transaction',
       component: CashTransaction,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/game',
+      name: 'game',
+      component: GameView,
     },
   ],
 })
