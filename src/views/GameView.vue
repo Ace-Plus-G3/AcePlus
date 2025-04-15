@@ -1,27 +1,34 @@
 <template>
   <el-container>
     <el-header>HEADER</el-header>
-    <el-main>
-      <el-text class="timer" style="color: black; font-size: 72px">{{ timer }}</el-text>
+    <el-main style="padding: 0">
+      <el-text class="timer" style="color: black; font-size: 56px">{{ timer }}</el-text>
 
-      <div class="game-container" style="position: relative">
-        <el-image src="/game/card_back_bg.png" alt="card_back" />
-        <CustomCardView
-          v-for="(_, index) in 4"
-          :length="4"
-          :key="index"
-          :index="index"
-          :start="startGame"
-          :delay="index * 200"
-          :reveal="reveal"
-          @handle-select-card="handleSelectCard"
-          :selectedCard="selectedCard"
-        />
+      <div ref="cardContainer" class="game-container" style="position: relative">
+        <div style="display: flex; align-items: center; justify-content: start; width: 100%">
+          <el-image
+            fit="cover"
+            src="/game/card_back_bg.png"
+            alt="card_back"
+            style="width: 80px; height: 120px"
+          />
+          <CustomCardView
+            v-for="(_, index) in 4"
+            :length="4"
+            :key="index"
+            :index="index"
+            :start="startGame"
+            :delay="index * 200"
+            :reveal="reveal"
+            @handle-select-card="handleSelectCard"
+            :selectedCard="selectedCard"
+          />
+        </div>
         <el-image
           src="/game/game_table.png"
           alt="game-table"
           fit="cover"
-          style="width: 100%; height: 460px"
+          style="width: 100%; height: 400px"
         />
       </div>
 
@@ -106,10 +113,10 @@ watch(
         reveal.value = true
       }, 10000)
 
-      // After 15 secs, Brings back the displayed cards.
+      // After 13 secs, Brings back the displayed cards.
       setTimeout(() => {
         handleResetCard()
-      }, 15000)
+      }, 12000)
     }
   },
 )
@@ -131,11 +138,11 @@ watch(
 }
 
 .el-header {
-  width: 1000px;
+  width: 800px;
   background: red;
 }
 .el-main {
-  width: 1000px;
+  width: 800px;
   /* background: blue; */
 
   display: flex;
@@ -151,9 +158,18 @@ watch(
   transition-duration: all 0.3ms;
 }
 
+.game-container {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .timer {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   background: white;
   display: flex;
   align-items: center;
@@ -163,7 +179,7 @@ watch(
 }
 
 .el-footer {
-  width: 1000px;
+  width: 800px;
   background: green;
 }
 </style>
