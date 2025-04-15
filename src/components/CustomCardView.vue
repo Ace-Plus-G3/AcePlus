@@ -12,7 +12,7 @@
         <img class="card-image" src="/game/card_back_bg.png" alt="black" />
       </div>
       <div class="flip-card-back">
-        <img class="card-image" :src="cards[Math.floor(Math.random() * 3)]" alt="ace" />
+        <img class="card-image" :src="cards[Math.floor(Math.random() * 10)]" alt="ace" />
       </div>
     </div>
   </div>
@@ -35,9 +35,16 @@ const props = defineProps<Props>()
 const target = ref<HTMLElement>()
 const emit = defineEmits(['handleSelectCard'])
 const cards = ref([
-  '/game/cards-front/ace-red-heart.png',
-  '/game/cards-front/2-red-heart.png',
-  '/game/cards-front/3-red-heart.png',
+  '/game/cards-front/card_a.png',
+  '/game/cards-front/card_2.png',
+  '/game/cards-front/card_3.png',
+  '/game/cards-front/card_4.png',
+  '/game/cards-front/card_5.png',
+  '/game/cards-front/card_6.png',
+  '/game/cards-front/card_7.png',
+  '/game/cards-front/card_8.png',
+  '/game/cards-front/card_9.png',
+  '/game/cards-front/card_10.png',
 ])
 
 const { apply } = useMotion(target, {
