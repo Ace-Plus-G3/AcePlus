@@ -1,7 +1,13 @@
 <template>
   <el-container>
     <el-header>HEADER</el-header>
-    <el-main style="padding: 0">
+    <el-main style="padding: 0; position: relative">
+      <div class="overlay">
+        <video class="card-video" autoplay loop muted playsinline>
+          <source src="/new-loading.webm" type="video/webm" />
+          Your browser does not support the video tag.
+        </video>
+      </div>
       <el-text class="timer" style="color: black; font-size: 56px">{{ timer }}</el-text>
 
       <div ref="cardContainer" class="game-container" style="position: relative">
@@ -35,7 +41,6 @@
       <div>
         <img
           @click="handleAnimation"
-          :disabled="true"
           draggable="false"
           src="/game/game_bet.png"
           alt="game_bet"
@@ -181,5 +186,19 @@ watch(
 .el-footer {
   width: 800px;
   background: green;
+}
+.overlay {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1990;
+}
+.card-video {
+  width: 800;
+  height: 800px;
 }
 </style>
