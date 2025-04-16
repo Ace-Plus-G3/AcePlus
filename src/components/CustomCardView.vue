@@ -12,21 +12,15 @@
   >
     <div class="flip-card-inner">
       <div class="flip-card-front">
-        <el-image
-          fit="cover"
-          style="width: 80px; height: 120px"
-          src="/game/card_back_bg.png"
-          alt="black"
-        />
+        <div class="player-count">
+          <el-image class="player-count-icon" src="/game/players_icon_xs.png" />
+          <el-text size="small" class="player-count-text">{{ userCount }}</el-text>
+        </div>
       </div>
-      <div class="flip-card-back">
-        <el-image
-          fit="cover"
-          style="width: 80px; height: 120px"
-          :src="cards[Math.floor(Math.random() * 10)]"
-          alt="ace"
-        />
-      </div>
+      <div
+        class="flip-card-back"
+        :style="{ backgroundImage: 'url(' + cards[Math.floor(Math.random() * 10)] + ')' }"
+      />
     </div>
   </div>
 </template>
@@ -47,6 +41,7 @@ type Props = {
 const emit = defineEmits(['handleSelectCard'])
 const props = defineProps<Props>()
 
+const userCount = ref(0)
 const parentWidth = ref<number | null>(null)
 const target = ref<HTMLElement>()
 const cards = ref([
@@ -88,7 +83,7 @@ const GiveCards = async () => {
   const targetX = LEFT_START + cardX
 
   await apply({
-    rotate: [0, 100, 170, 180],
+    rotate: [0, 90, 180, 270, 360],
     translateX: targetX,
     translateY: 230,
     transition: {
@@ -137,12 +132,6 @@ watch(
 </script>
 
 <style scoped>
-.card-image {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-}
-
 .flip-card {
   top: 0;
   position: absolute;
@@ -152,9 +141,52 @@ watch(
   perspective: 1000px;
 }
 
+.flip-card-front {
+  background-image: url('/game/card_back_bg.png');
+  background-size: cover;
+  background-position: center;
+  width: 80px;
+  height: 120px;
+
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  padding: 8px;
+}
+
+.player-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 30px;
+  padding: 0 0.5em;
+  /* background: white; */
+  /* border: 1px solid black; */
+}
+
+.player-count-text {
+  margin-top: 2px;
+  color: white;
+}
+.player-count-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.flip-card-back {
+  /* background-image: url('/game/card_back_bg.png'); */
+  background-size: cover;
+  background-position: center;
+  width: 80px;
+  height: 120px;
+}
+
 .flip-card-inner {
   position: relative;
-  width: 100%;
+  width: 80px;
   height: 120px;
   text-align: center;
   transition: transform 0.3s;
@@ -172,18 +204,13 @@ watch(
 .flip-card-front,
 .flip-card-back {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 80px;
+  height: 120px;
   -webkit-backface-visibility: hidden; /* Safari */
   backface-visibility: hidden;
 }
 
-.flip-card-front {
-  border-radius: 1em;
-}
-
 .flip-card-back {
-  border-radius: 1em;
   transform: rotateY(180deg);
 }
 
