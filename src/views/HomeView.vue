@@ -4,7 +4,7 @@
       <h1 class="title">Ace+</h1>
     </div>
     <div class="btn-container">
-      <button v-if="!isLoggedIn" class="btn-play-not-log">Play Now</button>
+      <button v-if="!isLoggedIn" class="btn btn-play-not-log">Play Now</button>
       <!-- Add a conditional rendering for this buttons if the user logged -->
       <template v-if="isLoggedIn">
         <button class="btn btn-start">Start</button>
@@ -18,11 +18,10 @@
 
 <script setup lang="ts">
 import { usePlayerStore } from '@/stores/playerStore'
-import { computed } from 'vue'
 
 const playerStore = usePlayerStore()
 
-const isLoggedIn = computed(() => !!playerStore.getToken)
+const isLoggedIn = !!playerStore.getToken
 </script>
 
 <style scoped>
@@ -34,6 +33,9 @@ const isLoggedIn = computed(() => !!playerStore.getToken)
   justify-content: center;
   align-items: center;
   gap: 67px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .title {
@@ -59,5 +61,18 @@ const isLoggedIn = computed(() => !!playerStore.getToken)
   height: 60px;
   border-radius: 30px;
   background-color: #e7bb68;
+}
+
+@media screen and (min-width: 320px) and (max-width: 680px) {
+  .title {
+    font-size: 100px;
+  }
+  .btn {
+    width: 180px;
+    height: 50px;
+  }
+  .btn-container {
+    gap: 15px;
+  }
 }
 </style>
