@@ -1,12 +1,10 @@
+import type { TLoginParams, TSignupParams } from '@/models/type'
 import type { TUser } from '@/types/user'
-import type { FormInstance } from 'element-plus'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 export const usePlayerStore = defineStore('playerStore', () => {
   // * STATES
-  const router = useRouter()
   const user = ref<TUser | null>(null)
   const token = ref<string | null>(null)
   const players = ref<TUser[]>([])
@@ -28,7 +26,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
   }
 
   // * ACTIONS
-  const handleSignup = async (formE1: FormInstance | undefined) => {
+  const handleSignup = async ({ formE1, handleChangeTab }: TSignupParams) => {
     if (!formE1) return
     await formE1.validate((valid, fields) => {
       if (valid) {
@@ -52,6 +50,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
           const updatedPlayers = JSON.stringify([formData])
           localStorage.setItem('players', updatedPlayers)
           console.log('Account created successfully!')
+          handleChangeTab('Login-Tab')
           return
         }
 
@@ -68,13 +67,13 @@ export const usePlayerStore = defineStore('playerStore', () => {
         const updatedPlayers = JSON.stringify([...JSON.parse(players_in_localstorage), formData])
         localStorage.setItem('players', updatedPlayers)
         console.log('Account created successfully!', players)
-        router.push('/login')
+        handleChangeTab('Login-Tab')
       } else {
         console.log('error submit!', fields)
       }
     })
   }
-  const handleLogin = async (formE1: FormInstance | undefined) => {
+  const handleLogin = async ({ formE1, handleCloseModal }: TLoginParams) => {
     if (!formE1) return
     await formE1.validate((valid, fields) => {
       if (valid) {
@@ -119,10 +118,8 @@ export const usePlayerStore = defineStore('playerStore', () => {
             updated_at: foundPlayer.updated_at,
           }),
         )
-        location.reload()
-        router.push('/')
         console.log('Logged in successfully!')
-        console.log(getToken.value)
+        handleCloseModal()
       } else {
         console.log('error submit!', fields)
       }
@@ -135,7 +132,6 @@ export const usePlayerStore = defineStore('playerStore', () => {
 
     localStorage.removeItem('token')
     localStorage.removeItem('user')
-    location.reload()
   }
   const handlePersistLogin = () => {
     const userToken = localStorage.getItem('token')

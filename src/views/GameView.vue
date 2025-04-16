@@ -263,15 +263,18 @@ shuffleCard()
 
 <style scoped>
 .el-container {
-  width: 100%;
-  height: 100dvh;
+  height: 100vh;
+  background-image: url(../assets/homepage_bg.png);
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  background-image: url('/game/game_bg.jpg');
-  background-position: center;
+  align-items: center;
+  gap: 67px;
   background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 0;
+  margin: 0;
 }
 
 .el-header {
