@@ -157,7 +157,9 @@ const loginForm = ref({
 
 const login = async () => {
   console.log('clicked')
-  await store.handleLogin(loginFormRef.value)
+  await store.handleLogin(loginFormRef.value).then(() => {
+    dialogFormVisible.value = false
+  })
 }
 </script>
 
