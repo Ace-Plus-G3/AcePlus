@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import TransactionHistory from '@/views/TransactionHistoryView.vue'
+import CashTransaction from '@/views/CashTransaction.vue'
+
+import { usePlayerStore } from '@/stores'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,7 +18,21 @@ const router = createRouter({
       name: 'transaction-history',
       component: TransactionHistory,
     },
+    {
+      path: '/cash-transaction',
+      name: 'cash-transaction',
+      component: CashTransaction,
+      meta: { requiresAuth: true },
+    },
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !usePlayerStore().getToken) {
+    next('/')
+  } else {
+    next()
+  }
 })
 
 export default router
