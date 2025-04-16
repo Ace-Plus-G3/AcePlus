@@ -17,7 +17,6 @@
               v-model="signupForm.phoneNumber"
               autocomplete="off"
               value="+63"
-              placeholder="e.g. 9162819251"
             />
           </el-form-item>
           <el-form-item>
@@ -51,7 +50,6 @@
               v-model="loginForm.phoneNumber"
               autocomplete="off"
               value="+63"
-              placeholder="e.g. 9162819251"
             />
           </el-form-item>
           <el-form-item>
@@ -161,7 +159,7 @@ const loginForm = ref({
 }
 
 :deep(.el-input__wrapper) {
-  border-radius: 5px;
+  border-radius: 8px;
   padding: 10px;
 }
 
@@ -170,13 +168,13 @@ const loginForm = ref({
   border-radius: 20px;
 }
 
-[data-v-4e698054] .el-button {
+:deep(.el-button) {
   width: 100%;
   padding: 20px;
   background-color: var(--primary-yellow);
   border: none;
   border-radius: 20px;
-  color: white;
+  color: var(--primary-black);
 }
 
 .terms-of-service-container {
