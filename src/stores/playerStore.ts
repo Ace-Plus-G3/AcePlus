@@ -124,7 +124,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
             updated_at: foundPlayer.updated_at,
           }),
         )
-        router.push('/')
+        // router.push('/')
         console.log('Logged in successfully!')
       } else {
         console.log('error submit!', fields)
@@ -138,7 +138,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
 
     localStorage.removeItem('token')
     localStorage.removeItem('user')
-    router.push('/login')
+    // router.push('/login')
   }
   const handlePersistLogin = () => {
     const userToken = localStorage.getItem('token')
