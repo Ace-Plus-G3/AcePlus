@@ -4,7 +4,6 @@
     class="flip-card"
     :class="{
       flipped: reveal,
-      selectedCard: selectedCard === index,
     }"
     v-motion
     ref="target"
@@ -19,13 +18,14 @@
       </div>
       <div
         class="flip-card-back"
-        :style="{ backgroundImage: 'url(' + cards[Math.floor(Math.random() * 10)] + ')' }"
+        :style="{ backgroundImage: 'url(' + fourCards[index].url + ')' }"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { TCardType } from '@/models/type'
 import { useMotion } from '@vueuse/motion'
 import { nextTick, onMounted, ref, watch } from 'vue'
 
@@ -36,6 +36,7 @@ type Props = {
   length: number
   reveal: boolean
   selectedCard: number | null
+  fourCards: TCardType[]
 }
 
 const emit = defineEmits(['handleSelectCard'])
@@ -44,18 +45,6 @@ const props = defineProps<Props>()
 const userCount = ref(0)
 const parentWidth = ref<number | null>(null)
 const target = ref<HTMLElement>()
-const cards = ref([
-  '/game/cards-front/card_a.png',
-  '/game/cards-front/card_2.png',
-  '/game/cards-front/card_3.png',
-  '/game/cards-front/card_4.png',
-  '/game/cards-front/card_5.png',
-  '/game/cards-front/card_6.png',
-  '/game/cards-front/card_7.png',
-  '/game/cards-front/card_8.png',
-  '/game/cards-front/card_9.png',
-  '/game/cards-front/card_10.png',
-])
 
 const { apply } = useMotion(target, {
   initial: {
@@ -70,11 +59,11 @@ const { apply } = useMotion(target, {
   },
 })
 
-const CARD_WIDTH = 80
-const CARD_SPACING = 40
-
 const GiveCards = async () => {
   if (!parentWidth.value) return
+
+  const CARD_WIDTH = 80
+  const CARD_SPACING = 40
 
   const TOTAL_WIDTH = props.length * CARD_WIDTH + (props.length - 1) * CARD_SPACING
   const LEFT_START = (parentWidth.value - TOTAL_WIDTH) / 2
@@ -111,12 +100,6 @@ onMounted(async () => {
 
   const parent = target.value?.parentElement
   parentWidth.value = parent?.offsetWidth ?? null
-
-  if (parentWidth.value) {
-    console.log('Parent width:', parentWidth.value)
-  } else {
-    console.warn('Parent width not available')
-  }
 })
 
 watch(
@@ -214,10 +197,10 @@ watch(
   transform: rotateY(180deg);
 }
 
-/* .flip-card.selectedCard .flip-card-inner {
+.flip-card.selectedCard .flip-card-inner {
   transform: scale(1.3);
   transition:
     transform 0.3s ease,
     border 0.3s ease;
-} */
+}
 </style>
