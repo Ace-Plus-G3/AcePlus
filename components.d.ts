@@ -9,6 +9,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCarousel: typeof import('element-plus/es')['ElCarousel']
+    ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElForm: typeof import('element-plus/es')['ElForm']
@@ -17,7 +19,10 @@ declare module 'vue' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
+    GameSection: typeof import('./src/components/GameSection.vue')['default']
     HeaderComponent: typeof import('./src/components/HeaderComponent.vue')['default']
+    ImageCarousel: typeof import('./src/components/ImageCarousel.vue')['default']
+    ImageSlider: typeof import('./src/components/ImageSlider.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SignupModal: typeof import('./src/components/SignupModal.vue')['default']

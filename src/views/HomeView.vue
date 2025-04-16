@@ -1,16 +1,11 @@
 <template>
-  <div id="home-page">
-    <headerComponent />
-  </div>
+  <div id="home-page"></div>
 </template>
 
-<script setup lang="ts">
-import headerComponent from '@/components/HeaderComponent.vue'
-</script>
+<script setup lang="ts"></script>
 
 <style scoped>
 #homePage {
-  background-color: #0a0a0a;
   height: 100vh;
 }
 </style>
