@@ -1,11 +1,14 @@
 <template>
   <div
-    @click="emit('handleSelectCard', { index })"
+    @click="emit('handleSelectCard', index)"
     class="flip-card"
-    :class="reveal && 'flipped'"
+    :class="{
+      flipped: reveal,
+      selectedCard: selectedCard === index,
+    }"
     v-motion
     ref="target"
-    style="z-index: 1000"
+    style="z-index: 10"
   >
     <div class="flip-card-inner">
       <div class="flip-card-front">
@@ -120,6 +123,7 @@ onMounted(async () => {
     console.warn('Parent width not available')
   }
 })
+
 watch(
   () => props.start,
   () => {
@@ -182,4 +186,11 @@ watch(
   border-radius: 1em;
   transform: rotateY(180deg);
 }
+
+/* .flip-card.selectedCard .flip-card-inner {
+  transform: scale(1.3);
+  transition:
+    transform 0.3s ease,
+    border 0.3s ease;
+} */
 </style>

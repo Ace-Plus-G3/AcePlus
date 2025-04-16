@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     CustomCard: typeof import('./src/components/CustomCard.vue')['default']
     CustomCardView: typeof import('./src/components/CustomCardView.vue')['default']
+    ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
     ElContainer: typeof import('element-plus/es')['ElContainer']

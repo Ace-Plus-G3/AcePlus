@@ -2,12 +2,12 @@
   <el-container>
     <el-header>HEADER</el-header>
     <el-main style="padding: 0; position: relative">
-      <div class="overlay">
+      <!-- <div class="overlay">
         <video class="card-video" autoplay loop muted playsinline>
           <source src="/new-loading.webm" type="video/webm" />
           Your browser does not support the video tag.
         </video>
-      </div>
+      </div> -->
       <el-text class="timer" style="color: black; font-size: 56px">{{ timer }}</el-text>
 
       <div ref="cardContainer" class="game-container" style="position: relative">
@@ -16,7 +16,7 @@
             fit="cover"
             src="/game/card_back_bg.png"
             alt="card_back"
-            style="width: 80px; height: 120px"
+            style="width: 80px; height: 120px; z-index: 20"
           />
           <CustomCardView
             v-for="(_, index) in 4"
@@ -39,15 +39,15 @@
       </div>
 
       <div>
-        <img
-          @click="handleAnimation"
-          draggable="false"
-          src="/game/game_bet.png"
-          alt="game_bet"
-          fit="cover"
-          style="width: 100px; height: 100px; margin-top: 4em"
-          class="game-start"
-        />
+        <el-button :disabled="startGame === 'Start'" @click="handleAnimation" class="start-btn">
+          <img
+            draggable="false"
+            src="/game/game_bet.png"
+            alt="game_bet"
+            fit="cover"
+            class="game-start"
+          />
+        </el-button>
         <!-- <img
           v-else
           @click="handleResetCard"
@@ -91,8 +91,8 @@ const handleResetCard = () => {
   }
 }
 
-const handleSelectCard = (index: number) => {
-  console.log(index)
+const handleSelectCard = (index: number | null) => {
+  selectedCard.value = selectedCard.value === index ? null : index
 }
 
 watch(
@@ -121,6 +121,7 @@ watch(
       // After 13 secs, Brings back the displayed cards.
       setTimeout(() => {
         handleResetCard()
+        handleSelectCard(null)
       }, 12000)
     }
   },
@@ -144,7 +145,7 @@ watch(
 
 .el-header {
   width: 800px;
-  background: red;
+  background: slateblue;
 }
 .el-main {
   width: 800px;
@@ -156,7 +157,17 @@ watch(
   justify-content: center;
 }
 
-.game-start:active {
+.start-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  border-radius: 100%;
+  padding: 0;
+}
+
+.start-btn:active {
   cursor: pointer;
   scale: 1.1;
   animation-duration: 300ms;
