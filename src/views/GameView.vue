@@ -8,6 +8,10 @@
           Your browser does not support the video tag.
         </video>
       </div> -->
+      <div style="position: fixed; z-index: 1000" v-if="game_status === 'WIN'" class="win-overlay">
+        <el-image src="/game/title_win.png" />
+      </div>
+
       <el-text class="timer" style="color: black; font-size: 56px">{{ timer }}</el-text>
 
       <div ref="cardContainer" class="game-container" style="position: relative">
@@ -27,7 +31,7 @@
             :delay="index * 200"
             :reveal="reveal"
             @handle-select-card="handleSelectCard"
-            :selected-card="index"
+            :selected-card="selectedCard"
             :four-cards="FourCards"
           />
         </div>
@@ -65,6 +69,7 @@ let intervalId: number | undefined = undefined
 const timer = ref(10)
 const reveal = ref(false)
 const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
+const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
 
 const FourCards = ref<TCardType[]>([])
 const selectedCard = ref<TCardType | null>(null)
@@ -82,8 +87,14 @@ const getHighestCard = () => {
   console.log('Highest Card:', highestCard)
   if (selectedCard.value?.value === highestCard.value || selectedCard.value?.value === 1) {
     console.log('You win!')
+    setTimeout(() => {
+      game_status.value = 'WIN'
+    }, 500)
   } else {
     console.log('You lose!')
+    setTimeout(() => {
+      game_status.value = 'LOSE'
+    }, 500)
   }
   return highestCard
 }
@@ -164,6 +175,7 @@ watch(
       setTimeout(() => {
         handleResetCard()
         handleSelectCard(null)
+        game_status.value = 'PENDING'
       }, 12000)
     }
   },
@@ -191,6 +203,7 @@ shuffleCard()
   width: 800px;
   background: slateblue;
 }
+
 .el-main {
   width: 800px;
   /* background: blue; */
@@ -242,6 +255,7 @@ shuffleCard()
   width: 800px;
   background: green;
 }
+
 .overlay {
   position: fixed;
   width: 100%;
@@ -252,8 +266,54 @@ shuffleCard()
   background: rgba(0, 0, 0, 0.7);
   z-index: 1990;
 }
+
 .card-video {
   width: 800;
   height: 800px;
+}
+
+.game-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  z-index: 1000;
+}
+
+.game-status-text {
+  color: white;
+  font-size: 40px;
+
+  width: 100%;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.win {
+  background: #e7bb68;
+}
+
+.lose {
+  background: #7d1f22;
+}
+
+.win-overlay {
+  animation: popup 0.5s ease-in-out;
+}
+
+@keyframes popup {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 </style>
