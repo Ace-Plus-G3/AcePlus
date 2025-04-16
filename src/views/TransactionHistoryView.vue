@@ -118,12 +118,10 @@ import TabsComponent from '@/components/TabsComponent.vue'
 </script>
 
 <style scoped>
-@media screen and (min-width: 320px) and (max-width: 680px) {
+@media screen and (max-width: 680px) {
   .card-amount-container {
     width: 100%;
     height: 100px;
-    background-color: #e7bb68;
-    border-radius: 10px;
     padding: 30px;
   }
 
@@ -135,11 +133,7 @@ import TabsComponent from '@/components/TabsComponent.vue'
     display: flex;
     flex-direction: column;
   }
-  .row-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
+
   .left-cashin h3,
   .left-cashout h3 {
     font-size: 18px;
@@ -162,6 +156,12 @@ import TabsComponent from '@/components/TabsComponent.vue'
   }
 }
 
+.row-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 .transact-history-container {
   max-width: 680px;
 }
@@ -182,12 +182,21 @@ import TabsComponent from '@/components/TabsComponent.vue'
   flex-direction: column;
   gap: 7px;
 }
+.card-amount-main-container {
+  padding-left: 26px;
+  padding-right: 26px;
+}
 
 .card-amount-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  background-color: #e7bb68;
+  border-radius: 10px;
+  /* width: 100%;
+  height: 150px; */
+  /* padding: 60px; */
 }
 
 .left-cashin h4,
