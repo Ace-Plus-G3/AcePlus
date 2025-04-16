@@ -8,9 +8,18 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AuthModal: typeof import('./src/components/AuthModal.vue')['default']
+    ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
+    ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
+    ElDialog: typeof import('element-plus/es')['ElDialog']
+    ElForm: typeof import('element-plus/es')['ElForm']
+    ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElHeader: typeof import('element-plus/es')['ElHeader']
+    ElInput: typeof import('element-plus/es')['ElInput']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
+    ElTabs: typeof import('element-plus/es')['ElTabs']
     GameSection: typeof import('./src/components/GameSection.vue')['default']
     HeaderComponent: typeof import('./src/components/HeaderComponent.vue')['default']
     HomePageButtons: typeof import('./src/components/HomePageButtons.vue')['default']
