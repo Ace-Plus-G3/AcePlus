@@ -87,18 +87,17 @@ export const usePlayerStore = defineStore('playerStore', () => {
 
         // Find player trying to log in  via email
         const foundPlayer: TUser = JSON.parse(players).find(
-          (item: TUser) => item.email === formData.email,
+          (item: TUser) => item.phoneNumber === formData.phoneNumber,
         )
 
         // If player not  found, send error
         if (!foundPlayer) return console.log('Player not found!')
-
+        console.log(foundPlayer)
         // If player found, save the user info and token to pinia
         usePlayerStore().setToken(foundPlayer.user_id)
         usePlayerStore().setUser({
           user_id: foundPlayer.user_id,
           phoneNumber: foundPlayer.phoneNumber,
-          email: foundPlayer.email,
           password: foundPlayer.password,
           total_money: foundPlayer.total_money,
           transaction_history: foundPlayer.transaction_history,
@@ -113,7 +112,6 @@ export const usePlayerStore = defineStore('playerStore', () => {
           JSON.stringify({
             user_id: foundPlayer.user_id,
             phoneNumber: foundPlayer.phoneNumber,
-            email: foundPlayer.email,
             password: foundPlayer.password,
             total_money: foundPlayer.total_money,
             transaction_history: foundPlayer.transaction_history,
@@ -121,8 +119,9 @@ export const usePlayerStore = defineStore('playerStore', () => {
             updated_at: foundPlayer.updated_at,
           }),
         )
-        // router.push('/')
+        router.push('/')
         console.log('Logged in successfully!')
+        console.log(getToken.value)
       } else {
         console.log('error submit!', fields)
       }
@@ -154,7 +153,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
 
     usePlayerStore().setUser(JSON.parse(foundUser))
     user.value = JSON.parse(foundUser)
-    token.value = JSON.parse(foundUser).id
+    token.value = JSON.parse(foundUser).user_id
     console.log('Persists!')
     return true
   }
