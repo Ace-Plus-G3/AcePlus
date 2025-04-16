@@ -49,13 +49,13 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="Login" name="second">
-        <el-form :model="loginForm" label-position="top" style="color: yellow">
+        <el-form :model="loginForm" ref="loginFormRef" label-position="top" style="color: yellow">
           <el-form-item>
             <el-input
               :prefix-icon="Flag"
               v-model="loginForm.phoneNumber"
               autocomplete="off"
-              value="+63"
+              placeholder="09xxxxxxxxx"
             />
           </el-form-item>
           <el-form-item>
@@ -68,7 +68,7 @@
             />
           </el-form-item>
           <div class="dialog-footer">
-            <el-button> Login </el-button>
+            <el-button @click="login()"> Login </el-button>
           </div>
         </el-form>
       </el-tab-pane>
@@ -127,19 +127,6 @@ const handleClose = (done: () => void) => {
   done()
 }
 
-// Form state
-const signupFormRef = ref<FormInstance>()
-
-const signupForm = ref({
-  phoneNumber: '',
-  password: '',
-})
-
-const loginForm = ref({
-  phoneNumber: '',
-  password: '',
-})
-
 const rules = ref<FormRules>({
   phoneNumber: [{ required: true, message: 'Please enter your mobile number', trigger: 'blur' }],
   password: [
@@ -148,8 +135,29 @@ const rules = ref<FormRules>({
   ],
 })
 
+// Signup Form state
+const signupFormRef = ref<FormInstance>()
+
+const signupForm = ref({
+  phoneNumber: '',
+  password: '',
+})
+
 const signup = async () => {
   await store.handleSignup(signupFormRef.value)
+}
+
+// Login Form state
+const loginFormRef = ref<FormInstance>()
+
+const loginForm = ref({
+  phoneNumber: '',
+  password: '',
+})
+
+const login = async () => {
+  console.log('clicked')
+  await store.handleLogin(loginFormRef.value)
 }
 </script>
 
