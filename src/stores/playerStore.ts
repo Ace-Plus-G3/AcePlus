@@ -35,7 +35,6 @@ export const usePlayerStore = defineStore('playerStore', () => {
         const formData = {
           user_id: String(Math.random() * 10),
           phoneNumber: formE1.$props.model?.phoneNumber,
-          email: formE1.$props.model?.email,
           password: formE1.$props.model?.password,
           total_money: formE1.$props.model?.total_money,
           transaction_history: formE1.$props.model?.transaction_history,
@@ -53,14 +52,12 @@ export const usePlayerStore = defineStore('playerStore', () => {
           const updatedPlayers = JSON.stringify([formData])
           localStorage.setItem('players', updatedPlayers)
           console.log('Account created successfully!')
-          router.push('/login')
           return
         }
 
         // If player already exists with the same email and phoneNumber, return error
         const foundPlayer = JSON.parse(players_in_localstorage).find(
-          (item: TUser) =>
-            item.phoneNumber === formData.phoneNumber || item.email === formData.email,
+          (item: TUser) => item.phoneNumber === formData.phoneNumber,
         )
 
         if (foundPlayer) {
@@ -70,7 +67,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
         // If new player and doesn't exists in local storage, add the new player
         const updatedPlayers = JSON.stringify([...JSON.parse(players_in_localstorage), formData])
         localStorage.setItem('players', updatedPlayers)
-        console.log('Account created successfully!')
+        console.log('Account created successfully!', players)
         router.push('/login')
       } else {
         console.log('error submit!', fields)

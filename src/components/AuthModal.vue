@@ -10,16 +10,22 @@
   >
     <el-tabs v-model="activeTab" @tab-click="handleClick" stretch>
       <el-tab-pane label="Sign up" name="first">
-        <el-form :model="signupForm" label-position="top" style="color: yellow">
-          <el-form-item>
+        <el-form
+          :model="signupForm"
+          :rules="rules"
+          ref="signupFormRef"
+          label-position="top"
+          style="color: yellow"
+        >
+          <el-form-item prop="phoneNumber">
             <el-input
               :prefix-icon="Flag"
               v-model="signupForm.phoneNumber"
               autocomplete="off"
-              value="+63"
+              placeholder="09xxxxxxxxx"
             />
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop="password">
             <el-input
               type="password"
               v-model="signupForm.password"
@@ -29,7 +35,7 @@
             />
           </el-form-item>
           <div class="dialog-footer">
-            <el-button> Create Account </el-button>
+            <el-button @click="signup()"> Create Account </el-button>
             <div class="terms-of-service-container">
               <el-checkbox> </el-checkbox>
               <p>
@@ -73,8 +79,14 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
+import type { FormInstance, FormRules } from 'element-plus'
+
 import type { TabsPaneContext } from 'element-plus'
 import { Flag } from '@element-plus/icons-vue'
+
+import { usePlayerStore } from '@/stores'
+
+const store = usePlayerStore()
 
 const activeTab = ref('first')
 
@@ -116,7 +128,8 @@ const handleClose = (done: () => void) => {
 }
 
 // Form state
-//const formRef = ref<FormInstance>()
+const signupFormRef = ref<FormInstance>()
+
 const signupForm = ref({
   phoneNumber: '',
   password: '',
@@ -126,6 +139,18 @@ const loginForm = ref({
   phoneNumber: '',
   password: '',
 })
+
+const rules = ref<FormRules>({
+  phoneNumber: [{ required: true, message: 'Please enter your mobile number', trigger: 'blur' }],
+  password: [
+    { required: true, message: 'Please enter your password', trigger: 'blur' },
+    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' },
+  ],
+})
+
+const signup = async () => {
+  await store.handleSignup(signupFormRef.value)
+}
 </script>
 
 <style scoped>
