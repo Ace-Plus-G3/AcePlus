@@ -6,8 +6,3 @@
   margin: 0;
   box-sizing: border-box;
 }
-
-body {
-  background: var(--primary-black);
-  color: var(--primary-white);
-}
