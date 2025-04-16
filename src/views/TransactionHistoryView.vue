@@ -16,8 +16,8 @@
       <h3 class="title-text">Transaction History</h3>
     </div>
     <!-- <div class="tab-container"> -->
-    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" stretch>
-      <el-tab-pane label="Cash-In" name="first">
+    <TabsComponent>
+      <template v-slot:cashin>
         <div class="history-item-container">
           <div class="row-container">
             <div class="left-cashin">
@@ -60,8 +60,8 @@
             </div>
           </div>
         </div>
-      </el-tab-pane>
-      <el-tab-pane label="Cash-Out" name="second">
+      </template>
+      <template v-slot:cashout>
         <div class="history-item-container">
           <div class="row-container">
             <div class="left-cashout">
@@ -104,23 +104,17 @@
             </div>
           </div>
         </div>
-      </el-tab-pane>
-    </el-tabs>
+      </template>
+    </TabsComponent>
     <!-- </div> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
-import { ref } from 'vue'
-import type { TabsPaneContext } from 'element-plus'
+
 import { Plus } from '@element-plus/icons-vue'
-
-const activeName = ref('first')
-
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
-}
+import TabsComponent from '@/components/TabsComponent.vue'
 </script>
 
 <style scoped>
@@ -166,6 +160,10 @@ const handleClick = (tab: TabsPaneContext, event: Event) => {
   .left-amount h3 {
     font-size: 20px;
   }
+}
+
+.transact-history-container {
+  max-width: 680px;
 }
 
 .el-button {
