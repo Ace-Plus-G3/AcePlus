@@ -27,7 +27,8 @@
             :delay="index * 200"
             :reveal="reveal"
             @handle-select-card="handleSelectCard"
-            :selectedCard="selectedCard"
+            :selected-card="index"
+            :four-cards="FourCards"
           />
         </div>
         <el-image
@@ -39,7 +40,7 @@
       </div>
 
       <div>
-        <el-button :disabled="startGame === 'Start'" @click="startGame = 'Start'" class="start-btn">
+        <el-button :disabled="startGame === 'Start'" @click="handleStart" class="start-btn">
           <img
             draggable="false"
             src="/game/game_bet.png"
@@ -56,14 +57,43 @@
 
 <script setup lang="ts">
 import CustomCardView from '@/components/CustomCardView.vue'
-import { ref, watch } from 'vue'
+import { Cards } from '@/models/constants'
+import type { TCardType } from '@/models/type'
+import { nextTick, ref, watch } from 'vue'
 
 let intervalId: number | undefined = undefined
-
 const timer = ref(10)
 const reveal = ref(false)
-const selectedCard = ref<number | null>(null)
 const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
+
+const FourCards = ref<TCardType[]>([])
+const selectedCard = ref<TCardType | null>(null)
+
+const getHighestCard = () => {
+  if (FourCards.value.length === 0) {
+    console.warn('No cards to evaluate!')
+    return null // Handle empty array
+  }
+
+  const highestCard = FourCards.value.reduce((maxCard, currentCard) => {
+    return currentCard.value > maxCard.value ? currentCard : maxCard
+  })
+
+  console.log('Highest Card:', highestCard)
+  if (selectedCard.value?.value === highestCard.value || selectedCard.value?.value === 1) {
+    console.log('You win!')
+  } else {
+    console.log('You lose!')
+  }
+  return highestCard
+}
+
+const handleStart = async () => {
+  startGame.value = 'Start'
+  shuffleCard()
+  console.log(FourCards.value)
+  await nextTick()
+}
 
 const handleResetCard = () => {
   startGame.value = 'Done'
@@ -77,8 +107,33 @@ const handleResetCard = () => {
   }
 }
 
+const shuffleCard = () => {
+  FourCards.value = Cards.slice()
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 4)
+  console.log('Shuffle!')
+}
+
 const handleSelectCard = (index: number | null) => {
-  selectedCard.value = selectedCard.value === index ? null : index
+  console.log('Index clicked:', index)
+
+  if (index === null) {
+    selectedCard.value = null // Clear selection if no index is provided
+    console.log('Selected card cleared')
+    return
+  }
+
+  const foundCard = FourCards.value[index] // Find the card at the given index
+
+  if (!foundCard) {
+    console.warn('No card found at index:', index)
+    return // Exit if no card is found
+  }
+
+  // Toggle selection
+  selectedCard.value = selectedCard.value?.value === foundCard.value ? null : foundCard
+
+  console.log('Selected card:', selectedCard.value)
 }
 
 watch(
@@ -102,6 +157,7 @@ watch(
       // After 10 secs, reveal
       setTimeout(() => {
         reveal.value = true
+        getHighestCard()
       }, 10000)
 
       // After 13 secs, Brings back the displayed cards.
@@ -112,6 +168,8 @@ watch(
     }
   },
 )
+
+shuffleCard()
 </script>
 
 <style scoped>
