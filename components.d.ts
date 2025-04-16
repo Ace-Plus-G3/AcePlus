@@ -13,6 +13,7 @@ declare module 'vue' {
     ElHeader: typeof import('element-plus/es')['ElHeader']
     GameSection: typeof import('./src/components/GameSection.vue')['default']
     HeaderComponent: typeof import('./src/components/HeaderComponent.vue')['default']
+    HomePageButtons: typeof import('./src/components/HomePageButtons.vue')['default']
     ImageCarousel: typeof import('./src/components/ImageCarousel.vue')['default']
     ImageSlider: typeof import('./src/components/ImageSlider.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
