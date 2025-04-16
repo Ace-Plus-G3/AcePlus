@@ -39,7 +39,7 @@
       </div>
 
       <div>
-        <el-button :disabled="startGame === 'Start'" @click="handleAnimation" class="start-btn">
+        <el-button :disabled="startGame === 'Start'" @click="startGame = 'Start'" class="start-btn">
           <img
             draggable="false"
             src="/game/game_bet.png"
@@ -48,16 +48,6 @@
             class="game-start"
           />
         </el-button>
-        <!-- <img
-          v-else
-          @click="handleResetCard"
-          draggable="false"
-          src="/game/game_again.png"
-          alt="game_again"
-          fit="cover"
-          style="width: 100px; height: 100px; margin-top: 4em"
-          class="game-start"
-        /> -->
       </div>
     </el-main>
     <el-footer>FOOTER</el-footer>
@@ -70,14 +60,10 @@ import { ref, watch } from 'vue'
 
 let intervalId: number | undefined = undefined
 
-const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
 const timer = ref(10)
 const reveal = ref(false)
 const selectedCard = ref<number | null>(null)
-
-const handleAnimation = () => {
-  startGame.value = 'Start'
-}
+const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
 
 const handleResetCard = () => {
   startGame.value = 'Done'
