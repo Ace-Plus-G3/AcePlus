@@ -28,6 +28,11 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+<<<<<<< HEAD
+components.d.ts
+=======
 component.d.ts
 auto-imports.d.ts
+
+>>>>>>> 5c462d5d6982f3a761bcdfa9b439a6614d0ff8d3
 components.d.ts
