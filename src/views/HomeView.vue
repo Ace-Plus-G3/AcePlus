@@ -4,7 +4,7 @@
       <h1 class="title">Ace+</h1>
     </div>
     <div class="btn-container">
-      <button v-if="!isLoggedIn" class="btn btn-play-not-log">Play Now</button>
+      <button v-if="!isLoggedIn" @click="openModal" class="btn btn-play-not-log">Play Now</button>
       <!-- Add a conditional rendering for this buttons if the user logged -->
       <template v-if="isLoggedIn">
         <button class="btn btn-start">Start</button>
@@ -14,10 +14,25 @@
       </template>
     </div>
   </div>
+  <div>
+    <AuthModal v-model="isModalVisible" />
+  </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import { usePlayerStore } from '@/stores/playerStore'
+
+import AuthModal from '@/components/AuthModal.vue'
+
+// Control modal visibility
+const isModalVisible = ref(false)
+
+// Open modal
+const openModal = () => {
+  isModalVisible.value = true
+}
 
 const playerStore = usePlayerStore()
 
