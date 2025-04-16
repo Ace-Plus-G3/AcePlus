@@ -1,9 +1,10 @@
 <template>
   <div
-    @click="emit('handleSelectCard', index)"
+    @click="handleCardClick(index)"
     class="flip-card"
     :class="{
       flipped: reveal,
+      selected: selectedCard?.value === props.fourCards[index].value,
     }"
     v-motion
     ref="target"
@@ -35,7 +36,7 @@ type Props = {
   index: number
   length: number
   reveal: boolean
-  selectedCard: number | null
+  selectedCard: TCardType | null
   fourCards: TCardType[]
 }
 
@@ -95,6 +96,18 @@ const BringBackCards = async () => {
   })
 }
 
+const handleSameCard = () => {
+  if (!props.selectedCard) return
+
+  console.log(props.fourCards[props.index])
+  console.log(props.selectedCard)
+}
+
+const handleCardClick = (index: number) => {
+  emit('handleSelectCard', index)
+  userCount.value++
+}
+
 onMounted(async () => {
   await nextTick() // ensures DOM is fully rendered
 
@@ -112,6 +125,8 @@ watch(
     }
   },
 )
+
+handleSameCard()
 </script>
 
 <style scoped>
@@ -197,8 +212,8 @@ watch(
   transform: rotateY(180deg);
 }
 
-.flip-card.selectedCard .flip-card-inner {
-  transform: scale(1.3);
+.flip-card.selected .flip-card-inner {
+  scale: 1.3;
   transition:
     transform 0.3s ease,
     border 0.3s ease;
