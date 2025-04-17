@@ -12,7 +12,23 @@
         <el-image src="/game/title_win.png" />
       </div>
 
-      <el-text class="timer" style="color: black; font-size: 56px">{{ timer }}</el-text>
+      <el-text v-if="startingIn === 0" class="timer" style="color: black; font-size: 56px">{{
+        timer
+      }}</el-text>
+
+      <div
+        v-if="startingIn > 0"
+        style="
+          z-index: 1000;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+        <el-text style="color: white; font-size: 32px" size="large">Starting in:</el-text>
+        <el-text style="color: white; font-size: 32px" size="large">{{ startingIn }}</el-text>
+      </div>
 
       <div ref="cardContainer" class="game-container" style="position: relative">
         <div style="display: flex; align-items: center; justify-content: start; width: 100%">
@@ -44,7 +60,7 @@
       </div>
 
       <div>
-        <el-button :disabled="startGame === 'Start'" @click="handleStart" class="start-btn">
+        <el-button :disabled="startGame === 'Start'" class="start-btn">
           <img
             draggable="false"
             src="/game/game_bet.png"
@@ -63,10 +79,11 @@
 import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards } from '@/models/constants'
 import type { TCardType } from '@/models/type'
-import { nextTick, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 let intervalId: number | undefined = undefined
 const timer = ref(10)
+const startingIn = ref(5)
 const reveal = ref(false)
 const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
 const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
@@ -85,37 +102,47 @@ const getHighestCard = () => {
   })
 
   console.log('Highest Card:', highestCard)
-  if (selectedCard.value?.value === highestCard.value || selectedCard.value?.value === 1) {
-    console.log('You win!')
-    setTimeout(() => {
+  setTimeout(() => {
+    if (selectedCard.value?.value === 1) {
       game_status.value = 'WIN'
-    }, 500)
-  } else {
-    console.log('You lose!')
-    setTimeout(() => {
+      console.log('You win!')
+    } else if (selectedCard.value?.value === highestCard.value) {
+      game_status.value = 'WIN'
+      console.log('You win!')
+    } else {
       game_status.value = 'LOSE'
-    }, 500)
-  }
+      console.log('You lose!')
+    }
+  }, 500)
   return highestCard
-}
-
-const handleStart = async () => {
-  startGame.value = 'Start'
-  shuffleCard()
-  console.log(FourCards.value)
-  await nextTick()
 }
 
 const handleResetCard = () => {
   startGame.value = 'Done'
-  timer.value = 10
+  timer.value = 3
   reveal.value = false
+  handleSelectCard(null)
+  game_status.value = 'PENDING'
 
-  // Clear the interval when resetting
   if (intervalId !== undefined) {
     clearInterval(intervalId)
     intervalId = undefined
   }
+  setTimeout(() => {
+    intervalId = setInterval(() => {
+      if (timer.value > 0) {
+        timer.value--
+      } else {
+        clearInterval(intervalId)
+        intervalId = undefined
+      }
+    }, 1000)
+  }, 500)
+
+  setTimeout(() => {
+    timer.value = 10
+    startGame.value = 'Start'
+  }, 4000)
 }
 
 const shuffleCard = () => {
@@ -129,33 +156,49 @@ const handleSelectCard = (index: number | null) => {
   console.log('Index clicked:', index)
 
   if (index === null) {
-    selectedCard.value = null // Clear selection if no index is provided
+    selectedCard.value = null
     console.log('Selected card cleared')
     return
   }
 
-  const foundCard = FourCards.value[index] // Find the card at the given index
+  const foundCard = FourCards.value[index]
 
   if (!foundCard) {
     console.warn('No card found at index:', index)
-    return // Exit if no card is found
+    return
   }
 
-  // Toggle selection
   selectedCard.value = selectedCard.value?.value === foundCard.value ? null : foundCard
 
   console.log('Selected card:', selectedCard.value)
 }
 
-watch(
-  () => startGame.value,
-  () => {
-    if (startGame.value === 'Start') {
-      if (intervalId !== undefined) {
-        clearInterval(intervalId)
-      }
+onMounted(() => {
+  if (intervalId !== undefined) {
+    clearInterval(intervalId)
+  }
 
-      // 10 seconds countdown
+  // 10 seconds countdown
+  intervalId = setInterval(() => {
+    if (startingIn.value > 0) {
+      startingIn.value--
+    } else {
+      clearInterval(intervalId)
+      intervalId = undefined
+    }
+  }, 1000)
+
+  setTimeout(() => {
+    startGame.value = 'Start'
+  }, 5000)
+})
+
+watch(startGame, () => {
+  if (startGame.value === 'Start') {
+    if (intervalId !== undefined) {
+      clearInterval(intervalId)
+    }
+    setTimeout(() => {
       intervalId = setInterval(() => {
         if (timer.value > 0) {
           timer.value--
@@ -163,23 +206,20 @@ watch(
           clearInterval(intervalId)
           intervalId = undefined
         }
-      }, 1000)
+      }, 1000) // 10 seconds countdown
+    }, 500) // 0.5 seconds delay before the countdown
 
-      // After 10 secs, reveal
-      setTimeout(() => {
-        reveal.value = true
-        getHighestCard()
-      }, 10000)
+    setTimeout(() => {
+      reveal.value = true
+      getHighestCard()
+    }, 10500) // After 10.5 secs, reveal (0.5 seconds for delay)
 
-      // After 13 secs, Brings back the displayed cards.
-      setTimeout(() => {
-        handleResetCard()
-        handleSelectCard(null)
-        game_status.value = 'PENDING'
-      }, 12000)
-    }
-  },
-)
+    // After 12 secs, Brings back the displayed cards.
+    setTimeout(() => {
+      handleResetCard()
+    }, 12000)
+  }
+})
 
 shuffleCard()
 </script>
