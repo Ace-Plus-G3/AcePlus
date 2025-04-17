@@ -89,12 +89,12 @@ const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
 const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
 
 const FourCards = ref<TCardType[]>([])
-const selectedCard = ref<TCardType | null>(null)
+const selectedCard = ref<TCardType[]>([])
 
 const getHighestCard = () => {
   if (FourCards.value.length === 0) {
     console.warn('No cards to evaluate!')
-    return null // Handle empty array
+    return null
   }
 
   const highestCard = FourCards.value.reduce((maxCard, currentCard) => {
@@ -102,18 +102,29 @@ const getHighestCard = () => {
   })
 
   console.log('Highest Card:', highestCard)
+
   setTimeout(() => {
-    if (selectedCard.value?.value === 1) {
+    const hasLuckyCard = selectedCard.value.some((card: TCardType) => card.value === 1)
+
+    if (hasLuckyCard) {
       game_status.value = 'WIN'
-      console.log('You win!')
-    } else if (selectedCard.value?.value === highestCard.value) {
+      console.log('You win with the lucky card!')
+      return
+    }
+
+    const hasHighestCard = selectedCard.value.some(
+      (card: TCardType) => card.value === highestCard.value,
+    )
+
+    if (hasHighestCard) {
       game_status.value = 'WIN'
-      console.log('You win!')
+      console.log('You win with the highest card!')
     } else {
       game_status.value = 'LOSE'
       console.log('You lose!')
     }
   }, 500)
+
   return highestCard
 }
 
@@ -123,6 +134,7 @@ const handleResetCard = () => {
   reveal.value = false
   handleSelectCard(null)
   game_status.value = 'PENDING'
+  shuffleCard()
 
   if (intervalId !== undefined) {
     clearInterval(intervalId)
@@ -149,28 +161,34 @@ const shuffleCard = () => {
   FourCards.value = Cards.slice()
     .sort(() => Math.random() - 0.5)
     .slice(0, 4)
-  console.log('Shuffle!')
+    .map((card) => ({
+      ...card,
+      playerCount: 0, // Reset on shuffle
+    }))
+
+  console.log('Shuffled Cards:', FourCards.value)
 }
 
 const handleSelectCard = (index: number | null) => {
-  console.log('Index clicked:', index)
-
   if (index === null) {
-    selectedCard.value = null
-    console.log('Selected card cleared')
+    selectedCard.value = []
     return
   }
 
   const foundCard = FourCards.value[index]
+  const isAlreadySelected = selectedCard.value.some((card) => card.value === foundCard.value)
 
-  if (!foundCard) {
-    console.warn('No card found at index:', index)
-    return
+  if (isAlreadySelected) {
+    // Unselect
+    selectedCard.value = selectedCard.value.filter((card) => card.value !== foundCard.value)
+    FourCards.value[index].playerCount -= 1
+  } else {
+    // Select
+    selectedCard.value.push(foundCard)
+    FourCards.value[index].playerCount += 1
   }
 
-  selectedCard.value = selectedCard.value?.value === foundCard.value ? null : foundCard
-
-  console.log('Selected card:', selectedCard.value)
+  console.log('Selected cards:', selectedCard.value)
 }
 
 onMounted(() => {

@@ -4,7 +4,7 @@
     class="flip-card"
     :class="{
       flipped: reveal,
-      selected: selectedCard?.value === props.fourCards[index].value,
+      selected: selectedCard.some((card) => card.value === fourCards[index].value),
     }"
     v-motion
     ref="target"
@@ -14,7 +14,9 @@
       <div class="flip-card-front">
         <div class="player-count">
           <el-image class="player-count-icon" src="/game/players_icon_xs.png" />
-          <el-text size="small" class="player-count-text">{{ userCount }}</el-text>
+          <el-text size="small" class="player-count-text">{{
+            fourCards[index].playerCount
+          }}</el-text>
         </div>
       </div>
       <div
@@ -36,7 +38,7 @@ type Props = {
   index: number
   length: number
   reveal: boolean
-  selectedCard: TCardType | null
+  selectedCard: TCardType[]
   fourCards: TCardType[]
 }
 
@@ -96,13 +98,6 @@ const BringBackCards = async () => {
   })
 }
 
-const handleSameCard = () => {
-  if (!props.selectedCard) return
-
-  console.log(props.fourCards[props.index])
-  console.log(props.selectedCard)
-}
-
 const handleCardClick = (index: number) => {
   emit('handleSelectCard', index)
   userCount.value++
@@ -125,8 +120,6 @@ watch(
     }
   },
 )
-
-handleSameCard()
 </script>
 
 <style scoped>
