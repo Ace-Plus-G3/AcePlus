@@ -1,36 +1,32 @@
 <template>
-  <div
-    @click="handleCardClick(index)"
-    class="flip-card"
-    :class="{
-      flipped: reveal,
-      selected: selectedCard.some((card) => card.value === fourCards[index].value),
-    }"
-    v-motion
-    ref="target"
-    style="z-index: 10"
-  >
-    <div class="flip-card-inner">
-      <div class="flip-card-front">
-        <div class="player-count">
-          <el-image class="player-count-icon" src="/game/players_icon_xs.png" />
-          <el-text size="small" class="player-count-text">{{
-            fourCards[index].playerCount
-          }}</el-text>
+  <div class="card-container" ref="target" @click="handleCardClick(index)">
+    <div
+      class="flip-card"
+      :class="{
+        flipped: reveal,
+        selected: selectedCard.some((card) => card.value === fourCards[index].value),
+      }"
+    >
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="player-count">
+            <img class="player-count-icon" src="/game/players_icon_xs.png" />
+            <span class="player-count-text">{{ fourCards[index].playerCount }}</span>
+          </div>
         </div>
+        <div
+          class="flip-card-back"
+          :style="{ backgroundImage: 'url(' + fourCards[index].url + ')' }"
+        />
       </div>
-      <div
-        class="flip-card-back"
-        :style="{ backgroundImage: 'url(' + fourCards[index].url + ')' }"
-      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { TCardType } from '@/models/type'
-import { useMotion } from '@vueuse/motion'
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, computed, nextTick } from 'vue'
+import { useWindowSize } from '@vueuse/core'
 
 type Props = {
   start: 'Start' | 'Pending' | 'Done'
@@ -40,92 +36,99 @@ type Props = {
   reveal: boolean
   selectedCard: TCardType[]
   fourCards: TCardType[]
+  containerWidth: number
+  containerHeight: number
 }
 
 const emit = defineEmits(['handleSelectCard'])
 const props = defineProps<Props>()
 
-const userCount = ref(0)
-const parentWidth = ref<number | null>(null)
 const target = ref<HTMLElement>()
+const { width } = useWindowSize()
 
-const { apply } = useMotion(target, {
-  initial: {
-    x: 0,
-    translateX: 0,
-    translateY: 0,
-    rotate: 0,
-  },
-  enter: {
-    x: 0,
-    rotate: 0,
-  },
-})
+// Card sizing based on screen width
+const CARD_WIDTH = computed(() => (width.value > 1360 ? 80 : 60))
+const CARD_HEIGHT = computed(() => (width.value > 1360 ? 120 : 90))
+const CARD_SPACING = computed(() => (width.value > 1360 ? 20 : 10))
 
-const GiveCards = async () => {
-  if (!parentWidth.value) return
+// Calculate distribution positions
+const calculateDistributionPosition = () => {
+  if (props.containerWidth <= 10 || props.containerHeight <= 10) {
+    console.error(`Invalid container dimensions: ${props.containerWidth}x${props.containerHeight}`)
+    return { x: 10, y: 10 }
+  }
 
-  const CARD_WIDTH = 80
-  const CARD_SPACING = 40
+  const TOTAL_WIDTH = props.length * CARD_WIDTH.value + (props.length - 1) * CARD_SPACING.value
+  const startX = Math.max(10, (props.containerWidth - TOTAL_WIDTH) / 2)
+  const distributedX = startX + props.index * (CARD_WIDTH.value + CARD_SPACING.value)
+  const centerY = Math.max(10, (props.containerHeight - CARD_HEIGHT.value) / 2)
 
-  const TOTAL_WIDTH = props.length * CARD_WIDTH + (props.length - 1) * CARD_SPACING
-  const LEFT_START = (parentWidth.value - TOTAL_WIDTH) / 2
-
-  const cardX = props.index * (CARD_WIDTH + CARD_SPACING)
-  const targetX = LEFT_START + cardX
-
-  await apply({
-    rotate: [0, 90, 180, 270, 360],
-    translateX: targetX,
-    translateY: 230,
-    transition: {
-      duration: 400,
-      delay: props.delay,
-    },
-  })
+  return { x: distributedX, y: centerY }
 }
 
-const BringBackCards = async () => {
-  await apply({
-    x: 0,
-    rotate: -180,
-    translateX: 0,
-    translateY: 0,
-    transition: {
-      duration: 400,
-      delay: props.delay,
-    },
-  })
+const updateCardPosition = (isDistributed: boolean) => {
+  if (!target.value) return
+
+  if (isDistributed) {
+    const position = calculateDistributionPosition()
+    target.value.style.transition = `transform ${200 + props.delay}ms ease-out`
+    target.value.style.transform = `translate(${position.x}px, ${position.y}px) rotate(360deg)`
+    target.value.style.zIndex = '10'
+  } else {
+    target.value.style.transition = `transform ${200 + props.delay}ms ease-in`
+    target.value.style.transform = `translate(10px, 10px) rotate(0deg)`
+    target.value.style.zIndex = `${10 - props.index}`
+  }
 }
 
 const handleCardClick = (index: number) => {
   emit('handleSelectCard', index)
-  userCount.value++
 }
-
-onMounted(async () => {
-  await nextTick() // ensures DOM is fully rendered
-
-  const parent = target.value?.parentElement
-  parentWidth.value = parent?.offsetWidth ?? null
-})
 
 watch(
   () => props.start,
-  () => {
-    if (props.start === 'Start') {
-      GiveCards()
-    } else {
-      BringBackCards()
+  (newValue) => {
+    if (newValue === 'Start') {
+      updateCardPosition(true)
+    } else if (newValue === 'Done') {
+      updateCardPosition(false)
     }
   },
+  { immediate: true },
 )
+
+// Watch container size changes
+watch([() => props.containerWidth, () => props.containerHeight], ([newWidth, newHeight]) => {
+  if (props.start === 'Start' && newWidth > 10 && newHeight > 10) {
+    updateCardPosition(true)
+  }
+})
+
+// Initialize position at top left corner
+onMounted(async () => {
+  if (target.value) {
+    target.value.style.transform = 'translate(10px, 10px)'
+    target.value.style.zIndex = `${10 - props.index}`
+  }
+
+  await nextTick()
+
+  if (props.start === 'Start' && props.containerWidth > 10 && props.containerHeight > 10) {
+    updateCardPosition(true)
+  }
+})
 </script>
 
 <style scoped>
-.flip-card {
-  top: 0;
+.card-container {
   position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  will-change: transform;
+}
+
+.flip-card {
   background-color: transparent;
   width: 80px;
   height: 120px;
@@ -138,7 +141,6 @@ watch(
   background-position: center;
   width: 80px;
   height: 120px;
-
   display: flex;
   align-items: start;
   justify-content: start;
@@ -150,25 +152,23 @@ watch(
   align-items: center;
   justify-content: center;
   gap: 4px;
-
   background: rgba(0, 0, 0, 0.3);
   border-radius: 30px;
   padding: 0 0.5em;
-  /* background: white; */
-  /* border: 1px solid black; */
 }
 
 .player-count-text {
   margin-top: 2px;
   color: white;
+  font-size: 12px;
 }
+
 .player-count-icon {
   width: 15px;
   height: 15px;
 }
 
 .flip-card-back {
-  /* background-image: url('/game/card_back_bg.png'); */
   background-size: cover;
   background-position: center;
   width: 80px;
@@ -184,10 +184,6 @@ watch(
   transform-style: preserve-3d;
 }
 
-/* .flip-card:hover .flip-card-inner {
-  transform: rotateY(180deg);
-} */
-
 .flip-card.flipped .flip-card-inner {
   transform: rotateY(180deg);
 }
@@ -197,8 +193,10 @@ watch(
   position: absolute;
   width: 80px;
   height: 120px;
-  -webkit-backface-visibility: hidden; /* Safari */
+  -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .flip-card-back {
@@ -209,6 +207,16 @@ watch(
   scale: 1.3;
   transition:
     transform 0.3s ease,
-    border 0.3s ease;
+    scale 0.3s ease;
+}
+
+@media screen and (max-width: 1360px) {
+  .flip-card,
+  .flip-card-inner,
+  .flip-card-front,
+  .flip-card-back {
+    width: 60px;
+    height: 90px;
+  }
 }
 </style>
