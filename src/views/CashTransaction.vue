@@ -8,9 +8,9 @@
       <TabsComponent>
         <template v-slot:cashin>
           <form class="transaction-form">
-            <el-input placeholder="Enter Account Number" />
-            <el-input placeholder="Enter Amount" />
-            <el-button>Cash In</el-button>
+            <el-input v-model="account_number" placeholder="Enter Account Number" />
+            <el-input v-model="amount" placeholder="Enter Amount" />
+            <el-button @click="CashIn">Cash In</el-button>
           </form>
         </template>
         <template v-slot:cashout>
@@ -29,8 +29,25 @@
 import { ref } from 'vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import TabsComponent from '@/components/TabsComponent.vue'
+import { useCreditStore } from '@/stores/creditStore';
 
+
+const creditStore = useCreditStore()
+
+
+const account_number = ref<number | null>(null);
+const amount = ref<number | null>(null);
+
+const CashIn = () => {
+  if (!amount.value || !account_number.value) {
+    console.log('Please fill in all fields');
+    return
+  }
+
+  creditStore.handleCashin(Number(amount.value), Number(account_number.value))
+}; 
 const imageSrc = ref(new URL('/src/assets/gcash-logo.jpg', import.meta.url).href)
+
 </script>
 
 <style scoped>
