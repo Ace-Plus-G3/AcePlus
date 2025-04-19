@@ -118,120 +118,167 @@ import TabsComponent from '@/components/TabsComponent.vue'
 </script>
 
 <style scoped>
-@media screen and (min-width: 320px) and (max-width: 680px) {
-  .card-amount-container {
-    width: 100%;
-    height: 100px;
-    background-color: #e7bb68;
-    border-radius: 10px;
-    padding: 30px;
-  }
+@media screen and (max-width: 768px) {
+
 
   .card-amount-main-container {
     padding-left: 13px;
     padding-right: 13px;
   }
+
   .history-item-container {
     display: flex;
     flex-direction: column;
   }
-  .row-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
+
   .left-cashin h3,
   .left-cashout h3 {
     font-size: 18px;
     font-weight: normal;
   }
+
   .left-cashin h4,
   .left-cashout h4 {
     font-size: 10px;
   }
+
   .left-cashin,
   .left-cashout {
     gap: 8px;
   }
+
   .left-amount h5 {
-    font-size: 8px;
-    font-weight: 400;
+    font-size: 8px !important;
+    font-weight: 400 !important;
   }
+
   .left-amount h3 {
-    font-size: 20px;
+    font-size: 20px !important;
   }
+
+
+    /* .transact-history-container {
+      max-width: 680px;
+    } */
+
+  .el-button {
+    font-size: 12px;
+  }
+
+  .left-amount h3 {
+    letter-spacing: 2px;
+  }
+
+  .left-amount {
+    color: var(--primary-black);
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+
+
+  .left-cashin,
+  .left-cashout {
+    display: flex;
+    flex-direction: column;
+  }
+
+
+  .row-container {
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 10px;
+    padding-bottom: 15px;
+  }
+
+  /* :deep(.el-tabs__nav) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  } */
+
+  :deep(.el-tabs__header) {
+    margin: 10px 0px 16px !important;
+  }
+
+  :deep(.el-tabs__item.is-active) {
+    font-size: 13px;
+  }
+
+  .title-text {
+    font-size: 24px;
+    margin-top: 15px;
+  }
+
+  .row-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between !important;
+    gap: 0px !important;
+    padding: 10px 50px !important;
+  }
+  .el-tabs {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+
+  .card-amount-container {
+    width: 90% !important;
+    height: 100px !important;
+    padding: 30px !important;
+  }
+  .history-item-container {
+    max-height: 450px !important;
+   }
 }
 
-.transact-history-container {
-  max-width: 680px;
+.el-tabs {
+  margin-left: 90px;
+  margin-right: 90px;
 }
 
 .el-button {
+  color: var(--primary-black);
   border-radius: 40px;
-  font-size: 12px;
-  color: var(--primary-black);
 }
 
-.left-amount h3 {
-  letter-spacing: 2px;
-}
-
-.left-amount {
-  color: var(--primary-black);
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.card-amount-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
+.row-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 500px;
+  }
 
 .left-cashin h4,
-.left-cashout h4 {
-  color: #c5c5c5;
-}
+  .left-cashout h4 {
+    color: #c5c5c5;
+  }
 
 .left-cashin,
-.left-cashout {
-  display: flex;
-  flex-direction: column;
-}
-
+  .left-cashout {
+    display: flex;
+    flex-direction: column;
+  }
 .right-cashin {
-  display: flex;
-  align-items: center;
-  color: #42f271;
-}
-
+    display: flex;
+    align-items: center;
+    color: #42f271;
+  }
 .right-cashout {
-  display: flex;
-  align-items: center;
-  color: #ea3e27;
-}
+    display: flex;
+    align-items: center;
+    color: #ea3e27;
+  }
 
 .history-item-container {
   color: #ffffffff;
-  /* padding-left: 20px;
-  padding-right: 20px; */
 }
 
 .row-container {
   border-bottom: 1px solid #313131;
-  padding-left: 40px;
-  padding-right: 40px;
-  padding-top: 10px;
-  padding-bottom: 15px;
-}
-
-:deep(.el-tabs__nav) {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  padding: 40px 100px;
 }
 
 :deep(.el-tabs__header) {
@@ -245,7 +292,11 @@ import TabsComponent from '@/components/TabsComponent.vue'
 :deep(.el-tabs__item.is-active) {
   color: #ffffff;
   font-family: 'Lemon', sans-serif;
-  font-size: 13px;
+}
+
+.title-text {
+  color: var(--primary-white);
+  text-align: center;
 }
 
 #transact-history {
@@ -253,10 +304,47 @@ import TabsComponent from '@/components/TabsComponent.vue'
   height: 100vh;
 }
 
-.title-text {
-  font-size: 24px;
-  color: var(--primary-white);
-  text-align: center;
-  margin-top: 15px;
+/* .card-amount-main-container {
+  display: none;
+} */
+
+.card-amount-main-container {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 20px;
+  }
+
+  .card-amount-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e7bb68;
+    border-radius: 10px;
+    /* width: 100%;
+  height: 150px; */
+    /* padding: 60px; */
+  }
+
+  .card-amount-container {
+    width: 70%;
+    height: 150px;
+    padding: 80px;
+  }
+
+  .left-amount h5 {
+    font-size: 22px;
+    font-weight: 400;
+  }
+
+  .left-amount h3 {
+    font-size: 32px;
+  }
+
+  .history-item-container {
+  max-height: 535px; /* Set the maximum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px; /* Optional padding for better spacing */
+  scrollbar-width: none; /* For modern browsers, makes the scrollbar thinner */
 }
 </style>
