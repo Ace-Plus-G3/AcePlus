@@ -229,6 +229,9 @@ import TabsComponent from '@/components/TabsComponent.vue'
     height: 100px !important;
     padding: 30px !important;
   }
+  .history-item-container {
+    max-height: 450px !important;
+   }
 }
 
 .el-tabs {
@@ -337,4 +340,11 @@ import TabsComponent from '@/components/TabsComponent.vue'
   .left-amount h3 {
     font-size: 32px;
   }
+
+  .history-item-container {
+  max-height: 535px; /* Set the maximum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 10px; /* Optional padding for better spacing */
+  scrollbar-width: none; /* For modern browsers, makes the scrollbar thinner */
+}
 </style>
