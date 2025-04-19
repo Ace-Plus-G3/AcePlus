@@ -31,7 +31,7 @@
         custom-class="custom-drawer">
         <div class="custom-drawer-header">
           <span class="title">Place your bets !</span>
-          <button class="cancel-btn" @click="drawer = false">Cancel</button>
+          <button class="cancel-btn" @click="handleCancel" >Cancel</button>
         </div>
 
       </el-drawer>
@@ -204,6 +204,11 @@ const cleanupIntervals = () => {
     intervalId = undefined
   }
 }
+
+const handleCancel = () => {
+  drawer.value = false; 
+  selectedCard.value = []; 
+};
 
 onMounted(async () => {
   window.addEventListener('resize', handleResize)
