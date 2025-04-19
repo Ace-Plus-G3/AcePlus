@@ -1,7 +1,9 @@
 <template>
   <el-header>
     <div class="back-container">
-      <Back />
+      <el-icon @click="goToBack" :size="30" :color="'var(--primary-yellow)'">
+        <Back />
+      </el-icon>
     </div>
     <div>
       <div class="hamburger">
@@ -15,6 +17,13 @@
 
 <script setup lang="ts">
 import { Back } from '@element-plus/icons-vue'
+import {useRouter} from 'vue-router'
+
+const router = useRouter()
+
+const goToBack = () => {
+  router.push({name: 'home'})
+}
 </script>
 
 <style scoped>
