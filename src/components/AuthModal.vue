@@ -8,8 +8,8 @@
     :modal="true"
     style="background-color: var(--primary-black); padding: 30px"
   >
-    <el-tabs v-model="activeTab" @tab-click="handleClick" stretch>
-      <el-tab-pane label="Sign up" name="first">
+    <el-tabs v-model="activeTab" stretch>
+      <el-tab-pane label="Sign up" name="Signup-Tab">
         <el-form
           :model="signupForm"
           :rules="rules"
@@ -35,7 +35,7 @@
             />
           </el-form-item>
           <div class="dialog-footer">
-            <el-button @click="signup()"> Create Account </el-button>
+            <el-button style="width: 100%" @click="signup()"> Create Account </el-button>
             <div class="terms-of-service-container">
               <el-checkbox> </el-checkbox>
               <p>
@@ -48,7 +48,7 @@
           </div>
         </el-form>
       </el-tab-pane>
-      <el-tab-pane label="Login" name="second">
+      <el-tab-pane label="Login" name="Login-Tab">
         <el-form :model="loginForm" ref="loginFormRef" label-position="top" style="color: yellow">
           <el-form-item>
             <el-input
@@ -68,7 +68,7 @@
             />
           </el-form-item>
           <div class="dialog-footer">
-            <el-button @click="login()"> Login </el-button>
+            <el-button style="width: 100%" @click="login()"> Login </el-button>
           </div>
         </el-form>
       </el-tab-pane>
@@ -78,31 +78,19 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-
 import type { FormInstance, FormRules } from 'element-plus'
-
-import type { TabsPaneContext } from 'element-plus'
 import { Flag } from '@element-plus/icons-vue'
-
 import { usePlayerStore } from '@/stores'
+import type { TLogin, TSignup } from '@/types/auth'
 
 const store = usePlayerStore()
-
-const activeTab = ref('first')
-
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
-}
+const activeTab = ref<'Signup-Tab' | 'Login-Tab'>('Signup-Tab')
 
 // Props to control visibility via v-model
-const props = defineProps<{
-  modelValue?: boolean
-}>()
+const props = defineProps<{ modelValue?: boolean }>()
 
 // Emits for v-model and form submission
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-}>()
+const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
 
 // Local state for form visibility
 const dialogFormVisible = ref(props.modelValue)
@@ -135,30 +123,37 @@ const rules = ref<FormRules>({
   ],
 })
 
+// handle Changing tabs
+const handleChangeTab = (tab: 'Signup-Tab' | 'Login-Tab') => {
+  activeTab.value = tab
+}
+
 // Signup Form state
 const signupFormRef = ref<FormInstance>()
-
-const signupForm = ref({
+const signupForm = ref<TSignup>({
   phoneNumber: '',
   password: '',
 })
-
 const signup = async () => {
-  await store.handleSignup(signupFormRef.value)
+  await store.handleSignup({
+    formE1: signupFormRef.value,
+    handleChangeTab,
+  })
 }
 
 // Login Form state
 const loginFormRef = ref<FormInstance>()
-
-const loginForm = ref({
+const loginForm = ref<TLogin>({
   phoneNumber: '',
   password: '',
 })
 
 const login = async () => {
-  console.log('clicked')
-  await store.handleLogin(loginFormRef.value).then(() => {
-    dialogFormVisible.value = false
+  await store.handleLogin({
+    formE1: loginFormRef.value,
+    handleCloseModal: () => {
+      dialogFormVisible.value = false
+    },
   })
 }
 </script>
@@ -172,6 +167,14 @@ const login = async () => {
 .el-dialog p {
   font-size: 0.75rem;
   margin-block: 10px;
+}
+
+.dialog-footer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 :deep(.el-tabs__nav) {
@@ -210,6 +213,9 @@ const login = async () => {
   border: none;
   border-radius: 20px;
   color: var(--primary-black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .terms-of-service-container {
