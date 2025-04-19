@@ -9,7 +9,7 @@
       <template v-if="isLoggedIn">
         <button class="btn btn-start">Start</button>
         <button class="btn btn-instructions">Instructions</button>
-        <button class="btn btn-wallet">Wallet</button>
+        <button @click="goToWallet()" class="btn btn-wallet">Wallet</button>
         <button @click="usePlayerStore().handleLogout" class="btn btn-logout">Logout</button>
       </template>
     </div>
@@ -24,7 +24,11 @@ import { ref } from 'vue'
 
 import { usePlayerStore } from '@/stores/playerStore'
 
+import { useRouter } from 'vue-router'
+
 import AuthModal from '@/components/AuthModal.vue'
+
+const router = useRouter()
 
 // Control modal visibility
 const isModalVisible = ref(false)
@@ -37,6 +41,10 @@ const openModal = () => {
 const playerStore = usePlayerStore()
 
 const isLoggedIn = !!playerStore.getToken
+
+const goToWallet = () => {
+  router.push('/cash-transaction')
+}
 </script>
 
 <style scoped>
