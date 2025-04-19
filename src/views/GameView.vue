@@ -15,35 +15,26 @@
     </div>
 
     <el-main>
-      <div class="game-container" ref="gameContainerRef">
+      <div class="game-container" ref="gameContainerRef" @click="drawer = true"  :disabled="startGame === 'Start'">
         <el-image fit="cover" src="/game/card_back_bg.png" alt="card_back_bg" class="card" />
-        <CustomCardView
-          v-for="(_, index) in 4"
-          :key="index"
-          :index="index"
-          :length="4"
-          :start="startGame"
-          :delay="index * 200"
-          :reveal="reveal"
-          @handle-select-card="handleSelectCard"
-          :selected-card="selectedCard"
-          :four-cards="FourCards"
-          :container-width="containerWidth"
-          :container-height="containerHeight"
-        />
+        <CustomCardView v-for="(_, index) in 4" :key="index" :index="index" :length="4" :start="startGame"
+          :delay="index * 200" :reveal="reveal" @handle-select-card="handleSelectCard" :selected-card="selectedCard"
+          :four-cards="FourCards" :container-width="containerWidth" :container-height="containerHeight" />
       </div>
 
-      <div>
-        <el-button :disabled="startGame === 'Start'" class="start-btn">
-          <img
-            draggable="false"
-            src="/game/game_bet.png"
-            alt="game_bet"
-            fit="cover"
-            class="game-start"
-          />
+      <!-- <div>
+        <el-button  :disabled="startGame === 'Start'" class="start-btn">
+          <img draggable="false" src="/game/game_bet.png" alt="game_bet" fit="cover" class="game-start" />
         </el-button>
-      </div>
+      </div> -->
+      <el-drawer direction="btt" @close="drawer = false" v-model="drawer" :with-header="false"
+        custom-class="custom-drawer">
+        <div class="custom-drawer-header">
+          <span class="title">Place your bets !</span>
+          <button class="cancel-btn" @click="drawer = false">Cancel</button>
+        </div>
+
+      </el-drawer>
     </el-main>
     <el-footer>FOOTER</el-footer>
   </el-container>
@@ -54,6 +45,8 @@ import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards } from '@/models/constants'
 import type { TCardType } from '@/models/type'
 import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted } from 'vue'
+
+const drawer = ref(false)
 
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
@@ -262,6 +255,60 @@ shuffleCard()
 </script>
 
 <style scoped>
+/* .el-drawer {
+  width: 40%;
+} */
+
+:deep(.el-drawer) {
+  width: 40% !important;
+  left: 30% !important;
+  right: 0;
+  height: 40% !important;
+  background: linear-gradient(to bottom, #1e1e3f, #0c0c1c);
+  border-radius: 10px 15px 0px 0px;
+  overflow: hidden;
+}
+
+/* Custom header */
+.custom-drawer-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(to right, #002c71, #00397f);
+  clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 100%, 0% 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 2;
+}
+
+/* Header text */
+.custom-drawer-header .title {
+  color: #ffca28;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Cancel button */
+.custom-drawer-header .cancel-btn {
+  background: #ffca28;
+  border: none;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-weight: bold;
+  color: #00397f;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  transition: background 0.3s;
+}
+
+.custom-drawer-header .cancel-btn:hover {
+  background: #ffd54f;
+}
+
 .el-container {
   height: 100vh;
   background-image: url(../assets/homepage_bg.png);
@@ -384,6 +431,7 @@ shuffleCard()
     opacity: 0;
     transform: translateY(100%);
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
