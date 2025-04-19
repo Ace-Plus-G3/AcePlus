@@ -15,7 +15,7 @@
     </div>
 
     <el-main>
-      <div class="game-container" ref="gameContainerRef" @click="drawer = true"  :disabled="startGame === 'Start'">
+      <div class="game-container" ref="gameContainerRef" @click="drawer = true" :disabled="startGame === 'Start'">
         <el-image fit="cover" src="/game/card_back_bg.png" alt="card_back_bg" class="card" />
         <CustomCardView v-for="(_, index) in 4" :key="index" :index="index" :length="4" :start="startGame"
           :delay="index * 200" :reveal="reveal" @handle-select-card="handleSelectCard" :selected-card="selectedCard"
@@ -31,9 +31,15 @@
         custom-class="custom-drawer">
         <div class="custom-drawer-header">
           <span class="title">Place your bets !</span>
-          <button class="cancel-btn" @click="handleCancel" >Cancel</button>
+          <button class="cancel-btn" @click="handleCancel">Cancel</button>
         </div>
-
+        <div class="drawer-content">
+          <div class="bet-grid">
+            <div v-for="chip in chips" :key="chip.value" class="chip">
+              <img :src="chip.image" :alt="chip.value" />
+            </div>
+          </div>
+        </div>
       </el-drawer>
     </el-main>
     <el-footer>FOOTER</el-footer>
@@ -206,8 +212,8 @@ const cleanupIntervals = () => {
 }
 
 const handleCancel = () => {
-  drawer.value = false; 
-  selectedCard.value = []; 
+  drawer.value = false;
+  selectedCard.value = [];
 };
 
 onMounted(async () => {
@@ -257,12 +263,49 @@ watch(startGame, (newValue) => {
   }
 })
 shuffleCard()
+
+
+const chips = [
+  { value: '1', image: new URL('@/assets/1PESO.png', import.meta.url).href },
+  { value: '5', image: new URL('@/assets/5PESO.png', import.meta.url).href },
+  { value: '10', image: new URL('@/assets/10PESO.png', import.meta.url).href },
+  { value: '50', image: new URL('@/assets/50PESO.png', import.meta.url).href },
+  { value: '100', image: new URL('@/assets/100PESO.png', import.meta.url).href },
+  { value: '500', image: new URL('@/assets/500PESO.png', import.meta.url).href },
+  { value: '1K', image: new URL('@/assets/1KPESO.png', import.meta.url).href },
+  { value: '5K', image: new URL('@/assets/5KPESO.png', import.meta.url).href },
+  { value: '10K', image: new URL('@/assets/10KPESO.png', import.meta.url).href },
+];
 </script>
 
 <style scoped>
 /* .el-drawer {
   width: 40%;
 } */
+
+.drawer-content {
+  margin-top: 60px;
+  padding: 20px;
+}
+
+.bet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 16px;
+  justify-items: center;
+}
+
+.chip img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.chip img:hover {
+  transform: scale(1.1);
+}
 
 :deep(.el-drawer) {
   width: 40% !important;
@@ -306,7 +349,7 @@ shuffleCard()
   font-weight: bold;
   color: #00397f;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: background 0.3s;
 }
 
