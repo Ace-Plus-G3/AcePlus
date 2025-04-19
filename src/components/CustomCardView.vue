@@ -10,8 +10,20 @@
       <div class="flip-card-inner">
         <div class="flip-card-front">
           <div class="player-count">
-            <img class="player-count-icon" src="/game/players_icon_xs.png" />
+            <el-image class="player-count-icon" :src="playerLogo" />
             <span class="player-count-text">{{ fourCards[index].playerCount }}</span>
+          </div>
+          <div class="bet-count-container">
+            <div class="bet-count">
+              <span class="bet-count-text">{{
+                props.selectedCard.reduce((total, card) => {
+                  return card.value === props.fourCards[props.index].value
+                    ? total + card.betAmount
+                    : total
+                }, 0)
+              }}</span>
+              <el-image class="player-count-icon" :src="GoldIcon" />
+            </div>
           </div>
         </div>
         <div
@@ -24,9 +36,11 @@
 </template>
 
 <script setup lang="ts">
-import type { TCardType } from '@/models/type'
+import type { TCardType, TSelectedCard } from '@/models/type'
 import { onMounted, ref, watch, computed, nextTick } from 'vue'
 import { useWindowSize } from '@vueuse/core'
+import GoldIcon from '@/assets/coins/gold.png'
+import playerLogo from '@/assets/icons/players_icon_xs.png'
 
 type Props = {
   start: 'Start' | 'Pending' | 'Done'
@@ -34,7 +48,7 @@ type Props = {
   index: number
   length: number
   reveal: boolean
-  selectedCard: TCardType[]
+  selectedCard: TSelectedCard[]
   fourCards: TCardType[]
   containerWidth: number
   containerHeight: number
@@ -55,7 +69,7 @@ const CARD_SPACING = computed(() => (width.value > 1360 ? 20 : 10))
 const calculateDistributionPosition = () => {
   if (props.containerWidth <= 10 || props.containerHeight <= 10) {
     console.error(`Invalid container dimensions: ${props.containerWidth}x${props.containerHeight}`)
-    return { x: 10, y: 10 }
+    return { x: 10, y: -60 }
   }
 
   const TOTAL_WIDTH = props.length * CARD_WIDTH.value + (props.length - 1) * CARD_SPACING.value
@@ -76,7 +90,7 @@ const updateCardPosition = (isDistributed: boolean) => {
     target.value.style.zIndex = '10'
   } else {
     target.value.style.transition = `transform ${200 + props.delay}ms ease-in`
-    target.value.style.transform = `translate(10px, 10px) rotate(0deg)`
+    target.value.style.transform = `translate(10px, -60px) rotate(0deg)`
     target.value.style.zIndex = `${10 - props.index}`
   }
 }
@@ -107,7 +121,7 @@ watch([() => props.containerWidth, () => props.containerHeight], ([newWidth, new
 // Initialize position at top left corner
 onMounted(async () => {
   if (target.value) {
-    target.value.style.transform = 'translate(10px, 10px)'
+    target.value.style.transform = 'translate(10px, -60px)'
     target.value.style.zIndex = `${10 - props.index}`
   }
 
@@ -136,25 +150,49 @@ onMounted(async () => {
 }
 
 .flip-card-front {
-  background-image: url('/game/card_back_bg.png');
+  background-image: url('@/assets/cards/back/card_back_bg.png');
   background-size: cover;
   background-position: center;
   width: 80px;
   height: 120px;
   display: flex;
+  flex-direction: column;
   align-items: start;
-  justify-content: start;
+  justify-content: space-between;
   padding: 8px;
 }
 
+.bet-count-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  margin-bottom: 5px;
+
+  .bet-count {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 2px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 30px;
+    padding-left: 1em;
+  }
+
+  .bet-count-text {
+    color: white;
+    font-size: 12px;
+  }
+}
 .player-count {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
+  justify-content: start;
+  gap: 2px;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 30px;
-  padding: 0 0.5em;
+  padding-right: 1em;
+  padding-left: 4px;
 }
 
 .player-count-text {
