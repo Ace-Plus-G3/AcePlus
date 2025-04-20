@@ -13,7 +13,7 @@
       <div class="countdown-text">Starting in:</div>
       <div class="countdown-number">{{ startingIn }}</div>
     </div>
-
+    <SpinTheWheel />
     <el-main>
       <div class="game-container" ref="gameContainerRef" @click="drawer = true" :disabled="startGame === 'Start'">
         <el-image fit="cover" src="/game/card_back_bg.png" alt="card_back_bg" class="card" />
@@ -27,6 +27,8 @@
           <img draggable="false" src="/game/game_bet.png" alt="game_bet" fit="cover" class="game-start" />
         </el-button>
       </div> -->
+
+
       <el-drawer direction="btt" @close="drawer = false" v-model="drawer" :with-header="false"
         custom-class="custom-drawer">
         <div class="custom-drawer-header">
@@ -47,6 +49,7 @@
 </template>
 
 <script setup lang="ts">
+import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards } from '@/models/constants'
 import type { TCardType } from '@/models/type'
@@ -470,7 +473,7 @@ const chips = [
 .card {
   width: 80px;
   height: 120px;
-  z-index: 1000;
+  z-index: 1;
   transform: translate(10px, 10px);
 }
 
