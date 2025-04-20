@@ -1,25 +1,43 @@
 <template>
   <el-container>
-    <el-header>HEADER</el-header>
+    <el-header>
+      <div class="el-header-top-bar">
+        <div class="el-header-image"></div>
+      </div>
+    </el-header>
 
+    <!-- Start of Overlays -->
     <div style="position: fixed; z-index: 1000" v-if="game_status === 'WIN'" class="win-overlay">
-      <el-image src="/game/title_win.png" />
+      <el-image :src="WIN_ICON" />
     </div>
 
     <div v-if="startingIn === 0" class="timer-container">
       <div class="timer">{{ timer }}</div>
     </div>
+
     <div v-if="startingIn > 0" class="starting-countdown">
       <div class="countdown-text">Starting in:</div>
       <div class="countdown-number">{{ startingIn }}</div>
     </div>
+    <!-- End of Overlays -->
 
     <el-main>
-      <div class="game-container" ref="gameContainerRef" @click="drawer = true" :disabled="startGame === 'Start'">
-        <el-image fit="cover" src="/game/card_back_bg.png" alt="card_back_bg" class="card" />
-        <CustomCardView v-for="(_, index) in 4" :key="index" :index="index" :length="4" :start="startGame"
-          :delay="index * 200" :reveal="reveal" @handle-select-card="handleSelectCard" :selected-card="selectedCard"
-          :four-cards="FourCards" :container-width="containerWidth" :container-height="containerHeight" />
+      <div class="game-container" ref="gameContainerRef" :disabled="startGame === 'Start'">
+        <el-image fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
+        <CustomCardView
+          v-for="(_, index) in 4"
+          :key="index"
+          :index="index"
+          :length="4"
+          :start="startGame"
+          :delay="index * 200"
+          :reveal="reveal"
+          @handle-select-card="handleSelectCard"
+          :selected-card="selectedCard"
+          :four-cards="FourCards"
+          :container-width="containerWidth"
+          :container-height="containerHeight"
+        />
       </div>
 
       <!-- <div>
@@ -27,32 +45,47 @@
           <img draggable="false" src="/game/game_bet.png" alt="game_bet" fit="cover" class="game-start" />
         </el-button>
       </div> -->
-      <el-drawer direction="btt" @close="drawer = false" v-model="drawer" :with-header="false"
-        custom-class="custom-drawer">
+    </el-main>
+
+    <el-footer>
+      <div class="el-footer-bottom-bar">
+        <div class="el-footer-image">
+          <span class="title">Place your bets !</span>
+        </div>
+      </div>
+    </el-footer>
+
+    <el-drawer direction="btt" @close="drawer = false" v-model="drawer" :with-header="false">
+      <div class="custom-drawer">
         <div class="custom-drawer-header">
           <span class="title">Place your bets !</span>
           <button class="cancel-btn" @click="handleCancel">Cancel</button>
         </div>
         <div class="drawer-content">
           <div class="bet-grid">
-            <div v-for="chip in chips" :key="chip.value" class="chip">
-              <img :src="chip.image" :alt="chip.value" />
+            <div
+              @click="handleSelectBet(chip.value)"
+              v-for="chip in chips"
+              :key="chip.value"
+              class="chip"
+            >
+              <img :src="chip.image" :alt="String(chip.value)" />
             </div>
           </div>
         </div>
-      </el-drawer>
-    </el-main>
-    <el-footer>FOOTER</el-footer>
+      </div>
+    </el-drawer>
   </el-container>
 </template>
 
 <script setup lang="ts">
 import CustomCardView from '@/components/CustomCardView.vue'
-import { Cards } from '@/models/constants'
-import type { TCardType } from '@/models/type'
+import { Cards, chips } from '@/models/constants'
+import type { TCardType, TSelectedCard } from '@/models/type'
 import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted } from 'vue'
 
-const drawer = ref(false)
+import cardBack from '@/assets/cards/back/card_back_bg.png'
+import WIN_ICON from '@/assets/game/title_win.png'
 
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
@@ -61,12 +94,20 @@ const containerHeight = ref(0)
 let intervalId: number | undefined = undefined
 const timer = ref(10)
 const startingIn = ref(5)
+
+const drawer = ref(false)
 const reveal = ref(false)
+
 const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
 const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
 
 const FourCards = ref<TCardType[]>([])
-const selectedCard = ref<TCardType[]>([])
+const selectedCard = ref<TSelectedCard[]>([])
+
+const currentSelectedCard = ref<{
+  index: number
+  card: TCardType
+} | null>(null)
 
 const updateContainerDimensions = async () => {
   await nextTick()
@@ -109,11 +150,14 @@ const getHighestCard = () => {
 }
 
 const handleResetCard = () => {
-  startGame.value = 'Done'
   timer.value = 3
   reveal.value = false
-  handleSelectCard(null)
+  // drawer.value = false
+  startGame.value = 'Done'
   game_status.value = 'PENDING'
+
+  selectedCard.value = []
+  currentSelectedCard.value = null
   shuffleCard()
 
   if (intervalId !== undefined) {
@@ -157,21 +201,49 @@ const handleSelectCard = (index: number | null) => {
     return
   }
 
-  const foundCard = FourCards.value[index]
-  const isAlreadySelected = selectedCard.value.some((card) => card.value === foundCard.value)
+  if (reveal.value) return
 
-  if (isAlreadySelected) {
-    // Unselect
-    selectedCard.value = selectedCard.value.filter((card) => card.value !== foundCard.value)
-    FourCards.value[index].playerCount -= 1
-  } else {
-    // Select
-    selectedCard.value.push(foundCard)
-    FourCards.value[index].playerCount += 1
+  drawer.value = true
+  const foundCard = FourCards.value[index]
+  currentSelectedCard.value = {
+    card: foundCard,
+    index,
   }
 }
 
-// Handle window resize
+const handleSelectBet = (betValue: number) => {
+  if (!currentSelectedCard.value) {
+    console.log('No card selected!')
+    return
+  }
+
+  const isAlreadySelected = selectedCard.value.some(
+    (card) => card.value === currentSelectedCard.value?.card.value,
+  )
+
+  if (isAlreadySelected) {
+    // Change bet of the selected card
+    const updatedSelectedCard = selectedCard.value.map((item) =>
+      item.value === currentSelectedCard.value?.card.value
+        ? {
+            ...currentSelectedCard.value.card,
+            betAmount: betValue,
+          }
+        : item,
+    )
+    selectedCard.value = updatedSelectedCard
+    // FourCards.value[index].playerCount -= 1
+  } else {
+    // Bet
+    selectedCard.value.push({
+      ...currentSelectedCard.value.card,
+      betAmount: betValue,
+    })
+    FourCards.value[currentSelectedCard.value.index].playerCount += 1
+  }
+  drawer.value = false
+}
+
 const handleResize = () => {
   updateContainerDimensions()
 }
@@ -212,9 +284,10 @@ const cleanupIntervals = () => {
 }
 
 const handleCancel = () => {
-  drawer.value = false;
-  selectedCard.value = [];
-};
+  drawer.value = false
+  currentSelectedCard.value = null
+  // selectedCard.value = []
+}
 
 onMounted(async () => {
   window.addEventListener('resize', handleResize)
@@ -252,6 +325,7 @@ watch(startGame, (newValue) => {
 
     // After timer completes, reveal cards
     setTimeout(() => {
+      handleCancel()
       reveal.value = true
       getHighestCard()
     }, 10500)
@@ -263,85 +337,225 @@ watch(startGame, (newValue) => {
   }
 })
 shuffleCard()
-
-
-const chips = [
-  { value: '1', image: new URL('@/assets/1PESO.png', import.meta.url).href },
-  { value: '5', image: new URL('@/assets/5PESO.png', import.meta.url).href },
-  { value: '10', image: new URL('@/assets/10PESO.png', import.meta.url).href },
-  { value: '50', image: new URL('@/assets/50PESO.png', import.meta.url).href },
-  { value: '100', image: new URL('@/assets/100PESO.png', import.meta.url).href },
-  { value: '500', image: new URL('@/assets/500PESO.png', import.meta.url).href },
-  { value: '1K', image: new URL('@/assets/1KPESO.png', import.meta.url).href },
-  { value: '5K', image: new URL('@/assets/5KPESO.png', import.meta.url).href },
-  { value: '10K', image: new URL('@/assets/10KPESO.png', import.meta.url).href },
-];
 </script>
 
 <style scoped>
-/* .el-drawer {
-  width: 40%;
-} */
-
-.drawer-content {
-  margin-top: 60px;
-  padding: 20px;
+.el-container {
+  height: 100vh;
+  background-image: url('@/assets/homepage_bg.png');
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 0;
+  margin: 0;
 }
 
-.bet-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: 16px;
-  justify-items: center;
+.el-header {
+  width: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: auto !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .el-header-top-bar {
+    max-width: 800px;
+    min-width: 320px;
+    width: 100%;
+    aspect-ratio: 8.88 / 1;
+    position: relative;
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .el-header-image {
+    width: 100%;
+    height: 100%;
+
+    background-image: url('@/assets/game/topbar.png');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    z-index: 2;
+  }
 }
 
-.chip img {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  transition: transform 0.2s;
-  cursor: pointer;
+.el-main {
+  max-width: 800px;
+  min-width: 320px;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+
+  .game-container {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    max-height: 400px;
+    background-image: url('@/assets/game/game_table.png');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: relative;
+    margin: 0;
+    padding: 0;
+  }
+
+  .card {
+    width: 80px;
+    height: 120px;
+    z-index: 1000;
+    transform: translate(10px, -60px);
+  }
 }
 
-.chip img:hover {
-  transform: scale(1.1);
+.el-footer {
+  width: 100%;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: auto !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .el-footer-bottom-bar {
+    max-width: 800px;
+    min-width: 320px;
+    width: 100%;
+    aspect-ratio: 8.88 / 1;
+    position: relative;
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .el-footer-image {
+    width: 100%;
+    height: 100%;
+
+    background-image: url('@/assets/game/bottombar.png');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    z-index: 2;
+
+    .title {
+      color: #ffca28;
+      font-weight: bold;
+      font-size: 16px;
+    }
+  }
+}
+
+/* Drawer Styles*/
+:deep(.el-overlay) {
+  overflow: hidden !important;
+  display: flex;
+  justify-content: center;
 }
 
 :deep(.el-drawer) {
-  width: 40% !important;
-  left: 30% !important;
-  right: 0;
-  height: 40% !important;
-  background: linear-gradient(to bottom, #1e1e3f, #0c0c1c);
-  border-radius: 10px 15px 0px 0px;
   overflow: hidden;
+  background: none;
+  height: 40% !important;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+:deep(.el-drawer__body) {
+  padding: 0;
+  margin: 0;
+  max-width: 800px;
+  min-width: 375px;
+  width: 100%;
+  height: 100%;
+}
+
+.custom-drawer {
+  max-width: 800px;
+  min-width: 375px;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Custom header */
 .custom-drawer-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50px;
-  background: linear-gradient(to right, #002c71, #00397f);
-  clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 100%, 0% 100%);
+  max-width: 800px;
+  min-width: 375px;
+  width: 90%;
+  aspect-ratio: 8.88 / 1;
+
+  background-image: url('@/assets/game/bottombar.png');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 40px;
   z-index: 2;
 }
 
-/* Header text */
-.custom-drawer-header .title {
+.drawer-content {
+  width: 85%;
+  height: 100%;
+  z-index: 1;
+  background-image: url('@/assets/game/drawer_bg.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 20px;
+}
+
+.title {
   color: #ffca28;
   font-weight: bold;
   font-size: 16px;
 }
 
-/* Cancel button */
-.custom-drawer-header .cancel-btn {
+.cancel-btn {
   background: #ffca28;
   border: none;
   border-radius: 20px;
@@ -353,81 +567,33 @@ const chips = [
   transition: background 0.3s;
 }
 
-.custom-drawer-header .cancel-btn:hover {
+.bet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 16px;
+  justify-items: center;
+}
+
+.chip img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.chip img:hover {
+  transform: scale(1.1);
+}
+
+.cancel-btn:hover {
   background: #ffd54f;
 }
 
-.el-container {
-  height: 100vh;
-  background-image: url(../assets/homepage_bg.png);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 67px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  padding: 0;
-  margin: 0;
-}
-
-.el-header {
-  max-width: 800px;
-  min-width: 320px;
-  width: 100%;
-  background: slateblue;
-}
-
-.el-main {
-  max-width: 800px;
-  min-width: 320px;
-  width: 100%;
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  margin: 0;
-}
-
-.el-footer {
-  max-width: 800px;
-  min-width: 320px;
-  width: 100%;
-  background: green;
-}
-
-.game-container {
-  width: 100%;
-  height: 400px;
-  background-image: url('/game/game_table.png');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  position: relative;
-  margin: 0;
-  padding: 0;
-}
-
-.start-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 90px;
-  height: 90px;
-  border-radius: 100%;
-  padding: 0;
-}
-
-.start-btn:active {
-  cursor: pointer;
-  scale: 1.1;
-  transition: all 0.3s;
-}
+/* Overlays styles */
 
 .timer-container {
+  position: fixed;
   background: white;
   border: 5px solid black;
   border-radius: 100%;
@@ -445,6 +611,7 @@ const chips = [
 }
 
 .starting-countdown {
+  position: fixed;
   height: 100px;
   z-index: 1000;
   display: flex;
@@ -467,12 +634,7 @@ const chips = [
   animation: popup 0.5s ease-in-out;
 }
 
-.card {
-  width: 80px;
-  height: 120px;
-  z-index: 1000;
-  transform: translate(10px, 10px);
-}
+/* Responsive styles */
 
 @keyframes popup {
   from {
@@ -486,16 +648,81 @@ const chips = [
   }
 }
 
-@media screen and (max-width: 1360px) {
-  .card {
-    width: 60px;
-    height: 90px;
+@media screen and (max-width: 1280px) {
+  :deep(.card) {
+    width: 60px !important;
+    height: 90px !important;
   }
 }
 
 @media screen and (max-width: 720px) {
   .game-container {
-    background-size: 110% 75%;
+    background-size: contain;
+  }
+
+  .title {
+    font-size: 14px;
+  }
+
+  .cancel-btn {
+    padding: 3px 10px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .el-header,
+  .el-footer {
+    width: 90% !important;
+  }
+
+  .custom-drawer-header {
+    width: 90% !important;
+  }
+
+  :deep(.el-drawer__body) {
+    width: 100%;
+  }
+
+  .chip img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .bet-grid {
+    gap: 1em;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  }
+
+  .timer-container {
+    width: 80px;
+    height: 80px;
+  }
+
+  .timer {
+    font-size: 46px;
+  }
+
+  .countdown-text,
+  .countdown-number {
+    font-size: 28px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .el-header-image,
+  .el-footer-image,
+  .custom-drawer-header {
+    padding: 0 20px;
+  }
+
+  .timer-container {
+    width: 60px;
+    height: 60px;
+  }
+
+  .timer {
+    font-size: 36px;
   }
 }
 </style>
