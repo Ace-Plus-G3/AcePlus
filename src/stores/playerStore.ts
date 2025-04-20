@@ -31,7 +31,7 @@ export const usePlayerStore = defineStore('playerStore', () => {
     await formE1.validate((valid, fields) => {
       if (valid) {
         const formData = {
-          user_id: String(Math.random() * 10),
+          user_id: crypto.randomUUID(),
           phoneNumber: formE1.$props.model?.phoneNumber,
           password: formE1.$props.model?.password,
           total_money: formE1.$props.model?.total_money,

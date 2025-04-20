@@ -1,0 +1,50 @@
+<template>
+  <div v-if="startingIn > 0" class="starting-countdown">
+    <div class="countdown-text">Starting in:</div>
+    <div class="countdown-number-container">
+      <div class="countdown-number">{{ startingIn }}</div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+type TProps = {
+  startingIn: number
+}
+
+defineProps<TProps>()
+</script>
+
+<style scoped>
+.starting-countdown {
+  position: fixed;
+  top: 10%;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.countdown-text,
+.countdown-number {
+  color: var(--primary-yellow);
+  text-shadow:
+    -3px 0 var(--primary-red),
+    0 3px var(--primary-red),
+    3px 0 var(--primary-red),
+    0 -3px var(--primary-red);
+  font-size: 46px;
+}
+
+.countdown-number-container {
+  width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 5px solid var(--primary-red);
+  background: rgba(0, 0, 0, 0.1);
+}
+</style>

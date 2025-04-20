@@ -2,10 +2,11 @@ import type { Cashin } from '@/types/user'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { usePlayerStore } from './playerStore'
+import { loadFromLocalStorage } from '@/utils/loadFromLocalStorage'
 
 export const useCreditStore = defineStore('creditStore', () => {
   // STATES
-  const cashin = ref<Cashin[]>([])
+  const cashin = ref<Cashin[]>([]) // all cash-in history
   const currentBalance = ref<number>(0)
 
   //GETTERS
@@ -60,7 +61,7 @@ export const useCreditStore = defineStore('creditStore', () => {
     currentBalance.value = userBalance + Number(amount)
     localStorage.setItem(userBalanceKey, JSON.stringify(currentBalance.value))
   }
-  const loadPersistedData = () => {
+  const handlePersistCredits = () => {
     const playerStore = usePlayerStore()
     const loggedInUser = playerStore.getUser
 
@@ -71,17 +72,11 @@ export const useCreditStore = defineStore('creditStore', () => {
 
     const userId = loggedInUser.user_id
 
-    const loadFromLocalStorage = (key: string, defaultValue: [] | number) => {
-      const savedData = localStorage.getItem(key)
-      return savedData ? JSON.parse(savedData) : defaultValue
-    }
-
     // Load user-specific data
     cashin.value = loadFromLocalStorage(`cashin_${userId}`, [])
     currentBalance.value = loadFromLocalStorage(`currentBalance_${userId}`, 0)
+    console.log('Persist Credits!')
   }
-
-  loadPersistedData()
 
   return {
     cashin,
@@ -94,6 +89,6 @@ export const useCreditStore = defineStore('creditStore', () => {
     getCurrentBalance,
 
     handleCashin,
-    loadPersistedData,
+    handlePersistCredits,
   }
 })
