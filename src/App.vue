@@ -5,10 +5,11 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 
-import { usePlayerStore } from './stores'
+import { useCreditStore, usePlayerStore } from './stores'
 
 onMounted(() => {
   usePlayerStore().handlePersistLogin()
+  useCreditStore().handlePersistCredits()
 })
 </script>
 
