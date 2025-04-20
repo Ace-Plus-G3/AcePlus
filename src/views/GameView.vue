@@ -7,18 +7,9 @@
     </el-header>
 
     <!-- Start of Overlays -->
-    <div style="position: fixed; z-index: 1000" v-if="game_status === 'WIN'" class="win-overlay">
-      <el-image :src="WIN_ICON" />
-    </div>
-
-    <div v-if="startingIn === 0" class="timer-container">
-      <div class="timer">{{ timer }}</div>
-    </div>
-
-    <div v-if="startingIn > 0" class="starting-countdown">
-      <div class="countdown-text">Starting in:</div>
-      <div class="countdown-number">{{ startingIn }}</div>
-    </div>
+    <PlayerWins :game_status="game_status" />
+    <GameTimer :starting-in="startingIn" :timer="timer" />
+    <StartingInView :starting-in="startingIn" />
     <!-- End of Overlays -->
 
     <el-main>
@@ -85,7 +76,9 @@ import type { TCardType, TSelectedCard } from '@/models/type'
 import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted } from 'vue'
 
 import cardBack from '@/assets/cards/back/card_back_bg.png'
-import WIN_ICON from '@/assets/game/title_win.png'
+import PlayerWins from '@/components/overlays/PlayerWins.vue'
+import StartingInView from '@/components/overlays/StartingInView.vue'
+import GameTimer from '@/components/overlays/GameTimer.vue'
 
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
@@ -590,63 +583,7 @@ shuffleCard()
   background: #ffd54f;
 }
 
-/* Overlays styles */
-
-.timer-container {
-  position: fixed;
-  background: white;
-  border: 5px solid black;
-  border-radius: 100%;
-  width: 100px;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-}
-
-.timer {
-  color: black;
-  font-size: 56px;
-}
-
-.starting-countdown {
-  position: fixed;
-  height: 100px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.countdown-text {
-  color: white;
-  font-size: 32px;
-}
-
-.countdown-number {
-  color: white;
-  font-size: 32px;
-}
-
-.win-overlay {
-  animation: popup 0.5s ease-in-out;
-}
-
 /* Responsive styles */
-
-@keyframes popup {
-  from {
-    opacity: 0;
-    transform: translateY(100%);
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
 
 @media screen and (max-width: 1280px) {
   :deep(.card) {
