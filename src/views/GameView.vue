@@ -19,24 +19,15 @@
       <div class="countdown-text">Starting in:</div>
       <div class="countdown-number">{{ startingIn }}</div>
     </div>
-    <SpinTheWheel />
+    <div v-if="selectedCard.length > 0 && selectedCard[0].value === 1">
+      <SpinTheWheel />
+    </div>
     <el-main>
       <div class="game-container" ref="gameContainerRef" :disabled="startGame === 'Start'">
         <el-image fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
-        <CustomCardView
-          v-for="(_, index) in 4"
-          :key="index"
-          :index="index"
-          :length="4"
-          :start="startGame"
-          :delay="index * 200"
-          :reveal="reveal"
-          @handle-select-card="handleSelectCard"
-          :selected-card="selectedCard"
-          :four-cards="FourCards"
-          :container-width="containerWidth"
-          :container-height="containerHeight"
-        />
+        <CustomCardView v-for="(_, index) in 4" :key="index" :index="index" :length="4" :start="startGame"
+          :delay="index * 200" :reveal="reveal" @handle-select-card="handleSelectCard" :selected-card="selectedCard"
+          :four-cards="FourCards" :container-width="containerWidth" :container-height="containerHeight" />
       </div>
 
       <!-- <div>
@@ -62,12 +53,7 @@
         </div>
         <div class="drawer-content">
           <div class="bet-grid">
-            <div
-              @click="handleSelectBet(chip.value)"
-              v-for="chip in chips"
-              :key="chip.value"
-              class="chip"
-            >
+            <div @click="handleSelectBet(chip.value)" v-for="chip in chips" :key="chip.value" class="chip">
               <img :src="chip.image" :alt="String(chip.value)" />
             </div>
           </div>
@@ -226,9 +212,9 @@ const handleSelectBet = (betValue: number) => {
     const updatedSelectedCard = selectedCard.value.map((item) =>
       item.value === currentSelectedCard.value?.card.value
         ? {
-            ...currentSelectedCard.value.card,
-            betAmount: betValue,
-          }
+          ...currentSelectedCard.value.card,
+          betAmount: betValue,
+        }
         : item,
     )
     selectedCard.value = updatedSelectedCard
@@ -340,6 +326,10 @@ shuffleCard()
 </script>
 
 <style scoped>
+.card {
+  z-index: 1 !important;
+}
+
 .el-container {
   height: 100vh;
   background-image: url('@/assets/homepage_bg.png');
@@ -676,6 +666,7 @@ shuffleCard()
 }
 
 @media screen and (max-width: 800px) {
+
   .el-header,
   .el-footer {
     width: 90% !important;
@@ -715,6 +706,7 @@ shuffleCard()
 }
 
 @media screen and (max-width: 400px) {
+
   .el-header-image,
   .el-footer-image,
   .custom-drawer-header {

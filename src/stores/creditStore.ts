@@ -60,6 +60,8 @@ export const useCreditStore = defineStore('creditStore', () => {
     currentBalance.value = userBalance + Number(amount)
     localStorage.setItem(userBalanceKey, JSON.stringify(currentBalance.value))
   }
+
+  
   const loadPersistedData = () => {
     const playerStore = usePlayerStore()
     const loggedInUser = playerStore.getUser
@@ -81,7 +83,7 @@ export const useCreditStore = defineStore('creditStore', () => {
     currentBalance.value = loadFromLocalStorage(`currentBalance_${userId}`, 0)
   }
 
-  loadPersistedData()
+
 
   return {
     cashin,

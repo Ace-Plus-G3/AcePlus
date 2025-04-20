@@ -2,49 +2,71 @@
     <div>
         <div class="layer"></div>
         <div class="wheel-container">
-            <img src="../assets/wheel.png" @click="spinWheel" class="wheel" alt="" :style="{ transform: `rotate(${rotation}deg)` }" />
+            <img :src="Wheel" class="wheel"  :style="{ transform: `rotate(${rotation}deg)` }" />
             <img src="../assets/feet_wheel.png" class="wheel-bg">
+            <el-image :src="BorderWheel" class="border-wheel"></el-image>>
 
-            
+
         </div>
 
-        
+
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import BorderWheel from '@/assets/border_wheel.png'
+import Wheel from '@/assets/wheel-new.png'
 
 const rotation = ref(0);
 
 const spinWheel = () => {
-  const fullRotations = 360 * 10;
-  const extraDeg = Math.floor(Math.random() * 360);
-  const total = fullRotations + extraDeg;
+    console.log('click');
 
-  rotation.value = Math.round(rotation.value + total);
+    const fullRotations = 360 * 10;
+    const extraDeg = Math.floor(Math.random() * 360);
+    const total = fullRotations + extraDeg;
+
+    rotation.value = Math.round(rotation.value + total);
 };
 
+onMounted(() => {
+    spinWheel();
+})
 </script>
 
 <style scoped>
+.layer,
+.border-wheel {
+    pointer-events: none;
+}
+
 .wheel {
-    z-index: 100;
+    z-index: 98;
+    position: absolute;
+    right: 33%;
+    top: 2%;
+    width: 670px;
+    transform-origin: center center;
+    transition: transform 8s cubic-bezier(0.33, 1, 0.68, 1);
+    will-change: transform;
+    transform: translateZ(0) rotate(0deg);
+    /* 🔧 GPU hack */
+}
+
+.border-wheel {
+    z-index: 99;
     position: absolute;
     right: 33%;
     top: 2.6%;
     width: 663px;
-    transform-origin: center center;
-    transition: transform 8s cubic-bezier(0.33, 1, 0.68, 1);
-    will-change: transform;
-    transform: translateZ(0) rotate(0deg); /* 🔧 GPU hack */
 }
 
 .wheel-bg {
     z-index: 99;
     position: absolute;
     right: 33%;
-    top: 68%;
+    top: 73%;
     width: 650px;
 }
 
@@ -55,7 +77,7 @@ const spinWheel = () => {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 99;
+    z-index: 97;
 
 }
 </style>
