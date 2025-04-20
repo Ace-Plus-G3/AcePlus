@@ -87,8 +87,6 @@ import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted } from 'v
 import cardBack from '@/assets/cards/back/card_back_bg.png'
 import WIN_ICON from '@/assets/game/title_win.png'
 
-const drawer = ref(true)
-
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
 const containerHeight = ref(0)
@@ -96,6 +94,8 @@ const containerHeight = ref(0)
 let intervalId: number | undefined = undefined
 const timer = ref(10)
 const startingIn = ref(5)
+
+const drawer = ref(false)
 const reveal = ref(false)
 
 const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
@@ -200,6 +200,8 @@ const handleSelectCard = (index: number | null) => {
     selectedCard.value = []
     return
   }
+
+  if (reveal.value) return
 
   drawer.value = true
   const foundCard = FourCards.value[index]
@@ -323,7 +325,7 @@ watch(startGame, (newValue) => {
 
     // After timer completes, reveal cards
     setTimeout(() => {
-      // handleCancel()
+      handleCancel()
       reveal.value = true
       getHighestCard()
     }, 10500)
@@ -573,8 +575,8 @@ shuffleCard()
 }
 
 .chip img {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
   transition: transform 0.2s;
   cursor: pointer;
@@ -683,13 +685,13 @@ shuffleCard()
   }
 
   .chip img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
   }
 
   .bet-grid {
-    gap: 8px;
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+    gap: 1em;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
   }
 
   .timer-container {

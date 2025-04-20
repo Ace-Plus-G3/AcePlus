@@ -242,7 +242,7 @@ onMounted(async () => {
 }
 
 .flip-card.selected .flip-card-inner {
-  scale: 1.3;
+  scale: 1.2;
   transition:
     transform 0.3s ease,
     scale 0.3s ease;
