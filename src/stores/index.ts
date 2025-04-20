@@ -1,3 +1,4 @@
 import { usePlayerStore } from './playerStore'
+import { useCreditStore } from './creditStore'
 
-export { usePlayerStore }
+export { usePlayerStore, useCreditStore }

@@ -6,6 +6,18 @@ export type TCardType = {
   playerCount: number
 }
 
+export type TSelectedCard = {
+  value: number
+  url: string
+  playerCount: number
+  betAmount: number
+}
+
+export type TChips = {
+  value: number
+  image: string
+}
+
 export type TSignupParams = {
   formE1: FormInstance | undefined
   handleChangeTab: (tab: 'Signup-Tab' | 'Login-Tab') => void
