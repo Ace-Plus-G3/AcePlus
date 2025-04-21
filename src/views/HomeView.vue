@@ -41,7 +41,7 @@ const gotoGame = () => {
 }
 
 const goToWallet = () => {
-  router.push('/cash-transaction')
+  router.push('/transaction-history')
 }
 </script>
 
@@ -62,7 +62,17 @@ const goToWallet = () => {
 .title {
   font-family: 'Lemon', sans-serif;
   font-size: 170px;
-  color: #f9c80e;
+  background: linear-gradient(
+    90deg,
+    rgba(232, 184, 57, 1) 0%,
+    rgba(232, 184, 57, 1) 35%,
+    rgba(186, 129, 21, 1) 63%,
+    rgba(251, 246, 127, 1) 82%,
+    rgba(220, 188, 78, 1) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-left: 0.1em;
 }
 
 .btn-container {
@@ -76,7 +86,21 @@ const goToWallet = () => {
   width: 200px;
   height: 60px;
   border-radius: 30px;
-  background-color: #e7bb68;
+  background-color: #e8b839;
+  background: linear-gradient(
+    90deg,
+    rgba(232, 184, 57, 1) 0%,
+    rgba(232, 184, 57, 1) 35%,
+    rgba(186, 129, 21, 1) 63%,
+    rgba(251, 246, 127, 1) 82%,
+    rgba(220, 188, 78, 1) 100%
+  );
+  border: none !important;
+}
+
+:deep(.el-button):hover {
+  scale: 1.1;
+  cursor: pointer;
 }
 
 :deep(.el-text) {

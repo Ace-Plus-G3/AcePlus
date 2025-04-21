@@ -218,6 +218,11 @@ const login = async () => {
   justify-content: center;
 }
 
+:deep(.el-button):hover {
+  scale: none !important;
+  cursor: pointer;
+}
+
 .terms-of-service-container {
   display: flex;
   align-items: center;

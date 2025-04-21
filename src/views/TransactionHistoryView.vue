@@ -8,7 +8,8 @@
           <h3><span>₱</span>6,456.13</h3>
         </div>
         <div class="right-amount">
-          <el-button :icon="Plus">Cash In</el-button>
+          <el-button @click="goToCashTransact" :icon="Plus">Cash In</el-button>
+          <el-button @click="goToCashTransact" :icon="Minus">Cash Out</el-button>
         </div>
       </div>
     </div>
@@ -113,14 +114,19 @@
 <script setup lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
 
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Minus } from '@element-plus/icons-vue'
 import TabsComponent from '@/components/TabsComponent.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToCashTransact = () => {
+  router.push({ name: 'cash-transaction' })
+}
 </script>
 
 <style scoped>
 @media screen and (max-width: 768px) {
-
-
   .card-amount-main-container {
     padding-left: 13px;
     padding-right: 13px;
@@ -156,8 +162,7 @@ import TabsComponent from '@/components/TabsComponent.vue'
     font-size: 20px !important;
   }
 
-
-    /* .transact-history-container {
+  /* .transact-history-container {
       max-width: 680px;
     } */
 
@@ -176,14 +181,11 @@ import TabsComponent from '@/components/TabsComponent.vue'
     gap: 7px;
   }
 
-
-
   .left-cashin,
   .left-cashout {
     display: flex;
     flex-direction: column;
   }
-
 
   .row-container {
     padding-left: 40px;
@@ -226,12 +228,12 @@ import TabsComponent from '@/components/TabsComponent.vue'
 
   .card-amount-container {
     width: 90% !important;
-    height: 100px !important;
+    height: 140px !important;
     padding: 30px !important;
   }
   .history-item-container {
     max-height: 450px !important;
-   }
+  }
 }
 
 .el-tabs {
@@ -241,36 +243,37 @@ import TabsComponent from '@/components/TabsComponent.vue'
 
 .el-button {
   color: var(--primary-black);
-  border-radius: 40px;
+  border-radius: 10px;
+  border: none;
 }
 
 .row-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    gap: 500px;
-  }
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 500px;
+}
 
 .left-cashin h4,
-  .left-cashout h4 {
-    color: #c5c5c5;
-  }
+.left-cashout h4 {
+  color: #c5c5c5;
+}
 
 .left-cashin,
-  .left-cashout {
-    display: flex;
-    flex-direction: column;
-  }
+.left-cashout {
+  display: flex;
+  flex-direction: column;
+}
 .right-cashin {
-    display: flex;
-    align-items: center;
-    color: #42f271;
-  }
+  display: flex;
+  align-items: center;
+  color: #42f271;
+}
 .right-cashout {
-    display: flex;
-    align-items: center;
-    color: #ea3e27;
-  }
+  display: flex;
+  align-items: center;
+  color: #ea3e27;
+}
 
 .history-item-container {
   color: #ffffffff;
@@ -309,40 +312,51 @@ import TabsComponent from '@/components/TabsComponent.vue'
 } */
 
 .card-amount-main-container {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 20px;
-  }
+  display: flex;
+  justify-content: center;
+  padding-bottom: 20px;
+  overflow: hidden;
+}
 
-  .card-amount-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #e7bb68;
-    border-radius: 10px;
-    /* width: 100%;
+.card-amount-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  gap: 20px;
+  background-color: #e8b839;
+  background: linear-gradient(
+    90deg,
+    rgba(232, 184, 57, 1) 0%,
+    rgba(232, 184, 57, 1) 35%,
+    rgba(186, 129, 21, 1) 63%,
+    rgba(251, 246, 127, 1) 82%,
+    rgba(220, 188, 78, 1) 100%
+  );
+  border-radius: 10px;
+  /* width: 100%;
   height: 150px; */
-    /* padding: 60px; */
-  }
+  /* padding: 60px; */
+}
 
-  .card-amount-container {
-    width: 70%;
-    height: 150px;
-    padding: 80px;
-  }
+.card-amount-container {
+  width: 70%;
+  height: 190px;
+  padding: 80px;
+  overflow: hidden;
+}
 
-  .left-amount h5 {
-    font-size: 22px;
-    font-weight: 400;
-  }
+.left-amount h5 {
+  font-size: 22px;
+  font-weight: 400;
+}
 
-  .left-amount h3 {
-    font-size: 32px;
-  }
+.left-amount h3 {
+  font-size: 32px;
+}
 
-  .history-item-container {
-  max-height: 535px; /* Set the maximum height */
+.history-item-container {
+  max-height: 490px; /* Set the maximum height */
   overflow-y: auto; /* Enable vertical scrolling */
   padding: 10px; /* Optional padding for better spacing */
   scrollbar-width: none; /* For modern browsers, makes the scrollbar thinner */

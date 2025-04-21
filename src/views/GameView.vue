@@ -38,6 +38,10 @@
         />
       </div>
 
+      <div v-if="selectedCard.length > 0 && selectedCard[0].value === 1">
+        <SpinTheWheel />
+      </div>
+
       <!-- <div>
         <el-button  :disabled="startGame === 'Start'" class="start-btn">
           <img draggable="false" src="/game/game_bet.png" alt="game_bet" fit="cover" class="game-start" />
@@ -77,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-// import SpinTheWheel from '@/components/SpinTheWheel.vue'
+import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards, chips } from '@/models/constants'
 import type { TCardType, TSelectedCard } from '@/models/type'
@@ -391,7 +395,7 @@ watch(startGame, (newValue) => {
 
 <style scoped>
 .card {
-  z-index: 1000 !important;
+  z-index: 1 !important;
 }
 
 .el-container {
@@ -640,7 +644,16 @@ watch(startGame, (newValue) => {
 }
 
 .cancel-btn {
-  background: #ffca28;
+  background-color: #e8b839;
+  background: linear-gradient(
+    90deg,
+    rgba(232, 184, 57, 1) 0%,
+    rgba(232, 184, 57, 1) 35%,
+    rgba(186, 129, 21, 1) 63%,
+    rgba(251, 246, 127, 1) 82%,
+    rgba(220, 188, 78, 1) 100%
+  );
+  border: none !important;
   border: none;
   border-radius: 20px;
   padding: 4px 12px;
@@ -649,6 +662,10 @@ watch(startGame, (newValue) => {
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+  cursor: pointer;
 }
 
 .bet-grid {

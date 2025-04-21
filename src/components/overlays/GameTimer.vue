@@ -17,7 +17,7 @@ defineProps<TProps>()
 .timer-container {
   position: fixed;
   top: 10%;
-  z-index: 1000;
+  z-index: 1;
   width: 100px;
   height: 100px;
   border-radius: 100%;
