@@ -555,7 +555,16 @@ watch(startGame, (newValue) => {
 }
 
 .cancel-btn {
-  background: #ffca28;
+  background-color: #e8b839;
+  background: linear-gradient(
+    90deg,
+    rgba(232, 184, 57, 1) 0%,
+    rgba(232, 184, 57, 1) 35%,
+    rgba(186, 129, 21, 1) 63%,
+    rgba(251, 246, 127, 1) 82%,
+    rgba(220, 188, 78, 1) 100%
+  );
+  border: none !important;
   border: none;
   border-radius: 20px;
   padding: 4px 12px;
@@ -564,6 +573,10 @@ watch(startGame, (newValue) => {
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: background 0.3s;
+}
+
+.cancel-btn:hover {
+  cursor: pointer;
 }
 
 .bet-grid {

@@ -29,25 +29,22 @@
 import { ref } from 'vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import TabsComponent from '@/components/TabsComponent.vue'
-import { useCreditStore } from '@/stores/creditStore';
-
+import { useCreditStore } from '@/stores/creditStore'
 
 const creditStore = useCreditStore()
 
-
-const account_number = ref<number | null>(null);
-const amount = ref<number | null>(null);
+const account_number = ref<number | null>(null)
+const amount = ref<number | null>(null)
 
 const CashIn = () => {
   if (!amount.value || !account_number.value) {
-    console.log('Please fill in all fields');
+    console.log('Please fill in all fields')
     return
   }
 
   creditStore.handleCashin(Number(amount.value), Number(account_number.value))
-}; 
+}
 const imageSrc = ref(new URL('/src/assets/gcash-logo.jpg', import.meta.url).href)
-
 </script>
 
 <style scoped>
@@ -96,5 +93,20 @@ const imageSrc = ref(new URL('/src/assets/gcash-logo.jpg', import.meta.url).href
   border: none;
   border-radius: 40px;
   padding: 24px;
+  background-color: #e8b839;
+  background: linear-gradient(
+    90deg,
+    rgba(232, 184, 57, 1) 0%,
+    rgba(232, 184, 57, 1) 35%,
+    rgba(186, 129, 21, 1) 63%,
+    rgba(251, 246, 127, 1) 82%,
+    rgba(220, 188, 78, 1) 100%
+  );
+  border: none !important;
+}
+
+:deep(.el-button):hover {
+  scale: 1.1;
+  cursor: pointer;
 }
 </style>
