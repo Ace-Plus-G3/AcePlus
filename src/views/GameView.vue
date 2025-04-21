@@ -408,7 +408,7 @@ watch(startGame, (newValue) => {
 
 <style scoped>
 .card {
-  z-index: 1 !important;
+  z-index: 20 !important;
 }
 
 .el-container {
