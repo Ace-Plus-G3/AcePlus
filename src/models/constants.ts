@@ -1,4 +1,4 @@
-import type { TCardType, TChips } from './type'
+import type { TCardType, TChips, TSpinWheel } from './type'
 
 export const Cards: Array<TCardType> = [
   {
@@ -63,4 +63,15 @@ export const chips: Array<TChips> = [
   { value: 1000, image: new URL('@/assets/coins/1KPESO.png', import.meta.url).href },
   { value: 5000, image: new URL('@/assets/coins/5KPESO.png', import.meta.url).href },
   { value: 10000, image: new URL('@/assets/coins/10KPESO.png', import.meta.url).href },
+]
+
+export const wheelDeg: Array<TSpinWheel> = [
+  { deg: 0, multiplier: 3 },
+  { deg: 45, multiplier: 4 },
+  { deg: 90, multiplier: 5 },
+  { deg: 135, multiplier: 6 },
+  { deg: 180, multiplier: 7 },
+  { deg: 225, multiplier: 8 },
+  { deg: 270, multiplier: 9 },
+  { deg: 315, multiplier: 0 },
 ]

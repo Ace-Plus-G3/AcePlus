@@ -17,6 +17,9 @@
     <PlayerWins :game_status="game_status" />
     <GameTimer :starting-in="startingIn" :timer="timer" />
     <StartingInView :starting-in="startingIn" />
+    <div class="spin-overlay">
+      <SpinTheWheel />
+    </div>
     <!-- End of Overlays -->
 
     <el-main>
@@ -36,10 +39,6 @@
           :container-width="containerWidth"
           :container-height="containerHeight"
         />
-      </div>
-
-      <div v-if="selectedCard.length > 0 && selectedCard[0].value === 1">
-        <SpinTheWheel />
       </div>
 
       <!-- <div>
@@ -702,6 +701,20 @@ watch(startGame, (newValue) => {
 
 .cancel-btn:hover {
   background: #ffd54f;
+}
+
+.spin-overlay {
+  z-index: 2000;
+  position: fixed;
+  top: 0;
+
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Responsive styles */
