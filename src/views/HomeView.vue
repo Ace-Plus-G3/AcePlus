@@ -12,9 +12,7 @@
         <el-button @click="gotoGame" class="btn btn-start"><el-text>Start</el-text></el-button>
         <el-button class="btn btn-instructions"><el-text>Instructions</el-text></el-button>
         <el-button @click="goToWallet" class="btn btn-wallet"><el-text>Wallet</el-text></el-button>
-        <el-button @click="usePlayerStore().handleLogout" class="btn btn-logout"
-          ><el-text>Logout</el-text></el-button
-        >
+        <el-button @click="logout()" class="btn btn-logout"><el-text>Logout</el-text></el-button>
       </template>
     </div>
   </div>
@@ -29,6 +27,8 @@ import { usePlayerStore } from '@/stores/playerStore'
 import { useRouter } from 'vue-router'
 import AuthModal from '@/components/AuthModal.vue'
 
+import { showNotify } from '@/utils/notify'
+
 const router = useRouter()
 const isModalVisible = ref(false)
 
@@ -42,6 +42,15 @@ const gotoGame = () => {
 
 const goToWallet = () => {
   router.push('/transaction-history')
+}
+
+const logout = () => {
+  usePlayerStore().handleLogout()
+  showNotify({
+    title: 'Success!',
+    message: 'You have logout successfully.',
+    type: 'success',
+  })
 }
 </script>
 

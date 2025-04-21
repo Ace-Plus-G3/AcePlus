@@ -28,87 +28,84 @@ export const usePlayerStore = defineStore('playerStore', () => {
   // * ACTIONS
   const handleSignup = async ({ formE1, handleChangeTab }: TSignupParams) => {
     if (!formE1) return
-    await formE1.validate((valid, fields) => {
-      if (valid) {
-        const formData = {
-          user_id: crypto.randomUUID(),
-          phoneNumber: formE1.$props.model?.phoneNumber,
-          password: formE1.$props.model?.password,
-          total_money: formE1.$props.model?.total_money,
-          transaction_history: formE1.$props.model?.transaction_history,
-          created_at: new Date(),
-          updated_at: new Date(),
-        }
 
-        if (!formData) return
+    try {
+      await formE1.validate((valid, fields) => {
+        if (valid) {
+          const formData = {
+            user_id: crypto.randomUUID(),
+            phoneNumber: formE1.$props.model?.phoneNumber,
+            password: formE1.$props.model?.password,
+            total_money: formE1.$props.model?.total_money,
+            transaction_history: formE1.$props.model?.transaction_history,
+            created_at: new Date(),
+            updated_at: new Date(),
+          }
 
-        // Get all saves players in local storage
-        const players_in_localstorage = localStorage.getItem('players')
+          if (!formData) return
 
-        // If there's no players, create one
-        if (!players_in_localstorage) {
-          const updatedPlayers = JSON.stringify([formData])
+          // Get all saves players in local storage
+          const players_in_localstorage = localStorage.getItem('players')
+
+          // If there's no players, create one
+          if (!players_in_localstorage) {
+            const updatedPlayers = JSON.stringify([formData])
+            localStorage.setItem('players', updatedPlayers)
+            console.log('Account created successfully!')
+            handleChangeTab('Login-Tab')
+            return
+          }
+
+          // If player already exists with the same email and phoneNumber, return error
+          const foundPlayer = JSON.parse(players_in_localstorage).find(
+            (item: TUser) => item.phoneNumber === formData.phoneNumber,
+          )
+
+          if (foundPlayer) {
+            throw new Error(`User already exists`)
+          }
+
+          // If new player and doesn't exists in local storage, add the new player
+          const updatedPlayers = JSON.stringify([...JSON.parse(players_in_localstorage), formData])
           localStorage.setItem('players', updatedPlayers)
-          console.log('Account created successfully!')
+          console.log('Account created successfully!', players)
           handleChangeTab('Login-Tab')
-          return
+        } else {
+          console.log('error submit!', fields)
         }
-
-        // If player already exists with the same email and phoneNumber, return error
-        const foundPlayer = JSON.parse(players_in_localstorage).find(
-          (item: TUser) => item.phoneNumber === formData.phoneNumber,
-        )
-
-        if (foundPlayer) {
-          return console.log('User already exists!')
-        }
-
-        // If new player and doesn't exists in local storage, add the new player
-        const updatedPlayers = JSON.stringify([...JSON.parse(players_in_localstorage), formData])
-        localStorage.setItem('players', updatedPlayers)
-        console.log('Account created successfully!', players)
-        handleChangeTab('Login-Tab')
-      } else {
-        console.log('error submit!', fields)
-      }
-    })
+      })
+    } catch (err) {
+      throw new Error(`Signup failed: ${(err as Error).message}`)
+    }
   }
+
   const handleLogin = async ({ formE1, handleCloseModal }: TLoginParams) => {
     if (!formE1) return
-    await formE1.validate((valid, fields) => {
-      if (valid) {
-        const formData = formE1.$props.model
-        if (!formData) return
 
-        const players = localStorage.getItem('players')
-        // If there's no players[] in local storage, send error
-        if (!players) return console.log('Players not found!')
+    try {
+      await formE1.validate((valid, fields) => {
+        if (valid) {
+          const formData = formE1.$props.model
+          if (!formData) return
 
-        // Find player trying to log in  via email
-        const foundPlayer: TUser = JSON.parse(players).find(
-          (item: TUser) => item.phoneNumber === formData.phoneNumber,
-        )
+          const players = localStorage.getItem('players')
+          // If there's no players[] in local storage, send error
+          if (!players) throw new Error('Players not found')
 
-        // If player not  found, send error
-        if (!foundPlayer) return console.log('Player not found!')
-        console.log(foundPlayer)
-        // If player found, save the user info and token to pinia
-        usePlayerStore().setToken(foundPlayer.user_id)
-        usePlayerStore().setUser({
-          user_id: foundPlayer.user_id,
-          phoneNumber: foundPlayer.phoneNumber,
-          password: foundPlayer.password,
-          total_money: foundPlayer.total_money,
-          transaction_history: foundPlayer.transaction_history,
-          created_at: foundPlayer.created_at,
-          updated_at: foundPlayer.updated_at,
-        })
+          // Find player trying to log in  via email
+          const foundPlayer: TUser = JSON.parse(players).find(
+            (item: TUser) =>
+              item.phoneNumber === formData.phoneNumber && item.password === formData.password,
+          )
 
-        // Saves the user info and token to local storage
-        localStorage.setItem('token', JSON.stringify(foundPlayer.user_id))
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
+          // If player not  found, send error
+          if (!foundPlayer) throw new Error('Player not found')
+
+          console.log(foundPlayer)
+
+          // If player found, save the user info and token to pinia
+          usePlayerStore().setToken(foundPlayer.user_id)
+          usePlayerStore().setUser({
             user_id: foundPlayer.user_id,
             phoneNumber: foundPlayer.phoneNumber,
             password: foundPlayer.password,
@@ -116,15 +113,33 @@ export const usePlayerStore = defineStore('playerStore', () => {
             transaction_history: foundPlayer.transaction_history,
             created_at: foundPlayer.created_at,
             updated_at: foundPlayer.updated_at,
-          }),
-        )
-        console.log('Logged in successfully!')
-        handleCloseModal()
-      } else {
-        console.log('error submit!', fields)
-      }
-    })
+          })
+
+          // Saves the user info and token to local storage
+          localStorage.setItem('token', JSON.stringify(foundPlayer.user_id))
+          localStorage.setItem(
+            'user',
+            JSON.stringify({
+              user_id: foundPlayer.user_id,
+              phoneNumber: foundPlayer.phoneNumber,
+              password: foundPlayer.password,
+              total_money: foundPlayer.total_money,
+              transaction_history: foundPlayer.transaction_history,
+              created_at: foundPlayer.created_at,
+              updated_at: foundPlayer.updated_at,
+            }),
+          )
+          console.log('Logged in successfully!')
+          handleCloseModal()
+        } else {
+          console.log('error submit!', fields)
+        }
+      })
+    } catch (err) {
+      throw new Error(`Login failed: ${(err as Error).message}`)
+    }
   }
+
   const handleLogout = () => {
     setUser(null)
     setToken(null)
