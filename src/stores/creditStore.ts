@@ -20,8 +20,17 @@ export const useCreditStore = defineStore('creditStore', () => {
     localStorage.setItem('cashin', JSON.stringify(cashin.value))
   }
   const setCurrentBalance = (newBalance: number) => {
+    const playerStore = usePlayerStore()
+    const loggedInUser = playerStore.getUser
+
+    if (!loggedInUser) {
+      console.error('No user is logged in!')
+      return
+    }
+
+    const userId = loggedInUser.user_id
     currentBalance.value = newBalance
-    localStorage.setItem('currentBalance', JSON.stringify(currentBalance.value))
+    localStorage.setItem(`currentBalance_${userId}`, JSON.stringify(currentBalance.value))
   }
 
   //ACTIONS

@@ -2,7 +2,14 @@
   <el-container>
     <el-header>
       <div class="el-header-top-bar">
-        <div class="el-header-image"></div>
+        <div class="el-header-image">
+          <button class="leave-btn" @click="router.push('/')">Leave</button>
+          <div class="chip-amount">
+            <el-text class="chip-amount-text" style="color: white" size="small">{{
+              convertToReadableFormat(useCreditStore().getCurrentBalance)
+            }}</el-text>
+          </div>
+        </div>
       </div>
     </el-header>
 
@@ -85,6 +92,11 @@ import PlayerWins from '@/components/overlays/PlayerWins.vue'
 import StartingInView from '@/components/overlays/StartingInView.vue'
 import GameTimer from '@/components/overlays/GameTimer.vue'
 import { getRandomCards } from '@/utils/getRandomCards'
+import { useRouter } from 'vue-router'
+import { useCreditStore } from '@/stores'
+import { convertToReadableFormat } from '@/utils/convertMoney'
+
+const router = useRouter()
 
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
@@ -93,7 +105,6 @@ const containerHeight = ref(0)
 let intervalId: number | undefined = undefined
 const timer = ref(10)
 const startingIn = ref(5)
-
 const drawer = ref(false)
 const reveal = ref(false)
 
@@ -203,6 +214,12 @@ const handleSelectCard = (index: number | null) => {
 
   if (reveal.value) return
 
+  const currentBalance = useCreditStore().getCurrentBalance
+  if (!currentBalance) {
+    console.log('Please top up first, you have no balance')
+    return
+  }
+
   drawer.value = true
   const foundCard = FourCards.value[index]
   currentSelectedCard.value = {
@@ -214,6 +231,13 @@ const handleSelectCard = (index: number | null) => {
 const handleSelectBet = (betValue: number) => {
   if (!currentSelectedCard.value) {
     console.log('No card selected!')
+    return
+  }
+
+  const currentBalance = useCreditStore().getCurrentBalance
+  if (currentBalance < betValue) {
+    console.log('Insufficient balance!')
+    drawer.value = false
     return
   }
 
@@ -289,6 +313,50 @@ const handleCancel = () => {
   // selectedCard.value = []
 }
 
+const handleRevealCard = () => {
+  reveal.value = true
+
+  if (FourCards.value.length === 0) {
+    return null
+  }
+
+  const highestCard = FourCards.value.reduce((maxCard, currentCard) =>
+    currentCard.value > maxCard.value ? currentCard : maxCard,
+  )
+  const hasLuckyCard = selectedCard.value.findIndex((card: TCardType) => card.value === 1)
+
+  selectedCard.value.forEach((item) => {
+    if (hasLuckyCard >= 0) {
+      if (item.value === highestCard.value && hasLuckyCard >= 0) {
+        // Skip processing the highest card if the lucky card also exists
+        console.log('SKIP SINCE the item is not the highest card and there is a lucky card')
+        return
+      }
+
+      // If the item is the lucky card, spin the wheel
+      if (item.value === selectedCard.value[hasLuckyCard].value) {
+        useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + item.betAmount)
+        console.log('the item is the lucky card! Spin the wheel')
+      }
+    }
+
+    // If the item is the highest card and no lucky card bet exists
+    if (item.value === highestCard.value && hasLuckyCard < 0) {
+      useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + item.betAmount)
+      console.log('Item is the highest card!')
+    }
+
+    // If the item is not the highest card nor the lucky card
+    if (
+      item.value !== highestCard.value &&
+      (hasLuckyCard < 0 || item.value !== selectedCard.value[hasLuckyCard]?.value)
+    ) {
+      useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance - item.betAmount)
+      console.log('Not the highest nor the lucky card')
+    }
+  })
+}
+
 onMounted(async () => {
   window.addEventListener('resize', handleResize)
 
@@ -326,8 +394,8 @@ watch(startGame, (newValue) => {
     // After timer completes, reveal cards
     setTimeout(() => {
       handleCancel()
-      reveal.value = true
       getHighestCard()
+      handleRevealCard()
     }, 10500)
 
     // Reset after reveal
@@ -340,7 +408,7 @@ watch(startGame, (newValue) => {
 
 <style scoped>
 .card {
-  z-index: 1 !important;
+  z-index: 20 !important;
 }
 
 .el-container {
@@ -396,6 +464,36 @@ watch(startGame, (newValue) => {
     align-items: center;
     padding: 0 40px;
     z-index: 2;
+
+    .chip-amount {
+      background-image: url('@/assets/coins/chip_amount.png');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      width: 120px;
+      height: 50px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .leave-btn {
+      height: 40px;
+      width: 120px;
+
+      background: #ffca28;
+      border: none;
+      border-radius: 20px;
+      /* padding: 4px 12px; */
+      font-size: 14px;
+      font-weight: bold;
+      color: #00397f;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      transition: background 0.3s;
+    }
   }
 }
 
@@ -627,6 +725,19 @@ watch(startGame, (newValue) => {
   .cancel-btn {
     padding: 3px 10px;
     font-size: 12px;
+  }
+
+  .leave-btn {
+    font-size: 12px !important;
+    width: 80px !important;
+    height: 30px !important;
+  }
+  .chip-amount {
+    width: 100px !important;
+    height: 30px !important;
+  }
+  .chip-amount-text {
+    font-size: 10px;
   }
 }
 

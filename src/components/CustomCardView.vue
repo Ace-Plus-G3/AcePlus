@@ -16,11 +16,13 @@
           <div class="bet-count-container">
             <div class="bet-count">
               <span class="bet-count-text">{{
-                props.selectedCard.reduce((total, card) => {
-                  return card.value === props.fourCards[props.index].value
-                    ? total + card.betAmount
-                    : total
-                }, 0)
+                convertToReadableFormat(
+                  props.selectedCard.reduce((total, card) => {
+                    return card.value === props.fourCards[props.index].value
+                      ? total + card.betAmount
+                      : total
+                  }, 0),
+                )
               }}</span>
               <el-image class="player-count-icon" :src="GoldIcon" />
             </div>
@@ -41,6 +43,7 @@ import { onMounted, ref, watch, computed, nextTick } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import GoldIcon from '@/assets/coins/gold.png'
 import playerLogo from '@/assets/icons/players_icon_xs.png'
+import { convertToReadableFormat } from '@/utils/convertMoney'
 
 type Props = {
   start: 'Start' | 'Pending' | 'Done'
@@ -176,7 +179,7 @@ onMounted(async () => {
     gap: 2px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 30px;
-    padding-left: 1em;
+    padding-left: 0.5em;
   }
 
   .bet-count-text {
@@ -255,6 +258,17 @@ onMounted(async () => {
   .flip-card-back {
     width: 60px;
     height: 90px;
+  }
+
+  .flip-card-front {
+    padding: 4px !important;
+  }
+
+  .bet-count {
+    padding-left: 0.2em !important;
+  }
+  .bet-count-text {
+    font-size: 8px !important;
   }
 }
 </style>
