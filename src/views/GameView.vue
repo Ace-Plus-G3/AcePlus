@@ -214,6 +214,12 @@ const handleSelectCard = (index: number | null) => {
 
   if (reveal.value) return
 
+  const currentBalance = useCreditStore().getCurrentBalance
+  if (!currentBalance) {
+    console.log('Please top up first, you have no balance')
+    return
+  }
+
   drawer.value = true
   const foundCard = FourCards.value[index]
   currentSelectedCard.value = {
@@ -225,6 +231,13 @@ const handleSelectCard = (index: number | null) => {
 const handleSelectBet = (betValue: number) => {
   if (!currentSelectedCard.value) {
     console.log('No card selected!')
+    return
+  }
+
+  const currentBalance = useCreditStore().getCurrentBalance
+  if (currentBalance < betValue) {
+    console.log('Insufficient balance!')
+    drawer.value = false
     return
   }
 
