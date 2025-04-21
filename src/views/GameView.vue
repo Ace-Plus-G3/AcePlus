@@ -15,9 +15,20 @@
     <el-main>
       <div class="game-container" ref="gameContainerRef" :disabled="startGame === 'Start'">
         <el-image fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
-        <CustomCardView v-for="(_, index) in 4" :key="index" :index="index" :length="4" :start="startGame"
-          :delay="index * 200" :reveal="reveal" @handle-select-card="handleSelectCard" :selected-card="selectedCard"
-          :four-cards="FourCards" :container-width="containerWidth" :container-height="containerHeight" />
+        <CustomCardView
+          v-for="(_, index) in FourCards"
+          :key="index"
+          :index="index"
+          :length="4"
+          :start="startGame"
+          :delay="index * 200"
+          :reveal="reveal"
+          @handle-select-card="handleSelectCard"
+          :selected-card="selectedCard"
+          :four-cards="FourCards"
+          :container-width="containerWidth"
+          :container-height="containerHeight"
+        />
       </div>
 
       <!-- <div>
@@ -43,7 +54,12 @@
         </div>
         <div class="drawer-content">
           <div class="bet-grid">
-            <div @click="handleSelectBet(chip.value)" v-for="chip in chips" :key="chip.value" class="chip">
+            <div
+              @click="handleSelectBet(chip.value)"
+              v-for="chip in chips"
+              :key="chip.value"
+              class="chip"
+            >
               <img :src="chip.image" :alt="String(chip.value)" />
             </div>
           </div>
@@ -54,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import SpinTheWheel from '@/components/SpinTheWheel.vue'
+// import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards, chips } from '@/models/constants'
 import type { TCardType, TSelectedCard } from '@/models/type'
@@ -64,6 +80,7 @@ import cardBack from '@/assets/cards/back/card_back_bg.png'
 import PlayerWins from '@/components/overlays/PlayerWins.vue'
 import StartingInView from '@/components/overlays/StartingInView.vue'
 import GameTimer from '@/components/overlays/GameTimer.vue'
+import { getRandomCards } from '@/utils/getRandomCards'
 
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
@@ -164,13 +181,14 @@ const handleResetCard = () => {
 }
 
 const shuffleCard = () => {
-  FourCards.value = Cards.slice()
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 4)
-    .map((card) => ({
-      ...card,
-      playerCount: 0,
-    }))
+  FourCards.value = getRandomCards(Cards).map((card) => ({
+    ...card,
+    playerCount: 0,
+  }))
+
+  // FourCards.value.forEach((item) => {
+  //   console.log(`${item.value},${item.playerCount}`)
+  // })
 }
 
 const handleSelectCard = (index: number | null) => {
@@ -204,9 +222,9 @@ const handleSelectBet = (betValue: number) => {
     const updatedSelectedCard = selectedCard.value.map((item) =>
       item.value === currentSelectedCard.value?.card.value
         ? {
-          ...currentSelectedCard.value.card,
-          betAmount: betValue,
-        }
+            ...currentSelectedCard.value.card,
+            betAmount: betValue,
+          }
         : item,
     )
     selectedCard.value = updatedSelectedCard
@@ -314,12 +332,11 @@ watch(startGame, (newValue) => {
     }, 12000)
   }
 })
-shuffleCard()
 </script>
 
 <style scoped>
 .card {
-  z-index: 1 !important;
+  z-index: 1000 !important;
 }
 
 .el-container {
@@ -597,7 +614,6 @@ shuffleCard()
 }
 
 @media screen and (max-width: 800px) {
-
   .el-header,
   .el-footer {
     width: 90% !important;
@@ -637,7 +653,6 @@ shuffleCard()
 }
 
 @media screen and (max-width: 400px) {
-
   .el-header-image,
   .el-footer-image,
   .custom-drawer-header {
