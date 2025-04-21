@@ -10,14 +10,18 @@ export type TUser = {
 }
 
 export type Transaction = {
-  transaction_id: string;
-  account_number: number;
-  user_id: string;
-  type: 'Cash- In' | 'Cash- Out';
-  amount: number;
-  date: string;
-};
+  transaction_id: string
+  account_number: number
+  user_id: string
+  type: 'Cash- In' | 'Cash- Out'
+  amount: number
+  date: string
+}
 
 export type Cashin = Omit<Transaction, 'type'> & {
-  type: 'Cash- In';
-};
+  type: 'Cash- In'
+}
+
+export type Cashout = Omit<Transaction, 'type'> & {
+  type: 'Cash- Out'
+}
