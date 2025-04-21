@@ -31,6 +31,10 @@
         />
       </div>
 
+      <div v-if="selectedCard.length > 0 && selectedCard[0].value === 1">
+        <SpinTheWheel />
+      </div>
+
       <!-- <div>
         <el-button  :disabled="startGame === 'Start'" class="start-btn">
           <img draggable="false" src="/game/game_bet.png" alt="game_bet" fit="cover" class="game-start" />
@@ -70,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-// import SpinTheWheel from '@/components/SpinTheWheel.vue'
+import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards, chips } from '@/models/constants'
 import type { TCardType, TSelectedCard } from '@/models/type'
@@ -336,7 +340,7 @@ watch(startGame, (newValue) => {
 
 <style scoped>
 .card {
-  z-index: 1000 !important;
+  z-index: 1 !important;
 }
 
 .el-container {
