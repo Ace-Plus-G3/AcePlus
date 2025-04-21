@@ -89,7 +89,9 @@ const resetTransactionFields = () => {
 
 .main-container {
   background-color: var(--primary-black);
+  max-width: 800px;
   height: 100vh;
+  margin: 0 auto;
 }
 
 .image-container {
