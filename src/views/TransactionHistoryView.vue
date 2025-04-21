@@ -8,8 +8,8 @@
           <h3><span>₱</span>6,456.13</h3>
         </div>
         <div class="right-amount">
-          <el-button :icon="Plus">Cash In</el-button>
-          <el-button :icon="Minus">Cash Out</el-button>
+          <el-button @click="goToCashTransact" :icon="Plus">Cash In</el-button>
+          <el-button @click="goToCashTransact" :icon="Minus">Cash Out</el-button>
         </div>
       </div>
     </div>
@@ -116,6 +116,13 @@ import HeaderComponent from '@/components/HeaderComponent.vue'
 
 import { Plus, Minus } from '@element-plus/icons-vue'
 import TabsComponent from '@/components/TabsComponent.vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToCashTransact = () => {
+  router.push({ name: 'cash-transaction' })
+}
 </script>
 
 <style scoped>
