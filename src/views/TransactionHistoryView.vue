@@ -21,6 +21,7 @@
       <template v-slot:cashin>
         <div class="history-item-container">
           <div
+            @click="goToReciept(transaction.transaction_id)"
             v-for="transaction in creditStore.cashin"
             :key="transaction.user_id"
             class="row-container"
@@ -69,6 +70,10 @@ import { useRouter } from 'vue-router'
 import { useCreditStore } from '@/stores/creditStore'
 
 const creditStore = useCreditStore()
+
+const goToReciept = (transaction_id: string) => {
+  router.push({ name: 'receipt', params: { id: transaction_id } })
+}
 
 const router = useRouter()
 

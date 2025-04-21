@@ -130,6 +130,10 @@ export const useCreditStore = defineStore('creditStore', () => {
     console.log('Persist Credits!')
   }
 
+  const getCashinTransacById = (transaction_id: string | string[]) => {
+    return cashin.value.find((item) => item.transaction_id === transaction_id)
+  }
+
   return {
     cashin,
     currentBalance,
@@ -144,5 +148,6 @@ export const useCreditStore = defineStore('creditStore', () => {
     handleCashin,
     handleCashout,
     handlePersistCredits,
+    getCashinTransacById,
   }
 })
