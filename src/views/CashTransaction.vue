@@ -31,6 +31,8 @@ import HeaderComponent from '@/components/HeaderComponent.vue'
 import TabsComponent from '@/components/TabsComponent.vue'
 import { useCreditStore } from '@/stores/creditStore'
 
+const imageSrc = ref(new URL('/src/assets/gcash-logo.jpg', import.meta.url).href)
+
 const creditStore = useCreditStore()
 
 const account_number = ref<number | null>(null)
@@ -42,7 +44,14 @@ const CashIn = () => {
     return
   }
 
+  if (amount.value < 100) {
+    console.log('Minimum cashin is 100')
+    return
+  }
+
   creditStore.handleCashin(Number(amount.value), Number(account_number.value))
+
+  resetTransactionFields()
 }
 
 const CashOut = () => {
@@ -62,8 +71,14 @@ const CashOut = () => {
   }
 
   creditStore.handleCashout(Number(amount.value), Number(account_number.value))
+
+  resetTransactionFields()
 }
-const imageSrc = ref(new URL('/src/assets/gcash-logo.jpg', import.meta.url).href)
+
+const resetTransactionFields = () => {
+  account_number.value = null
+  amount.value = null
+}
 </script>
 
 <style scoped>
