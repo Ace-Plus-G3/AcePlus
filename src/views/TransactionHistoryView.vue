@@ -20,88 +20,36 @@
     <TabsComponent>
       <template v-slot:cashin>
         <div class="history-item-container">
-          <div class="row-container">
+          <div
+            v-for="transaction in creditStore.cashin"
+            :key="transaction.user_id"
+            class="row-container"
+          >
             <div class="left-cashin">
-              <h4>9:45 pm</h4>
-              <h3>Cash- In</h3>
-              <h4>April 11, 2025</h4>
+              <h4>{{ moment(transaction.date).format('h:mm:ss a') }}</h4>
+              <h3>{{ transaction.type }}</h3>
+              <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
             </div>
             <div class="right-cashin">
-              <h3><span>₱</span>200</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashin">
-              <h4>9:45 pm</h4>
-              <h3>Cash- In</h3>
-              <h4>April 12, 2025</h4>
-            </div>
-            <div class="right-cashin">
-              <h3><span>₱</span>100</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashin">
-              <h4>9:45 pm</h4>
-              <h3>Top- Up</h3>
-              <h4>April 15, 2025</h4>
-            </div>
-            <div class="right-cashin">
-              <h3><span>₱</span>200</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashin">
-              <h4>9:45 pm</h4>
-              <h3>Top- Up</h3>
-              <h4>April 15, 2025</h4>
-            </div>
-            <div class="right-cashin">
-              <h3><span>₱</span>200</h3>
+              <h3><span>₱</span>{{ transaction.amount }}</h3>
             </div>
           </div>
         </div>
       </template>
       <template v-slot:cashout>
         <div class="history-item-container">
-          <div class="row-container">
+          <div
+            class="row-container"
+            v-for="transaction in creditStore.cashout"
+            :key="transaction.user_id"
+          >
             <div class="left-cashout">
-              <h4>9:45 pm</h4>
-              <h3>Cash- Out</h3>
-              <h4>April 11, 2025</h4>
+              <h4>{{ moment(transaction.date).format('h:mm:ss a') }}</h4>
+              <h3>{{ transaction.type }}</h3>
+              <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
             </div>
             <div class="right-cashout">
-              <h3><span>₱</span><span>-</span>200</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashout">
-              <h4>9:45 pm</h4>
-              <h3>Cash- Out</h3>
-              <h4>April 11, 2025</h4>
-            </div>
-            <div class="right-cashout">
-              <h3><span>₱</span><span>-</span>200</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashout">
-              <h4>9:45 pm</h4>
-              <h3>Cash- Out</h3>
-              <h4>April 12, 2025</h4>
-            </div>
-            <div class="right-cashout">
-              <h3><span>₱</span><span>-</span>100</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashout">
-              <h4>9:45 pm</h4>
-              <h3>Cash- Out</h3>
-              <h4>April 15, 2025</h4>
-            </div>
-            <div class="right-cashout">
-              <h3><span>₱</span><span>-</span>200</h3>
+              <h3><span>₱</span><span>-</span>{{ transaction.amount }}</h3>
             </div>
           </div>
         </div>
@@ -113,16 +61,22 @@
 
 <script setup lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
+import moment from 'moment'
 
 import { Plus, Minus } from '@element-plus/icons-vue'
 import TabsComponent from '@/components/TabsComponent.vue'
 import { useRouter } from 'vue-router'
+import { useCreditStore } from '@/stores/creditStore'
+
+const creditStore = useCreditStore()
 
 const router = useRouter()
 
 const goToCashTransact = () => {
   router.push({ name: 'cash-transaction' })
 }
+
+// const dateTimeString = creditStore
 </script>
 
 <style scoped>
