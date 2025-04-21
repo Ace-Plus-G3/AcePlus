@@ -1,4 +1,4 @@
-import type { Cashin } from '@/types/user'
+import type { Cashin, Cashout } from '@/types/user'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { usePlayerStore } from './playerStore'
@@ -7,6 +7,7 @@ import { loadFromLocalStorage } from '@/utils/loadFromLocalStorage'
 export const useCreditStore = defineStore('creditStore', () => {
   // STATES
   const cashin = ref<Cashin[]>([]) // all cash-in history
+  const cashout = ref<Cashout[]>([]) // all cash-out history
   const currentBalance = ref<number>(0)
 
   //GETTERS
@@ -70,6 +71,47 @@ export const useCreditStore = defineStore('creditStore', () => {
     currentBalance.value = userBalance + Number(amount)
     localStorage.setItem(userBalanceKey, JSON.stringify(currentBalance.value))
   }
+
+  const handleCashout = (amount: number, account_number: number) => {
+    const playerStore = usePlayerStore()
+    const loggedInUser = playerStore.getUser
+
+    if (!loggedInUser) {
+      console.error('No user is logged in!')
+      return
+    }
+
+    const userId = loggedInUser.user_id
+
+    const newCashout: Cashout = {
+      transaction_id: crypto.randomUUID(),
+      user_id: userId, // Use the logged-in user's ID
+      type: 'Cash- Out',
+      amount,
+      date: new Date().toISOString(),
+      account_number,
+    }
+
+    // Load the user's cashout history from local storage
+    const userCashoutKey = `cashout_${userId}`
+    const userBalanceKey = `currentBalance_${userId}`
+
+    const savedCashout = localStorage.getItem(userCashoutKey)
+    const userCashout = savedCashout ? JSON.parse(savedCashout) : []
+    userCashout.push(newCashout)
+
+    // Save the updated cashin history back to local storage
+    cashout.value = userCashout
+    localStorage.setItem(userCashoutKey, JSON.stringify(userCashout))
+
+    // Update and save the user's current balance
+    const savedBalance = localStorage.getItem(userBalanceKey)
+    const userBalance = savedBalance ? Number(savedBalance) : 0
+
+    currentBalance.value = userBalance - Number(amount)
+    localStorage.setItem(userBalanceKey, JSON.stringify(currentBalance.value))
+  }
+
   const handlePersistCredits = () => {
     const playerStore = usePlayerStore()
     const loggedInUser = playerStore.getUser
@@ -98,6 +140,7 @@ export const useCreditStore = defineStore('creditStore', () => {
     getCurrentBalance,
 
     handleCashin,
+    handleCashout,
     handlePersistCredits,
   }
 })

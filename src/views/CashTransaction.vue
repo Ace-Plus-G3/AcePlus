@@ -15,9 +15,9 @@
         </template>
         <template v-slot:cashout>
           <form class="transaction-form">
-            <el-input placeholder="Enter Account Number" />
-            <el-input placeholder="Enter Amount" />
-            <el-button>Cash Out</el-button>
+            <el-input v-model="account_number" placeholder="Enter Account Number" />
+            <el-input v-model="amount" placeholder="Enter Amount" />
+            <el-button @click="CashOut">Cash Out</el-button>
           </form>
         </template>
       </TabsComponent>
@@ -43,6 +43,25 @@ const CashIn = () => {
   }
 
   creditStore.handleCashin(Number(amount.value), Number(account_number.value))
+}
+
+const CashOut = () => {
+  if (!amount.value || !account_number.value) {
+    console.log('Please fill in all fields')
+    return
+  }
+
+  if (amount.value < 100) {
+    console.log('Minimum cashout is 100')
+    return
+  }
+
+  if (amount.value > creditStore.getCurrentBalance) {
+    console.log('Insufficient Balance')
+    return
+  }
+
+  creditStore.handleCashout(Number(amount.value), Number(account_number.value))
 }
 const imageSrc = ref(new URL('/src/assets/gcash-logo.jpg', import.meta.url).href)
 </script>
