@@ -74,7 +74,9 @@ const imageSrc = ref(new URL('/src/assets/gcash-logo.jpg', import.meta.url).href
 
 .main-container {
   background-color: var(--primary-black);
+  max-width: 800px;
   height: 100vh;
+  margin: 0 auto;
 }
 
 .image-container {
