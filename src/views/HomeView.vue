@@ -41,7 +41,7 @@ const gotoGame = () => {
 }
 
 const goToWallet = () => {
-  router.push('/cash-transaction')
+  router.push('/transaction-history')
 }
 </script>
 
