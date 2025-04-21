@@ -35,7 +35,9 @@
             />
           </el-form-item>
           <div class="dialog-footer">
-            <el-button style="width: 100%" @click="signup()"> Create Account </el-button>
+            <el-button @click="signup()" :disabled="!isSignupFormValid" style="width: 100%">
+              Create Account
+            </el-button>
             <div class="terms-of-service-container">
               <el-checkbox> </el-checkbox>
               <p>
@@ -49,8 +51,14 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="Login" name="Login-Tab">
-        <el-form :model="loginForm" ref="loginFormRef" label-position="top" style="color: yellow">
-          <el-form-item>
+        <el-form
+          :model="loginForm"
+          ref="loginFormRef"
+          :rules="rules"
+          label-position="top"
+          style="color: yellow"
+        >
+          <el-form-item prop="phoneNumber">
             <el-input
               :prefix-icon="Flag"
               v-model="loginForm.phoneNumber"
@@ -58,7 +66,7 @@
               placeholder="09xxxxxxxxx"
             />
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop="password">
             <el-input
               v-model="loginForm.password"
               autocomplete="off"
@@ -68,7 +76,9 @@
             />
           </el-form-item>
           <div class="dialog-footer">
-            <el-button style="width: 100%" @click="login()"> Login </el-button>
+            <el-button @click="login()" :disabled="!isLoginFormValid" style="width: 100%">
+              Login
+            </el-button>
           </div>
         </el-form>
       </el-tab-pane>
@@ -77,11 +87,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { Flag } from '@element-plus/icons-vue'
 import { usePlayerStore } from '@/stores'
 import type { TLogin, TSignup } from '@/types/auth'
+import { showNotify } from '@/utils/notify'
 
 const store = usePlayerStore()
 const activeTab = ref<'Signup-Tab' | 'Login-Tab'>('Signup-Tab')
@@ -116,7 +127,10 @@ const handleClose = (done: () => void) => {
 }
 
 const rules = ref<FormRules>({
-  phoneNumber: [{ required: true, message: 'Please enter your mobile number', trigger: 'blur' }],
+  phoneNumber: [
+    { required: true, message: 'Please enter your mobile number', trigger: 'blur' },
+    { min: 11, max: 11, message: 'Phone Number must be 11 digits', trigger: 'blur' },
+  ],
   password: [
     { required: true, message: 'Please enter your password', trigger: 'blur' },
     { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' },
@@ -130,31 +144,69 @@ const handleChangeTab = (tab: 'Signup-Tab' | 'Login-Tab') => {
 
 // Signup Form state
 const signupFormRef = ref<FormInstance>()
+
 const signupForm = ref<TSignup>({
   phoneNumber: '',
   password: '',
 })
+
+const isSignupFormValid = computed(() => {
+  return signupForm.value.phoneNumber.trim() !== '' && signupForm.value.password.trim() !== ''
+})
+
 const signup = async () => {
-  await store.handleSignup({
-    formE1: signupFormRef.value,
-    handleChangeTab,
-  })
+  try {
+    await store.handleSignup({
+      formE1: signupFormRef.value,
+      handleChangeTab,
+    })
+    showNotify({
+      title: 'Success!',
+      message: 'You have sign up successfully.',
+      type: 'success',
+    })
+  } catch (error) {
+    showNotify({
+      title: 'Error!',
+      message: `${error}`,
+      type: 'error',
+    })
+  }
 }
 
 // Login Form state
 const loginFormRef = ref<FormInstance>()
+
 const loginForm = ref<TLogin>({
   phoneNumber: '',
   password: '',
 })
 
+const isLoginFormValid = computed(() => {
+  return loginForm.value.phoneNumber.trim() !== '' && loginForm.value.password.trim() !== ''
+})
+
 const login = async () => {
-  await store.handleLogin({
-    formE1: loginFormRef.value,
-    handleCloseModal: () => {
-      dialogFormVisible.value = false
-    },
-  })
+  try {
+    await store.handleLogin({
+      formE1: loginFormRef.value,
+      handleCloseModal: () => {
+        dialogFormVisible.value = false
+      },
+    })
+    showNotify({
+      title: 'Success!',
+      message: 'You have logged in successfully.',
+      type: 'success',
+    })
+  } catch (error) {
+    console.log(error)
+    showNotify({
+      title: 'Error!',
+      message: `${error}`,
+      type: 'error',
+    })
+  }
 }
 </script>
 
