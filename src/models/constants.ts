@@ -1,4 +1,4 @@
-import type { TCardType, TChips } from './type'
+import type { TCardType, TChips, TSpinWheel } from './type'
 
 export const Cards: Array<TCardType> = [
   {
@@ -63,4 +63,35 @@ export const chips: Array<TChips> = [
   { value: 1000, image: new URL('@/assets/coins/1KPESO.png', import.meta.url).href },
   { value: 5000, image: new URL('@/assets/coins/5KPESO.png', import.meta.url).href },
   { value: 10000, image: new URL('@/assets/coins/10KPESO.png', import.meta.url).href },
+]
+
+export const wheelDeg: Array<TSpinWheel> = [
+  { deg: 0, multiplier: 3, url: new URL('@/assets/game/spin-value/3x.png', import.meta.url).href },
+  { deg: 45, multiplier: 4, url: new URL('@/assets/game/spin-value/4x.png', import.meta.url).href },
+  { deg: 90, multiplier: 5, url: new URL('@/assets/game/spin-value/5x.png', import.meta.url).href },
+  {
+    deg: 135,
+    multiplier: 6,
+    url: new URL('@/assets/game/spin-value/6x.png', import.meta.url).href,
+  },
+  {
+    deg: 180,
+    multiplier: 7,
+    url: new URL('@/assets/game/spin-value/7x.png', import.meta.url).href,
+  },
+  {
+    deg: 225,
+    multiplier: 8,
+    url: new URL('@/assets/game/spin-value/8x.png', import.meta.url).href,
+  },
+  {
+    deg: 270,
+    multiplier: 9,
+    url: new URL('@/assets/game/spin-value/9x.png', import.meta.url).href,
+  },
+  {
+    deg: 315,
+    multiplier: 0,
+    url: new URL('@/assets/game/spin-value/bokya.png', import.meta.url).href,
+  },
 ]
