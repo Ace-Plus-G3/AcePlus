@@ -66,12 +66,32 @@ export const chips: Array<TChips> = [
 ]
 
 export const wheelDeg: Array<TSpinWheel> = [
-  { deg: 0, multiplier: 3 },
-  { deg: 45, multiplier: 4 },
-  { deg: 90, multiplier: 5 },
-  { deg: 135, multiplier: 6 },
-  { deg: 180, multiplier: 7 },
-  { deg: 225, multiplier: 8 },
-  { deg: 270, multiplier: 9 },
-  { deg: 315, multiplier: 0 },
+  { deg: 0, multiplier: 0, url: new URL('@/assets/game/spin-value/3x.png', import.meta.url).href },
+  { deg: 45, multiplier: 4, url: new URL('@/assets/game/spin-value/4x.png', import.meta.url).href },
+  { deg: 90, multiplier: 5, url: new URL('@/assets/game/spin-value/5x.png', import.meta.url).href },
+  {
+    deg: 135,
+    multiplier: 6,
+    url: new URL('@/assets/game/spin-value/6x.png', import.meta.url).href,
+  },
+  {
+    deg: 180,
+    multiplier: 7,
+    url: new URL('@/assets/game/spin-value/7x.png', import.meta.url).href,
+  },
+  {
+    deg: 225,
+    multiplier: 8,
+    url: new URL('@/assets/game/spin-value/8x.png', import.meta.url).href,
+  },
+  {
+    deg: 270,
+    multiplier: 9,
+    url: new URL('@/assets/game/spin-value/9x.png', import.meta.url).href,
+  },
+  {
+    deg: 315,
+    multiplier: 0,
+    url: new URL('@/assets/game/spin-value/bokya.png', import.meta.url).href,
+  },
 ]

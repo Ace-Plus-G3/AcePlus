@@ -1,5 +1,5 @@
 <template>
-  <div class="wheel-container" @click="handleSpin">
+  <div v-if="multiplierWin === null" class="wheel-container" @click="handleSpin">
     <img
       draggable="false"
       :src="Wheel"
@@ -9,6 +9,15 @@
     <img draggable="false" src="../assets/feet_wheel.png" class="wheel-bg" />
     <el-image draggable="false" :src="BorderWheel" class="border-wheel"></el-image>
   </div>
+  <div class="win-overlay" v-if="multiplierWin?.multiplier === 0 || multiplierWin">
+    <div class="banner">
+      <el-image fit="cover" :src="congratulations" class="congratulations" />
+      <el-image fit="cover" :src="vfxLight" class="light-1" />
+      <el-image fit="cover" :src="vfxLight" class="light-2" />
+      <el-image :src="multiplierWin.url" class="text" />
+      <el-text class="close-text" @click="emit('handleClose', false)">Click here to close</el-text>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -16,9 +25,21 @@ import { ref } from 'vue'
 import BorderWheel from '@/assets/border_wheel.png'
 import Wheel from '@/assets/wheel-new-new.png'
 import { wheelDeg } from '@/models/constants'
+import vfxLight from '@/assets/game/vfx-light.png'
+import congratulations from '@/assets/game/congratulations.png'
+import type { TSpinWheel } from '@/models/type'
+import { useCreditStore } from '@/stores'
+
+type Props = {
+  betAmount: number
+}
+
+const emit = defineEmits(['handleClose'])
+const props = defineProps<Props>()
 
 const rotation = ref(0)
 const isSpinning = ref(false)
+const multiplierWin = ref<TSpinWheel | null>(null)
 
 const spinWheel = () => {
   if (isSpinning.value) return
@@ -26,18 +47,15 @@ const spinWheel = () => {
   console.log('Wheel spinning...')
   isSpinning.value = true
 
-  // Number of full rotations for good spinning effect
-  const fullRotations = 360 * 5 // 5 full rotations
+  const fullRotations = 360 * 10
 
-  // Select a random winning slice
+  // 30% chance of bokya appearing
+  const shouldBokyaAppear: boolean = Math.random() < 0.3
+  console.log(shouldBokyaAppear)
+
   const randomIndex = Math.floor(Math.random() * wheelDeg.length)
   const selectedSlice = wheelDeg[randomIndex]
-
-  // Calculate where the wheel needs to stop
-  // To make a specific slice stop at the top, we rotate to (360 - slice.deg)
-  // The wheel rotates clockwise, so the top position is 0 degrees
-  // Adding the full rotations ensures a good spinning animation
-  const stopAtDegree = fullRotations + (360 - selectedSlice.deg)
+  const stopAtDegree = fullRotations - selectedSlice.deg
 
   // Set the new rotation value
   rotation.value = stopAtDegree
@@ -48,10 +66,12 @@ const spinWheel = () => {
   // Reset after animation completes
   setTimeout(() => {
     isSpinning.value = false
-    // Normalize the rotation to keep the value manageable
-    rotation.value = rotation.value % 360
+    multiplierWin.value = selectedSlice
     console.log(`Spin complete. Winner: Multiplier ${selectedSlice.multiplier}`)
-  }, 8000) // Match this to your CSS transition time
+    useCreditStore().setCurrentBalance(
+      useCreditStore().getCurrentBalance + props.betAmount * multiplierWin.value.multiplier,
+    )
+  }, 8000)
 }
 
 const handleSpin = () => {
@@ -65,7 +85,9 @@ const handleSpin = () => {
 .layer {
   pointer-events: none;
 }
+
 .wheel-container {
+  animation: popup 0.25s ease-in-out;
   position: relative;
   width: 700px;
   height: 700px;
@@ -96,13 +118,94 @@ const handleSpin = () => {
   bottom: 0;
 }
 
-/* .layer {
-  position: absolute;
+.win-overlay {
+  width: 100%;
+  height: 100dvh;
+
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 97;
-} */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  animation: popup 0.25s ease-in-out;
+}
+
+.banner {
+  width: 400px;
+  height: 567px;
+  background-image: url('@/assets/game/congrats-banner.png');
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.congratulations {
+  position: absolute;
+  top: 7.5%;
+}
+
+.text {
+  position: absolute;
+  font-size: 48px;
+  animation: popup 0.25s ease-in-out;
+}
+
+.close-text {
+  position: absolute;
+  bottom: -10%;
+  color: var(--primary-white);
+  word-spacing: 4px;
+}
+
+.light-1 {
+  animation: fade-in-out linear 2s infinite alternate;
+}
+
+.light-2 {
+  position: absolute;
+  transform: rotate(45deg);
+  animation: fade-in-out-2 linear 2s infinite alternate;
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-out-2 {
+  0% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes popup {
+  from {
+    scale: 0;
+  }
+
+  to {
+    scale: 1;
+  }
+}
 </style>

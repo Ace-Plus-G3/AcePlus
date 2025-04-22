@@ -31,4 +31,5 @@ export type TLoginParams = {
 export type TSpinWheel = {
   deg: number
   multiplier: number
+  url: string
 }

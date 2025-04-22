@@ -17,8 +17,8 @@
     <PlayerWins :game_status="game_status" />
     <GameTimer :starting-in="startingIn" :timer="timer" />
     <StartingInView :starting-in="startingIn" />
-    <div class="spin-overlay">
-      <SpinTheWheel />
+    <div class="spin-overlay" v-if="showSpinTheWheel">
+      <SpinTheWheel @handle-close="handleCloseWheel" :bet-amount="betOnAce" />
     </div>
     <!-- End of Overlays -->
 
@@ -104,8 +104,11 @@ const containerHeight = ref(0)
 let intervalId: number | undefined = undefined
 const timer = ref(10)
 const startingIn = ref(5)
+
 const drawer = ref(false)
 const reveal = ref(false)
+const showSpinTheWheel = ref(false)
+const betOnAce = ref(0) // store here the player's, bet on ace card
 
 const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
 const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
@@ -200,9 +203,9 @@ const shuffleCard = () => {
     playerCount: 0,
   }))
 
-  // FourCards.value.forEach((item) => {
-  //   console.log(`${item.value},${item.playerCount}`)
-  // })
+  FourCards.value.forEach((item) => {
+    console.log(`${item.value},${item.playerCount}`)
+  })
 }
 
 const handleSelectCard = (index: number | null) => {
@@ -299,19 +302,6 @@ const initializeGame = async () => {
   }, 1000)
 }
 
-const cleanupIntervals = () => {
-  if (intervalId !== undefined) {
-    clearInterval(intervalId)
-    intervalId = undefined
-  }
-}
-
-const handleCancel = () => {
-  drawer.value = false
-  currentSelectedCard.value = null
-  // selectedCard.value = []
-}
-
 const handleRevealCard = () => {
   reveal.value = true
 
@@ -334,8 +324,10 @@ const handleRevealCard = () => {
 
       // If the item is the lucky card, spin the wheel
       if (item.value === selectedCard.value[hasLuckyCard].value) {
-        useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + item.betAmount)
-        console.log('the item is the lucky card! Spin the wheel')
+        setTimeout(() => {
+          betOnAce.value = item.betAmount
+          showSpinTheWheel.value = true
+        }, 1000)
       }
     }
 
@@ -356,6 +348,15 @@ const handleRevealCard = () => {
   })
 }
 
+const handleCloseWheel = () => {
+  showSpinTheWheel.value = false
+}
+
+const handleCancel = () => {
+  drawer.value = false
+  currentSelectedCard.value = null
+}
+
 onMounted(async () => {
   window.addEventListener('resize', handleResize)
 
@@ -368,16 +369,25 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
-  cleanupIntervals()
+  if (intervalId !== undefined) {
+    clearInterval(intervalId)
+    intervalId = undefined
+  }
 })
 
 onUnmounted(() => {
-  cleanupIntervals()
+  if (intervalId !== undefined) {
+    clearInterval(intervalId)
+    intervalId = undefined
+  }
 })
 
 watch(startGame, (newValue) => {
   if (newValue === 'Start') {
-    cleanupIntervals()
+    if (intervalId !== undefined) {
+      clearInterval(intervalId)
+      intervalId = undefined
+    }
 
     setTimeout(() => {
       intervalId = setInterval(() => {
