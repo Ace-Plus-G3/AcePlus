@@ -5,7 +5,7 @@
       <div class="card-amount-container">
         <div class="left-amount">
           <h5>AVAILABLE BALANCE</h5>
-          <h3><span>₱</span>{{ useCreditStore().getCurrentBalance }}</h3>
+          <h3><span>₱</span> {{ formatCurrency(useCreditStore().getCurrentBalance) }}</h3>
         </div>
         <div class="right-amount">
           <el-button @click="goToCashTransact" :icon="Plus">Cash In</el-button>
@@ -32,7 +32,7 @@
               <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
             </div>
             <div class="right-cashin">
-              <h3><span>₱</span>{{ transaction.amount }}</h3>
+              <h3><span>₱</span> {{ formatCurrency(transaction.amount) }}</h3>
             </div>
           </div>
         </div>
@@ -51,7 +51,7 @@
               <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
             </div>
             <div class="right-cashout">
-              <h3><span>₱</span><span>-</span>{{ transaction.amount }}</h3>
+              <h3><span>₱</span><span> -</span>{{ formatCurrency(transaction.amount) }}</h3>
             </div>
           </div>
         </div>
@@ -69,6 +69,7 @@ import { Plus, Minus } from '@element-plus/icons-vue'
 import TabsComponent from '@/components/TabsComponent.vue'
 import { useRouter } from 'vue-router'
 import { useCreditStore } from '@/stores/creditStore'
+import { formatCurrency } from '@/utils/convertMoney'
 
 const creditStore = useCreditStore()
 
