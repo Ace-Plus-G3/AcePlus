@@ -1,14 +1,34 @@
 <template>
-  <div class="music-btn-container">
-    <UnMute class="music-btn" />
+  <audio ref="audioRef" controls class="audio">
+    <source src="#" type="audio/mpeg" />
+  </audio>
+
+  <div class="music-btn-container" @click="toggleMute">
+    <component :is="isMuted ? Mute : UnMute" class="music-btn" />
   </div>
 </template>
 
 <script setup lang="ts">
 import UnMute from '@/assets/svg/unmute_svg.vue'
+import Mute from '@/assets/svg/mute_svg.vue'
+import { ref } from 'vue'
+
+const audioRef = ref<HTMLAudioElement | null>(null)
+const isMuted = ref(false)
+
+const toggleMute = () => {
+  if (audioRef.value) {
+    isMuted.value = !isMuted.value
+    audioRef.value.muted = isMuted.value
+  }
+}
 </script>
 
 <style scoped>
+.audio {
+  display: none;
+}
+
 .music-btn {
   position: absolute;
   right: 10%;
