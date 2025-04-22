@@ -67,14 +67,13 @@ watch(
   { immediate: true },
 )
 
-const textToCopy = ref('')
+const textToCopy = ref(transactionId)
 
 const copyToClipBoard = () => {
   if (textToCopy.value) {
     navigator.clipboard
       .writeText(textToCopy.value)
       .then(() => {
-        console.log('Copied', textToCopy.value)
         ElMessage({
           message: 'Text Copied',
           type: 'success',
