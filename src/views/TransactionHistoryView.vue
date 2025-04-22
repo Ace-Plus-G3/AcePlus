@@ -21,6 +21,7 @@
       <template v-slot:cashin>
         <div class="history-item-container">
           <div
+            @click="goToReciept(transaction.transaction_id, transaction.type)"
             v-for="transaction in creditStore.cashin"
             :key="transaction.user_id"
             class="row-container"
@@ -39,6 +40,7 @@
       <template v-slot:cashout>
         <div class="history-item-container">
           <div
+            @click="goToReciept(transaction.transaction_id, transaction.type)"
             class="row-container"
             v-for="transaction in creditStore.cashout"
             :key="transaction.user_id"
@@ -69,6 +71,10 @@ import { useRouter } from 'vue-router'
 import { useCreditStore } from '@/stores/creditStore'
 
 const creditStore = useCreditStore()
+
+const goToReciept = (transaction_id: string, transaction_type: 'Cash- In' | 'Cash- Out') => {
+  router.push({ name: 'receipt', params: { id: transaction_id, type: transaction_type } })
+}
 
 const router = useRouter()
 

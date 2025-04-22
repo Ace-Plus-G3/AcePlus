@@ -4,6 +4,7 @@ import TransactionHistory from '@/views/TransactionHistoryView.vue'
 import CashTransaction from '@/views/CashTransaction.vue'
 import GameView from '@/views/GameView.vue'
 import { usePlayerStore } from '@/stores'
+import ReceiptView from '@/views/ReceiptView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,6 +29,12 @@ const router = createRouter({
       path: '/game',
       name: 'game',
       component: GameView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/receipt/:id/:type',
+      name: 'receipt',
+      component: ReceiptView,
       meta: { requiresAuth: true },
     },
   ],
