@@ -32,7 +32,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/receipt/:id',
+      path: '/receipt/:id/:type',
       name: 'receipt',
       component: ReceiptView,
       meta: { requiresAuth: true },

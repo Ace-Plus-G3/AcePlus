@@ -12,12 +12,17 @@ export const useCreditStore = defineStore('creditStore', () => {
 
   //GETTERS
   const getCashin = computed(() => cashin.value)
+  const getCashout = computed(() => cashout.value)
   const getCurrentBalance = computed(() => currentBalance.value)
 
   //SETTERS
   const setCashin = (newCashin: Cashin[]) => {
     cashin.value = newCashin
     localStorage.setItem('cashin', JSON.stringify(cashin.value))
+  }
+  const setCashout = (newCashout: Cashout[]) => {
+    cashout.value = newCashout
+    localStorage.setItem('cashout', JSON.stringify(cashout.value))
   }
   const setCurrentBalance = (newBalance: number) => {
     const playerStore = usePlayerStore()
@@ -134,6 +139,10 @@ export const useCreditStore = defineStore('creditStore', () => {
     return cashin.value.find((item) => item.transaction_id === transaction_id)
   }
 
+  const getCashoutTransacById = (transaction_id: string | string[]) => {
+    return cashout.value.find((item) => item.transaction_id === transaction_id)
+  }
+
   return {
     cashin,
     currentBalance,
@@ -141,13 +150,16 @@ export const useCreditStore = defineStore('creditStore', () => {
 
     setCashin,
     setCurrentBalance,
+    setCashout,
 
     getCashin,
     getCurrentBalance,
+    getCashout,
 
     handleCashin,
     handleCashout,
     handlePersistCredits,
     getCashinTransacById,
+    getCashoutTransacById,
   }
 })
