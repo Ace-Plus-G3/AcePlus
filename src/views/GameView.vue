@@ -94,7 +94,7 @@ import GameTimer from '@/components/overlays/GameTimer.vue'
 import { getRandomCards } from '@/utils/getRandomCards'
 import { useRouter } from 'vue-router'
 import { useCreditStore } from '@/stores'
-import { convertToReadableFormat } from '@/utils/convertMoney'
+import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
 import BetWin from '@/components/overlays/BetWin.vue'
 
 const router = useRouter()
@@ -337,7 +337,7 @@ const handleRevealCard = () => {
 
     // If the item is the highest card and no lucky card bet exists
     if (item.value === highestCard.value && hasLuckyCard < 0) {
-      allBets.value.push(`+${item.betAmount}`)
+      allBets.value.push(`+${formatCurrency(item.betAmount)}`)
       useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + item.betAmount)
       console.log('Item is the highest card!')
     }
@@ -347,7 +347,7 @@ const handleRevealCard = () => {
       item.value !== highestCard.value &&
       (hasLuckyCard < 0 || item.value !== selectedCard.value[hasLuckyCard]?.value)
     ) {
-      allBets.value.push(`-${item.betAmount}`)
+      allBets.value.push(`-${formatCurrency(item.betAmount)}`)
       useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance - item.betAmount)
       console.log('Not the highest nor the lucky card')
     }
