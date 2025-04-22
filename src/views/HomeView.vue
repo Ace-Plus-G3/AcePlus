@@ -1,5 +1,6 @@
 <template>
   <div id="home-page">
+    <MusicBtn />
     <div class="title-container">
       <h1 class="title">Ace+</h1>
     </div>
@@ -26,6 +27,7 @@ import { ref } from 'vue'
 import { usePlayerStore } from '@/stores/playerStore'
 import { useRouter } from 'vue-router'
 import AuthModal from '@/components/AuthModal.vue'
+import MusicBtn from '@/components/MusicButton.vue'
 
 import { showNotify } from '@/utils/notify'
 
