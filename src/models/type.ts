@@ -27,3 +27,9 @@ export type TLoginParams = {
   formE1: FormInstance | undefined
   handleCloseModal: () => void
 }
+
+export type TSpinWheel = {
+  deg: number
+  multiplier: number
+  url: string
+}

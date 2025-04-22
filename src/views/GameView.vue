@@ -17,11 +17,15 @@
     <PlayerWins :game_status="game_status" />
     <GameTimer :starting-in="startingIn" :timer="timer" />
     <StartingInView :starting-in="startingIn" />
+    <div class="spin-overlay" v-if="showSpinTheWheel">
+      <SpinTheWheel @handle-close="handleCloseWheel" :bet-amount="betOnAce" />
+    </div>
     <!-- End of Overlays -->
 
     <el-main>
       <div class="game-container" ref="gameContainerRef" :disabled="startGame === 'Start'">
         <el-image fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
+        <BetWin v-for="(item, index) in allBets" :key="item" :bet="item" :index="index" />
         <CustomCardView
           v-for="(_, index) in FourCards"
           :key="index"
@@ -36,10 +40,6 @@
           :container-width="containerWidth"
           :container-height="containerHeight"
         />
-      </div>
-
-      <div v-if="selectedCard.length > 0 && selectedCard[0].value === 1">
-        <SpinTheWheel />
       </div>
 
       <!-- <div>
@@ -95,6 +95,7 @@ import { getRandomCards } from '@/utils/getRandomCards'
 import { useRouter } from 'vue-router'
 import { useCreditStore } from '@/stores'
 import { convertToReadableFormat } from '@/utils/convertMoney'
+import BetWin from '@/components/overlays/BetWin.vue'
 
 const router = useRouter()
 
@@ -105,14 +106,18 @@ const containerHeight = ref(0)
 let intervalId: number | undefined = undefined
 const timer = ref(10)
 const startingIn = ref(5)
+
 const drawer = ref(false)
 const reveal = ref(false)
+const showSpinTheWheel = ref(false)
+const betOnAce = ref(0) // store here the player's, bet on ace card
 
 const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
 const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
 
 const FourCards = ref<TCardType[]>([])
 const selectedCard = ref<TSelectedCard[]>([])
+const allBets = ref<string[]>([])
 
 const currentSelectedCard = ref<{
   index: number
@@ -167,6 +172,7 @@ const handleResetCard = () => {
   game_status.value = 'PENDING'
 
   selectedCard.value = []
+  allBets.value = []
   currentSelectedCard.value = null
   shuffleCard()
 
@@ -201,9 +207,9 @@ const shuffleCard = () => {
     playerCount: 0,
   }))
 
-  // FourCards.value.forEach((item) => {
-  //   console.log(`${item.value},${item.playerCount}`)
-  // })
+  FourCards.value.forEach((item) => {
+    console.log(`${item.value},${item.playerCount}`)
+  })
 }
 
 const handleSelectCard = (index: number | null) => {
@@ -300,19 +306,6 @@ const initializeGame = async () => {
   }, 1000)
 }
 
-const cleanupIntervals = () => {
-  if (intervalId !== undefined) {
-    clearInterval(intervalId)
-    intervalId = undefined
-  }
-}
-
-const handleCancel = () => {
-  drawer.value = false
-  currentSelectedCard.value = null
-  // selectedCard.value = []
-}
-
 const handleRevealCard = () => {
   reveal.value = true
 
@@ -335,13 +328,16 @@ const handleRevealCard = () => {
 
       // If the item is the lucky card, spin the wheel
       if (item.value === selectedCard.value[hasLuckyCard].value) {
-        useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + item.betAmount)
-        console.log('the item is the lucky card! Spin the wheel')
+        setTimeout(() => {
+          betOnAce.value = item.betAmount
+          showSpinTheWheel.value = true
+        }, 1000)
       }
     }
 
     // If the item is the highest card and no lucky card bet exists
     if (item.value === highestCard.value && hasLuckyCard < 0) {
+      allBets.value.push(`+${item.betAmount}`)
       useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + item.betAmount)
       console.log('Item is the highest card!')
     }
@@ -351,10 +347,20 @@ const handleRevealCard = () => {
       item.value !== highestCard.value &&
       (hasLuckyCard < 0 || item.value !== selectedCard.value[hasLuckyCard]?.value)
     ) {
+      allBets.value.push(`-${item.betAmount}`)
       useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance - item.betAmount)
       console.log('Not the highest nor the lucky card')
     }
   })
+}
+
+const handleCloseWheel = () => {
+  showSpinTheWheel.value = false
+}
+
+const handleCancel = () => {
+  drawer.value = false
+  currentSelectedCard.value = null
 }
 
 onMounted(async () => {
@@ -369,16 +375,25 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
-  cleanupIntervals()
+  if (intervalId !== undefined) {
+    clearInterval(intervalId)
+    intervalId = undefined
+  }
 })
 
 onUnmounted(() => {
-  cleanupIntervals()
+  if (intervalId !== undefined) {
+    clearInterval(intervalId)
+    intervalId = undefined
+  }
 })
 
 watch(startGame, (newValue) => {
   if (newValue === 'Start') {
-    cleanupIntervals()
+    if (intervalId !== undefined) {
+      clearInterval(intervalId)
+      intervalId = undefined
+    }
 
     setTimeout(() => {
       intervalId = setInterval(() => {
@@ -702,6 +717,20 @@ watch(startGame, (newValue) => {
 
 .cancel-btn:hover {
   background: #ffd54f;
+}
+
+.spin-overlay {
+  z-index: 2000;
+  position: fixed;
+  top: 0;
+
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Responsive styles */

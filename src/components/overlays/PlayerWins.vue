@@ -1,6 +1,8 @@
 <template>
-  <div v-if="game_status === 'WIN'" class="win-overlay">
-    <el-image :src="WIN_ICON" />
+  <div class="overlay" v-if="game_status === 'WIN'">
+    <div class="win-overlay">
+      <el-image :src="WIN_ICON" />
+    </div>
   </div>
 </template>
 
@@ -14,10 +16,21 @@ defineProps<TProps>()
 </script>
 
 <style scoped>
+.overlay {
+  width: 100%;
+  height: 100dvh;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 .win-overlay {
   animation: popup 0.5s ease-in-out;
-  position: fixed;
-  z-index: 1000;
 }
 
 /* Responsive styles */

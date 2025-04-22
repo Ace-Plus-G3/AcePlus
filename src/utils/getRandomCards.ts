@@ -5,7 +5,7 @@ export function getRandomCards(cards: Array<TCardType>): Array<TCardType> {
   const selectedCards: Array<TCardType> = []
 
   // 10% chance of ace appearing
-  const shouldIncludeAce: boolean = Math.random() < 0.1
+  const shouldIncludeAce: boolean = Math.random() < 1
   const aceIndex: number = cardsDeck.findIndex((card: TCardType) => card.value === 1)
 
   if (shouldIncludeAce && aceIndex !== -1) {
