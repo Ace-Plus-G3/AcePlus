@@ -6,10 +6,8 @@
       </el-icon>
     </div>
     <div>
-      <div class="hamburger">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
+      <div class="text">
+        <h3 @click="goToTransact">E - Wallet</h3>
       </div>
     </div>
   </el-header>
@@ -17,12 +15,16 @@
 
 <script setup lang="ts">
 import { Back } from '@element-plus/icons-vue'
-import {useRouter} from 'vue-router'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 const goToBack = () => {
-  router.push({name: 'home'})
+  router.push({ name: 'home' })
+}
+
+const goToTransact = () => {
+  router.push({ name: 'transaction-history' })
 }
 </script>
 
@@ -37,10 +39,16 @@ const goToBack = () => {
   padding-bottom: 3px;
 }
 
-.hamburger {
+.text {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
+}
+
+.text h3 {
+  color: #f9c80e;
+}
+
+.text h3:hover {
+  cursor: pointer;
 }
 
 .line {
