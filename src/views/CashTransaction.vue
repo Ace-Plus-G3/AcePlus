@@ -23,13 +23,23 @@
       </TabsComponent>
     </div>
   </div>
+  <TransactionStatusDialog
+    v-if="dialogStore.isVisible"
+    :status="dialogStore.status"
+    :message="dialogStore.message"
+    v-model:visible="dialogStore.isVisible"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import TabsComponent from '@/components/TabsComponent.vue'
-import { useCreditStore } from '@/stores/creditStore'
+import TransactionStatusDialog from '@/components/TransactionStatusDialog.vue'
+import { useCreditStore } from '@/stores/'
+import { useDialogStore } from '@/stores'
+
+const dialogStore = useDialogStore()
 
 const imageSrc = ref(new URL('/src/assets/gcash-logo.jpg', import.meta.url).href)
 
@@ -40,37 +50,39 @@ const amount = ref<number | null>(null)
 
 const CashIn = () => {
   if (!amount.value || !account_number.value) {
-    console.log('Please fill in all fields')
+    dialogStore.showDialog('error', 'Please fill in all fields')
     return
   }
 
   if (amount.value < 100) {
-    console.log('Minimum cashin is 100')
+    dialogStore.showDialog('error', 'Minimum cash-in is 100')
     return
   }
 
   creditStore.handleCashin(Number(amount.value), Number(account_number.value))
+  dialogStore.showDialog('success', 'Transaction completed successfully!')
 
   resetTransactionFields()
 }
 
 const CashOut = () => {
   if (!amount.value || !account_number.value) {
-    console.log('Please fill in all fields')
+    dialogStore.showDialog('error', 'Please fill in all fields')
     return
   }
 
   if (amount.value < 100) {
-    console.log('Minimum cashout is 100')
+    dialogStore.showDialog('error', 'Minimum cash-out is 100')
     return
   }
 
   if (amount.value > creditStore.getCurrentBalance) {
-    console.log('Insufficient Balance')
+    dialogStore.showDialog('error', 'Insufficient Balance')
     return
   }
 
   creditStore.handleCashout(Number(amount.value), Number(account_number.value))
+  dialogStore.showDialog('success', 'Transaction completed successfully!')
 
   resetTransactionFields()
 }
@@ -121,6 +133,10 @@ const resetTransactionFields = () => {
   border-radius: 8px;
   padding: 16px;
   box-shadow: none;
+}
+
+:deep(.el-input__inner) {
+  color: #ffffff;
 }
 
 :deep(.el-button) {

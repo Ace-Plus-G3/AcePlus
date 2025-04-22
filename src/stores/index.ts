@@ -1,4 +1,5 @@
 import { usePlayerStore } from './playerStore'
 import { useCreditStore } from './creditStore'
+import { useDialogStore } from './transactionDialogStatusStore'
 
-export { usePlayerStore, useCreditStore }
+export { usePlayerStore, useCreditStore, useDialogStore }
