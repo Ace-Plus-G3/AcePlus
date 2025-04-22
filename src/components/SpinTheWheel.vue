@@ -17,7 +17,7 @@
       <el-image fit="cover" :src="vfxLight" class="light-2" />
       <div class="text-container">
         <el-image :src="multiplierWin?.url" class="" />
-        <el-text class="text">+{{ props.betAmount * multiplierWin.multiplier }}</el-text>
+        <el-text class="text">+{{ Math.round(outputValue) }}</el-text>
       </div>
       <el-text class="close-text" @click="emit('handleClose', false)">Click here to close</el-text>
     </div>
@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import BorderWheel from '@/assets/border_wheel.png'
 import Wheel from '@/assets/wheel-new-new.png'
 import { wheelDeg } from '@/models/constants'
@@ -33,6 +33,12 @@ import vfxLight from '@/assets/game/vfx-light.png'
 import congratulations from '@/assets/game/congratulations.png'
 import type { TSpinWheel } from '@/models/type'
 import { useCreditStore } from '@/stores'
+import { useTransition } from '@vueuse/core'
+
+// const props = defineProps<{
+//   betAmount: number
+//   multiplierWin: { multiplier: number } | null
+// }>()
 
 type Props = {
   betAmount: number
@@ -44,6 +50,17 @@ const props = defineProps<Props>()
 const rotation = ref(0)
 const isSpinning = ref(false)
 const multiplierWin = ref<TSpinWheel | null>(null)
+
+const source = ref(0)
+const outputValue = useTransition(source, { duration: 1500 })
+
+// Watch for changes and apply smooth transition
+watch(
+  () => props.betAmount * (multiplierWin.value ? multiplierWin.value.multiplier : 0),
+  (newValue) => {
+    source.value = newValue
+  },
+)
 
 const spinWheel = () => {
   if (isSpinning.value) return
@@ -176,7 +193,7 @@ onMounted(() => {
 
 .text {
   font-size: 48px;
-  color: white;
+  color: #f9c80e;
 }
 
 .close-text {

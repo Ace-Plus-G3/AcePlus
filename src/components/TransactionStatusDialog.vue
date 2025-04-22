@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, defineProps, defineEmits } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   visible: {
