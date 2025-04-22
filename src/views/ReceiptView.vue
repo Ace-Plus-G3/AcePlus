@@ -12,7 +12,7 @@
             <h4 class="amount" :style="{ color: transactionType === 'Cash- In' ? 'green' : 'red' }">
               {{ transactionType === 'Cash- In' ? '+' : '-' }}
               <span :style="{ color: transactionType === 'Cash- In' ? 'green' : 'red' }">{{
-                transaction?.amount
+                formatCurrency(transaction?.amount ? transaction.amount : 0)
               }}</span>
             </h4>
           </div>
@@ -47,6 +47,7 @@ import ReceiptSVG from '@/assets/svg/receipt_svg.vue'
 import CopySVG from '@/assets/svg/copy_svg.vue'
 import moment from 'moment'
 import { ElMessage } from 'element-plus'
+import { formatCurrency } from '@/utils/convertMoney'
 
 const route = useRoute()
 const transactionId = computed(() => String(route.params.id))
