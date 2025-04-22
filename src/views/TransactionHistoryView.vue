@@ -20,88 +20,36 @@
     <TabsComponent>
       <template v-slot:cashin>
         <div class="history-item-container">
-          <div class="row-container">
+          <div
+            v-for="transaction in creditStore.cashin"
+            :key="transaction.user_id"
+            class="row-container"
+          >
             <div class="left-cashin">
-              <h3>Cash- In</h3>
-              <h4>April 11, 2025</h4>
-              <h4>123456789</h4>
+              <h4>{{ moment(transaction.date).format('h:mm:ss a') }}</h4>
+              <h3>{{ transaction.type }}</h3>
+              <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
             </div>
             <div class="right-cashin">
-              <h3><span>₱</span>200</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashin">
-              <h3>Cash- In</h3>
-              <h4>April 12, 2025</h4>
-              <h4>123456789</h4>
-            </div>
-            <div class="right-cashin">
-              <h3><span>₱</span>100</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashin">
-              <h3>Top- Up</h3>
-              <h4>April 15, 2025</h4>
-              <h4>123456789</h4>
-            </div>
-            <div class="right-cashin">
-              <h3><span>₱</span>200</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashin">
-              <h3>Top- Up</h3>
-              <h4>April 15, 2025</h4>
-              <h4>123456789</h4>
-            </div>
-            <div class="right-cashin">
-              <h3><span>₱</span>200</h3>
+              <h3><span>₱</span>{{ transaction.amount }}</h3>
             </div>
           </div>
         </div>
       </template>
       <template v-slot:cashout>
         <div class="history-item-container">
-          <div class="row-container">
+          <div
+            class="row-container"
+            v-for="transaction in creditStore.cashout"
+            :key="transaction.user_id"
+          >
             <div class="left-cashout">
-              <h3>Cash- Out</h3>
-              <h4>April 11, 2025</h4>
-              <h4>123456789</h4>
+              <h4>{{ moment(transaction.date).format('h:mm:ss a') }}</h4>
+              <h3>{{ transaction.type }}</h3>
+              <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
             </div>
             <div class="right-cashout">
-              <h3><span>₱</span><span>-</span>200</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashout">
-              <h3>Cash- Out</h3>
-              <h4>April 11, 2025</h4>
-              <h4>123456789</h4>
-            </div>
-            <div class="right-cashout">
-              <h3><span>₱</span><span>-</span>200</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashout">
-              <h3>Cash- Out</h3>
-              <h4>April 12, 2025</h4>
-              <h4>123456789</h4>
-            </div>
-            <div class="right-cashout">
-              <h3><span>₱</span><span>-</span>100</h3>
-            </div>
-          </div>
-          <div class="row-container">
-            <div class="left-cashout">
-              <h3>Cash- Out</h3>
-              <h4>April 15, 2025</h4>
-              <h4>123456789</h4>
-            </div>
-            <div class="right-cashout">
-              <h3><span>₱</span><span>-</span>200</h3>
+              <h3><span>₱</span><span>-</span>{{ transaction.amount }}</h3>
             </div>
           </div>
         </div>
@@ -113,16 +61,22 @@
 
 <script setup lang="ts">
 import HeaderComponent from '@/components/HeaderComponent.vue'
+import moment from 'moment'
 
 import { Plus, Minus } from '@element-plus/icons-vue'
 import TabsComponent from '@/components/TabsComponent.vue'
 import { useRouter } from 'vue-router'
+import { useCreditStore } from '@/stores/creditStore'
+
+const creditStore = useCreditStore()
 
 const router = useRouter()
 
 const goToCashTransact = () => {
   router.push({ name: 'cash-transaction' })
 }
+
+// const dateTimeString = creditStore
 </script>
 
 <style scoped>
@@ -139,7 +93,7 @@ const goToCashTransact = () => {
 
   .left-cashin h3,
   .left-cashout h3 {
-    font-size: 18px;
+    font-size: 30px;
     font-weight: normal;
   }
 
@@ -236,9 +190,13 @@ const goToCashTransact = () => {
   }
 }
 
+.left-cashin h3 {
+  font-size: 20px;
+}
+
 .el-tabs {
-  margin-left: 90px;
-  margin-right: 90px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .el-button {
@@ -250,19 +208,20 @@ const goToCashTransact = () => {
 .row-container {
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
-  gap: 500px;
+  justify-content: space-between;
 }
 
 .left-cashin h4,
 .left-cashout h4 {
   color: #c5c5c5;
+  font-size: 12px;
 }
 
 .left-cashin,
 .left-cashout {
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 .right-cashin {
   display: flex;
@@ -281,7 +240,7 @@ const goToCashTransact = () => {
 
 .row-container {
   border-bottom: 1px solid #313131;
-  padding: 40px 100px;
+  padding: 32px;
 }
 
 :deep(.el-tabs__header) {
@@ -293,7 +252,7 @@ const goToCashTransact = () => {
 }
 
 :deep(.el-tabs__item.is-active) {
-  color: #ffffff;
+  color: #f9c80e;
   font-family: 'Lemon', sans-serif;
 }
 
@@ -304,6 +263,15 @@ const goToCashTransact = () => {
 
 #transact-history {
   background-color: var(--primary-black);
+  font-family: 'Roboto', sans-serif !important;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 auto;
+  /* background-image: url(../assets/homepage_bg.png); */
   height: 100vh;
 }
 
@@ -340,14 +308,14 @@ const goToCashTransact = () => {
 }
 
 .card-amount-container {
-  width: 70%;
-  height: 190px;
-  padding: 80px;
+  width: 400px;
+  height: 161px;
+  padding: 20px;
   overflow: hidden;
 }
 
 .left-amount h5 {
-  font-size: 22px;
+  font-size: 16px;
   font-weight: 400;
 }
 
@@ -358,7 +326,7 @@ const goToCashTransact = () => {
 .history-item-container {
   max-height: 490px; /* Set the maximum height */
   overflow-y: auto; /* Enable vertical scrolling */
-  padding: 10px; /* Optional padding for better spacing */
-  scrollbar-width: none; /* For modern browsers, makes the scrollbar thinner */
+  padding: 0;
+  scrollbar-width: none;
 }
 </style>

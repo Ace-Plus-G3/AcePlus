@@ -125,6 +125,7 @@ export const useCreditStore = defineStore('creditStore', () => {
 
     // Load user-specific data
     cashin.value = loadFromLocalStorage(`cashin_${userId}`, [])
+    cashout.value = loadFromLocalStorage(`cashout_${userId}`, [])
     currentBalance.value = loadFromLocalStorage(`currentBalance_${userId}`, 0)
     console.log('Persist Credits!')
   }
@@ -132,6 +133,7 @@ export const useCreditStore = defineStore('creditStore', () => {
   return {
     cashin,
     currentBalance,
+    cashout,
 
     setCashin,
     setCurrentBalance,
