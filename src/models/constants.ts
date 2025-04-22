@@ -66,7 +66,7 @@ export const chips: Array<TChips> = [
 ]
 
 export const wheelDeg: Array<TSpinWheel> = [
-  { deg: 0, multiplier: 0, url: new URL('@/assets/game/spin-value/3x.png', import.meta.url).href },
+  { deg: 0, multiplier: 3, url: new URL('@/assets/game/spin-value/3x.png', import.meta.url).href },
   { deg: 45, multiplier: 4, url: new URL('@/assets/game/spin-value/4x.png', import.meta.url).href },
   { deg: 90, multiplier: 5, url: new URL('@/assets/game/spin-value/5x.png', import.meta.url).href },
   {

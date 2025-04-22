@@ -10,18 +10,22 @@
     <el-image draggable="false" :src="BorderWheel" class="border-wheel"></el-image>
   </div>
   <div class="win-overlay" v-if="multiplierWin?.multiplier === 0 || multiplierWin">
+    <!-- <div class="win-overlay"> -->
     <div class="banner">
       <el-image fit="cover" :src="congratulations" class="congratulations" />
       <el-image fit="cover" :src="vfxLight" class="light-1" />
       <el-image fit="cover" :src="vfxLight" class="light-2" />
-      <el-image :src="multiplierWin.url" class="text" />
+      <div class="text-container">
+        <el-image :src="multiplierWin?.url" class="" />
+        <el-text class="text">+{{ props.betAmount * multiplierWin.multiplier }}</el-text>
+      </div>
       <el-text class="close-text" @click="emit('handleClose', false)">Click here to close</el-text>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import BorderWheel from '@/assets/border_wheel.png'
 import Wheel from '@/assets/wheel-new-new.png'
 import { wheelDeg } from '@/models/constants'
@@ -79,6 +83,14 @@ const handleSpin = () => {
     spinWheel()
   }
 }
+
+onMounted(() => {
+  setTimeout(() => {
+    if (!isSpinning.value) {
+      spinWheel()
+    }
+  }, 2000)
+})
 </script>
 
 <style scoped>
@@ -152,10 +164,19 @@ const handleSpin = () => {
   top: 7.5%;
 }
 
-.text {
+.text-container {
   position: absolute;
-  font-size: 48px;
   animation: popup 0.25s ease-in-out;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  font-size: 48px;
+  color: white;
 }
 
 .close-text {
@@ -163,6 +184,7 @@ const handleSpin = () => {
   bottom: -10%;
   color: var(--primary-white);
   word-spacing: 4px;
+  cursor: pointer;
 }
 
 .light-1 {
