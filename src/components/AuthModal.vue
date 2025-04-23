@@ -39,7 +39,7 @@
               Create Account
             </el-button>
             <div class="terms-of-service-container">
-              <el-checkbox> </el-checkbox>
+              <el-checkbox v-model="isAgreeToTerms"> </el-checkbox>
               <p>
                 Agree to Terms of Service
                 <span>
@@ -142,6 +142,8 @@ const handleChangeTab = (tab: 'Signup-Tab' | 'Login-Tab') => {
   activeTab.value = tab
 }
 
+const isAgreeToTerms = ref(false)
+
 // Signup Form state
 const signupFormRef = ref<FormInstance>()
 
@@ -155,6 +157,14 @@ const isSignupFormValid = computed(() => {
 })
 
 const signup = async () => {
+  if (isAgreeToTerms.value === false) {
+    showNotify({
+      title: 'Error!',
+      message: 'Please agree to our Terms of Service.',
+      type: 'error',
+    })
+    return
+  }
   try {
     await store.handleSignup({
       formE1: signupFormRef.value,
