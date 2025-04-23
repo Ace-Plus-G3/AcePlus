@@ -4,6 +4,12 @@
       <div class="el-header-top-bar">
         <div class="el-header-image">
           <button class="leave-btn" @click="router.push('/')">Leave</button>
+          <div class="jackpot-container">
+            <el-text class="jackpot-amount">15800</el-text>
+            <div class="jackpot-text-container">
+              <img :src="JackpotText" class="jackpot-text" alt="" />
+            </div>
+          </div>
           <div class="chip-amount">
             <el-text class="chip-amount-text" style="color: white" size="small">{{
               convertToReadableFormat(useCreditStore().getCurrentBalance)
@@ -96,6 +102,7 @@ import { useRouter } from 'vue-router'
 import { useCreditStore } from '@/stores'
 import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
 import BetWin from '@/components/overlays/BetWin.vue'
+import JackpotText from '@/assets/jackpot-text.png'
 
 const router = useRouter()
 
@@ -422,6 +429,46 @@ watch(startGame, (newValue) => {
 </script>
 
 <style scoped>
+.jackpot-text-container {
+  background-size: cover;
+  margin: 0 auto;
+  z-index: 55;
+  position: absolute;
+  top: 103%;
+  right: 38%;
+}
+
+.jackpot-text-container {
+  display: flex;
+}
+
+.jackpot-amount {
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 900 !important;
+  font-size: 3em;
+  background: #915a10;
+  background: linear-gradient(180deg, rgba(145, 90, 16, 1) 15%, rgba(68, 40, 2, 1) 75%);
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.jackpot-container {
+  background-image: url('../assets/jackpot_bgg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 300px;
+  height: 80px;
+  margin-top: 55px;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  /* position: absolute;
+  right: 30%;
+  top: 40%; */
+}
+
 .card {
   z-index: 20 !important;
 }
@@ -742,7 +789,17 @@ watch(startGame, (newValue) => {
   }
 }
 
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 768px) {
+  .jackpot-text {
+    top: 103%;
+    right: 38%;
+  }
+
+  .jackpot-text img {
+    width: 140px !important;
+    height: 30px !important;
+  }
+
   .game-container {
     background-size: contain;
   }
@@ -767,6 +824,9 @@ watch(startGame, (newValue) => {
   }
   .chip-amount-text {
     font-size: 10px;
+  }
+  .jackpot-text-container {
+    top: 110% !important;
   }
 }
 
@@ -809,11 +869,19 @@ watch(startGame, (newValue) => {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 425px) {
   .el-header-image,
   .el-footer-image,
   .custom-drawer-header {
-    padding: 0 20px;
+    padding: 0 15px !important;
+  }
+
+  .jackpot-container {
+    width: 160px !important;
+    height: 70px !important;
+    background-size: contain !important;
+    margin-top: 30px !important;
+    margin-left: 10px;
   }
 
   .timer-container {
@@ -823,6 +891,32 @@ watch(startGame, (newValue) => {
 
   .timer {
     font-size: 36px;
+  }
+
+  .leave-btn {
+    width: 50px !important;
+    font-size: 10px !important;
+    height: 20px !important;
+  }
+
+  .jackpot-amount {
+    font-size: 1.5em;
+  }
+
+  .chip-amount {
+    width: 80px !important;
+    height: 30px !important;
+  }
+  .chip-amount-text {
+    font-size: 8px !important;
+  }
+  .jackpot-text-container {
+    top: 120% !important;
+    right: 38%;
+  }
+
+  .jackpot-text {
+    width: 96px;
   }
 }
 </style>
