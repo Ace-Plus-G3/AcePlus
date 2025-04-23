@@ -53,6 +53,9 @@
       <div class="el-footer-bottom-bar">
         <div class="el-footer-image">
           <span class="title">Place your bets !</span>
+
+          <!-- temporary display -->
+          <h1 style="color: white">Total Bet Amount: {{ totalBetAmount }}</h1>
         </div>
       </div>
     </el-footer>
@@ -85,7 +88,7 @@ import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards, chips } from '@/models/constants'
 import type { TCardType, TSelectedCard } from '@/models/type'
-import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted } from 'vue'
+import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted, computed } from 'vue'
 
 import cardBack from '@/assets/cards/back/card_back_bg.png'
 import PlayerWins from '@/components/overlays/PlayerWins.vue'
@@ -119,6 +122,11 @@ const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
 const FourCards = ref<TCardType[]>([])
 const selectedCard = ref<TSelectedCard[]>([])
 const allBets = ref<string[]>([])
+
+//Temporary way to get the totalbetamount
+const totalBetAmount = computed(() =>
+  selectedCard.value.reduce((total, card) => total + card.betAmount, 0),
+)
 
 const currentSelectedCard = ref<{
   index: number
@@ -271,6 +279,9 @@ const handleSelectBet = (betValue: number) => {
     // console.log(betValue)
 
     FourCards.value[currentSelectedCard.value.index].playerCount += 1
+    //total bet amount
+    // const totalBetAmount = selectedCard.value.reduce((total, card) => total + card.betAmount, 0)
+    // console.log('Total Bet Amount:', totalBetAmount)
   }
   drawer.value = false
 }
