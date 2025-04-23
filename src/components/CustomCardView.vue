@@ -13,6 +13,9 @@
             <el-image class="player-count-icon" :src="playerLogo" />
             <span class="player-count-text">{{ fourCards[index].playerCount }}</span>
           </div>
+          <div ref="scaleRef" class="card_random_multi" v-if="fourCards[index].randomMultiplier">
+            {{ `${fourCards[index].randomMultiplier}x` }}
+          </div>
           <div class="bet-count-container">
             <div class="bet-count">
               <span class="bet-count-text">{{
@@ -31,7 +34,7 @@
         <div
           class="flip-card-back"
           :style="{ backgroundImage: 'url(' + fourCards[index].url + ')' }"
-        />
+        ></div>
       </div>
     </div>
   </div>
@@ -61,12 +64,13 @@ const emit = defineEmits(['handleSelectCard'])
 const props = defineProps<Props>()
 
 const target = ref<HTMLElement>()
+const scaleRef = ref<HTMLElement>()
 const { width } = useWindowSize()
 
 // Card sizing based on screen width
-const CARD_WIDTH = computed(() => (width.value > 1360 ? 80 : 60))
-const CARD_HEIGHT = computed(() => (width.value > 1360 ? 120 : 90))
-const CARD_SPACING = computed(() => (width.value > 1360 ? 20 : 10))
+const CARD_WIDTH = computed(() => (width.value > 1280 ? 80 : 60))
+const CARD_HEIGHT = computed(() => (width.value > 1280 ? 120 : 90))
+const CARD_SPACING = computed(() => (width.value > 1280 ? 20 : 10))
 
 // Calculate distribution positions
 const calculateDistributionPosition = () => {
@@ -91,6 +95,11 @@ const updateCardPosition = (isDistributed: boolean) => {
     target.value.style.transition = `transform ${200 + props.delay}ms ease-out`
     target.value.style.transform = `translate(${position.x}px, ${position.y}px) rotate(360deg)`
     target.value.style.zIndex = '10'
+
+    setTimeout(() => {
+      if (!scaleRef.value) return
+      scaleRef.value.classList.add('scaleIn')
+    }, 1500)
   } else {
     target.value.style.transition = `transform ${200 + props.delay}ms ease-in`
     target.value.style.transform = `translate(10px, -60px) rotate(0deg)`
@@ -109,6 +118,7 @@ watch(
       updateCardPosition(true)
     } else if (newValue === 'Done') {
       updateCardPosition(false)
+      scaleRef.value?.classList.remove('scaleIn')
     }
   },
   { immediate: true },
@@ -209,11 +219,35 @@ onMounted(async () => {
   height: 15px;
 }
 
+.card_random_multi {
+  color: white;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  scale: 0;
+}
+
+.scaleIn {
+  scale: 1;
+  transition:
+    transform 0.5s ease,
+    scale 0.5s ease;
+  animation: pulse-animation 1s infinite;
+}
+
 .flip-card-back {
   background-size: cover;
   background-position: center;
   width: 80px;
   height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
 }
 
 .flip-card-inner {
@@ -251,7 +285,19 @@ onMounted(async () => {
     scale 0.3s ease;
 }
 
-@media screen and (max-width: 1360px) {
+@keyframes pulse-animation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media screen and (max-width: 1280px) {
   .flip-card,
   .flip-card-inner,
   .flip-card-front,
