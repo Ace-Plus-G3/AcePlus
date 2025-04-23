@@ -222,6 +222,7 @@ const shuffleCard = () => {
 const handleSelectCard = (index: number | null) => {
   if (index === null) {
     selectedCard.value = []
+
     return
   }
 
@@ -276,6 +277,8 @@ const handleSelectBet = (betValue: number) => {
       ...currentSelectedCard.value.card,
       betAmount: betValue,
     })
+    // console.log(betValue)
+
     FourCards.value[currentSelectedCard.value.index].playerCount += 1
   }
   drawer.value = false
