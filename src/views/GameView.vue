@@ -47,12 +47,6 @@
           :container-height="containerHeight"
         />
       </div>
-
-      <!-- <div>
-        <el-button  :disabled="startGame === 'Start'" class="start-btn">
-          <img draggable="false" src="/game/game_bet.png" alt="game_bet" fit="cover" class="game-start" />
-        </el-button>
-      </div> -->
     </el-main>
 
     <el-footer>
@@ -174,10 +168,10 @@ const getHighestCard = () => {
 const handleResetCard = () => {
   timer.value = 3
   reveal.value = false
-  // drawer.value = false
   startGame.value = 'Done'
   game_status.value = 'PENDING'
 
+  FourCards.value = []
   selectedCard.value = []
   allBets.value = []
   currentSelectedCard.value = null
@@ -209,13 +203,10 @@ const handleResetCard = () => {
 }
 
 const shuffleCard = () => {
-  FourCards.value = getRandomCards(Cards).map((card) => ({
-    ...card,
-    playerCount: 0,
-  }))
+  FourCards.value = getRandomCards(Cards)
 
   FourCards.value.forEach((item) => {
-    console.log(`${item.value},${item.playerCount}`)
+    console.log(`Value:${item.value}, Multiplier: ${item.randomMultiplier}`)
   })
 }
 
@@ -339,6 +330,13 @@ const handleRevealCard = () => {
       // If the item is the lucky card, spin the wheel
       if (item.value === selectedCard.value[hasLuckyCard].value) {
         setTimeout(() => {
+          const withMultiplier =
+            item.betAmount * (item.randomMultiplier ? item.randomMultiplier : 1)
+
+          allBets.value.push(`+${formatCurrency(withMultiplier)}`)
+          useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + withMultiplier)
+        }, 500)
+        setTimeout(() => {
           betOnAce.value = item.betAmount
           showSpinTheWheel.value = true
         }, 1000)
@@ -347,8 +345,9 @@ const handleRevealCard = () => {
 
     // If the item is the highest card and no lucky card bet exists
     if (item.value === highestCard.value && hasLuckyCard < 0) {
-      allBets.value.push(`+${formatCurrency(item.betAmount)}`)
-      useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + item.betAmount)
+      const withMultiplier = item.betAmount * (item.randomMultiplier ? item.randomMultiplier : 1)
+      allBets.value.push(`+${formatCurrency(withMultiplier)}`)
+      useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + withMultiplier)
       console.log('Item is the highest card!')
     }
 
