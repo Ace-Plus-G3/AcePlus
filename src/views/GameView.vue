@@ -84,7 +84,7 @@
 import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards, chips } from '@/models/constants'
-import type { TCardType, TSelectedCard } from '@/models/type'
+import { type TBots, type TBotsCards, type TCardType, type TSelectedCard } from '@/models/type'
 import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted } from 'vue'
 
 import cardBack from '@/assets/cards/back/card_back_bg.png'
@@ -119,6 +119,8 @@ const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
 const FourCards = ref<TCardType[]>([])
 const selectedCard = ref<TSelectedCard[]>([])
 const allBets = ref<string[]>([])
+
+const allBots = ref<TBots[]>([])
 
 const currentSelectedCard = ref<{
   index: number
@@ -205,9 +207,9 @@ const handleResetCard = () => {
 const shuffleCard = () => {
   FourCards.value = getRandomCards(Cards)
 
-  FourCards.value.forEach((item) => {
-    console.log(`Value:${item.value}, Multiplier: ${item.randomMultiplier}`)
-  })
+  // FourCards.value.forEach((item) => {
+  //   console.log(`Value:${item.value}, Multiplier: ${item.randomMultiplier}`)
+  // })
 }
 
 const handleSelectCard = (index: number | null) => {
@@ -367,6 +369,54 @@ const handleCloseWheel = () => {
 const handleCancel = () => {
   drawer.value = false
   currentSelectedCard.value = null
+}
+
+const handleBots = () => {
+  const botRandomAmount = Math.floor(Math.random() * 20) // how many bots per game
+  const bot_bet_choices = [1, 5, 10, 50, 500, 100, 500, 1000, 5000, 10000] // amount of bet they can choice
+
+  const names = [
+    'Sophia',
+    'Liam',
+    'Olivia',
+    'Noah',
+    'Emma',
+    'James',
+    'Ava',
+    'Elijah',
+    'Isabella',
+    'Lucas',
+    'Mia',
+    'Ethan',
+    'Amelia',
+    'Alexander',
+    'Charlotte',
+    'Benjamin',
+    'Harper',
+    'Henry',
+    'Evelyn',
+    'Sebastian',
+  ]
+
+  for (let i = 0; i <= botRandomAmount; i++) {
+    const bot_random_choice_of_card = Math.floor(Math.random() * 4) // amount of card they can bet on
+
+    const bot_name = names[Math.floor(Math.random() * names.length)]
+    names.splice(Math.floor(Math.random() * names.length), 1)
+
+    const bot_cards: TBotsCards[] = []
+    for (let j = 0; j <= bot_random_choice_of_card; j++) {
+      bot_cards.push({
+        card_index: j,
+        bot_bet_amount: bot_bet_choices[Math.floor(Math.random() * bot_bet_choices.length)],
+      })
+    }
+
+    allBots.value.push({
+      bot_name,
+      bot_cards,
+    })
+  }
 }
 
 onMounted(async () => {

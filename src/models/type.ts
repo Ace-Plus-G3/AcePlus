@@ -35,3 +35,13 @@ export type TSpinWheel = {
   multiplier: number
   url: string
 }
+
+export type TBots = {
+  bot_name: string
+  bot_cards: TBotsCards[]
+}
+
+export type TBotsCards = {
+  card_index: number
+  bot_bet_amount: number
+}
