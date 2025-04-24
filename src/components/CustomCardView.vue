@@ -19,13 +19,7 @@
           <div class="bet-count-container">
             <div class="bet-count">
               <span class="bet-count-text">{{
-                convertToReadableFormat(
-                  props.selectedCard.reduce((total, card) => {
-                    return card.value === props.fourCards[props.index].value
-                      ? total + card.betAmount
-                      : total
-                  }, 0),
-                )
+                convertToReadableFormat(fourCards[props.index].totalBet)
               }}</span>
               <el-image class="player-count-icon" :src="GoldIcon" />
             </div>

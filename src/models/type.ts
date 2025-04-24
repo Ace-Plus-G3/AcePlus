@@ -5,14 +5,16 @@ export type TCardType = {
   url: string
   playerCount: number
   randomMultiplier?: number
+  totalBet: number
 }
 
 export type TSelectedCard = {
   value: number
   url: string
   playerCount: number
-  betAmount: number
+  betAmount: number // player's bet
   randomMultiplier?: number
+  totalBet: number
 }
 
 export type TChips = {
@@ -34,4 +36,14 @@ export type TSpinWheel = {
   deg: number
   multiplier: number
   url: string
+}
+
+export type TBots = {
+  bot_name: string
+  bot_cards: TBotsCards[]
+}
+
+export type TBotsCards = {
+  card_index: number
+  bot_bet_amount: number
 }

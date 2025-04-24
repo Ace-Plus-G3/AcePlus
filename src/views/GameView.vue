@@ -87,9 +87,8 @@
 import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards, chips } from '@/models/constants'
-import type { TCardType, TSelectedCard } from '@/models/type'
+import { type TBots, type TBotsCards, type TCardType, type TSelectedCard } from '@/models/type'
 import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted, computed } from 'vue'
-
 import cardBack from '@/assets/cards/back/card_back_bg.png'
 import PlayerWins from '@/components/overlays/PlayerWins.vue'
 import StartingInView from '@/components/overlays/StartingInView.vue'
@@ -125,12 +124,13 @@ const FourCards = ref<TCardType[]>([])
 const selectedCard = ref<TSelectedCard[]>([])
 const allBets = ref<string[]>([])
 
+const allBots = ref<TBots[]>([])
 const accumulatedJackpot = ref(0)
 const source = ref(0)
 const outputValue = useTransition(source, { duration: 1000 })
 
 const totalBetAmount = computed(() =>
-  selectedCard.value.reduce((total, card) => total + card.betAmount, 0),
+  FourCards.value.reduce((total, card) => total + card.totalBet, 0),
 )
 
 const fivePercentOfTotalBet = computed(() => totalBetAmount.value * 0.05)
@@ -196,6 +196,7 @@ const handleResetCard = () => {
   FourCards.value = []
   selectedCard.value = []
   allBets.value = []
+  allBots.value = []
   currentSelectedCard.value = null
   shuffleCard()
 
@@ -227,9 +228,9 @@ const handleResetCard = () => {
 const shuffleCard = () => {
   FourCards.value = getRandomCards(Cards)
 
-  FourCards.value.forEach((item) => {
-    console.log(`Value:${item.value}, Multiplier: ${item.randomMultiplier}`)
-  })
+  // FourCards.value.forEach((item) => {
+  //   console.log(`Value:${item.value}, Multiplier: ${item.randomMultiplier}`)
+  // })
 }
 
 const handleSelectCard = (index: number | null) => {
@@ -268,36 +269,38 @@ const handleSelectBet = (betValue: number) => {
     return
   }
 
-  const isAlreadySelected = selectedCard.value.some(
-    (card) => card.value === currentSelectedCard.value?.card.value,
+  const selectedCardIndex = selectedCard.value.findIndex(
+    (item) => item.value === currentSelectedCard.value?.card.value,
   )
 
-  if (isAlreadySelected) {
-    // Change bet of the selected card
-    const updatedSelectedCard = selectedCard.value.map((item) =>
-      item.value === currentSelectedCard.value?.card.value
-        ? {
-            ...currentSelectedCard.value.card,
-            betAmount: betValue,
-          }
-        : item,
-    )
-    selectedCard.value = updatedSelectedCard
-    // FourCards.value[index].playerCount -= 1
+  if (selectedCardIndex !== -1) {
+    // Update existing card
+    const oldBet = selectedCard.value[selectedCardIndex].betAmount
+    const newBet = betValue
+
+    console.log(`Old Bet: ${oldBet}`)
+    console.log(`New Bet: ${newBet}`)
+
+    // Update `FourCards` total bet by subtracting old bet and adding new bet
+    FourCards.value[currentSelectedCard.value.index].totalBet -= oldBet
+    FourCards.value[currentSelectedCard.value.index].totalBet += newBet
+
+    // Update `selectedCard` bet amount
+    selectedCard.value[selectedCardIndex] = {
+      ...selectedCard.value[selectedCardIndex],
+      betAmount: newBet,
+    }
   } else {
-    // Bet
+    // Add new card to `selectedCard`
     selectedCard.value.push({
       ...currentSelectedCard.value.card,
       betAmount: betValue,
     })
-    // console.log(betValue)
 
+    // Update `FourCards` total bet and player count
+    FourCards.value[currentSelectedCard.value.index].totalBet += betValue
     FourCards.value[currentSelectedCard.value.index].playerCount += 1
-    //total bet amount
-    // const totalBetAmount = selectedCard.value.reduce((total, card) => total + card.betAmount, 0)
-    // console.log('Total Bet Amount:', totalBetAmount)
   }
-  console.log(totalBetAmount.value)
 
   drawer.value = false
 }
@@ -388,6 +391,7 @@ const handleRevealCard = () => {
       console.log('Not the highest nor the lucky card')
     }
   })
+
   setTimeout(() => {
     handleEndOfGame()
   }, 1000)
@@ -400,6 +404,73 @@ const handleCloseWheel = () => {
 const handleCancel = () => {
   drawer.value = false
   currentSelectedCard.value = null
+}
+
+const handleDistributeBot = () => {
+  let accumulatedDelay = 0 // Keeps track of total delay time
+
+  allBots.value.forEach((bot) => {
+    // Generate a random delay between 1 to 10 seconds (in milliseconds)
+    const randomDelay = Math.floor(Math.random() * 5000) + 500
+
+    // Accumulate the delay for sequential execution
+    accumulatedDelay += randomDelay
+
+    setTimeout(() => {
+      bot.bot_cards.forEach((bot_card) => {
+        FourCards.value[bot_card.card_index].totalBet += bot_card.bot_bet_amount
+        FourCards.value[bot_card.card_index].playerCount += 1
+      })
+    }, accumulatedDelay)
+  })
+}
+
+const handleGenerateBots = () => {
+  const botRandomAmount = Math.floor(Math.random() * 20) // how many bots per game
+  const bot_bet_choices = [1, 5, 10, 50, 500, 100, 500, 1000, 5000, 10000] // amount of bet they can choice
+
+  const names = [
+    'Sophia',
+    'Liam',
+    'Olivia',
+    'Noah',
+    'Emma',
+    'James',
+    'Ava',
+    'Elijah',
+    'Isabella',
+    'Lucas',
+    'Mia',
+    'Ethan',
+    'Amelia',
+    'Alexander',
+    'Charlotte',
+    'Benjamin',
+    'Harper',
+    'Henry',
+    'Evelyn',
+    'Sebastian',
+  ]
+
+  for (let i = 0; i <= botRandomAmount; i++) {
+    const bot_random_choice_of_card = Math.floor(Math.random() * 4) // amount of card they can bet on
+
+    const bot_name = names[Math.floor(Math.random() * names.length)]
+    names.splice(Math.floor(Math.random() * names.length), 1)
+
+    const bot_cards: TBotsCards[] = []
+    for (let j = 0; j <= bot_random_choice_of_card; j++) {
+      bot_cards.push({
+        card_index: j,
+        bot_bet_amount: bot_bet_choices[Math.floor(Math.random() * bot_bet_choices.length)],
+      })
+    }
+
+    allBots.value.push({
+      bot_name,
+      bot_cards,
+    })
+  }
 }
 
 onMounted(async () => {
@@ -432,14 +503,6 @@ onMounted(() => {
   accumulatedJackpot.value = storedJackpot ? parseFloat(storedJackpot) : 0 // Default to 0 if no value exists
 })
 
-watch(
-  selectedCard,
-  (newValue) => {
-    localStorage.setItem('selectedCard', JSON.stringify(newValue))
-  },
-  { deep: true },
-)
-
 // Watch for changes in accumulatedJackpot and update source
 watch(
   accumulatedJackpot,
@@ -457,6 +520,8 @@ watch(startGame, (newValue) => {
     }
 
     setTimeout(() => {
+      handleGenerateBots()
+      handleDistributeBot()
       intervalId = setInterval(() => {
         if (timer.value > 0) {
           timer.value--
@@ -499,8 +564,7 @@ watch(startGame, (newValue) => {
 .jackpot-amount {
   font-family: 'Roboto', sans-serif !important;
   font-weight: 900 !important;
-  font-size: 3em;
-  background: #915a10;
+  font-size: clamp(16px, 32px, 48rem); /* Responsive font size */
   background: linear-gradient(180deg, rgba(145, 90, 16, 1) 15%, rgba(68, 40, 2, 1) 75%);
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -511,11 +575,12 @@ watch(startGame, (newValue) => {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  width: 300px;
+  width: 350px;
   height: 80px;
   margin-top: 55px;
   z-index: 50;
   display: flex;
+  align-items: center;
   justify-content: center;
   flex-direction: column;
   /* position: absolute;
@@ -939,6 +1004,9 @@ watch(startGame, (newValue) => {
     background-size: contain !important;
     margin-top: 30px !important;
     margin-left: 10px;
+  }
+  .jackpot-amount {
+    font-size: 14px !important;
   }
 
   .timer-container {
