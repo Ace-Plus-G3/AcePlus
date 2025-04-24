@@ -5,7 +5,9 @@
         <div class="el-header-image">
           <button class="leave-btn" @click="router.push('/')">Leave</button>
           <div class="jackpot-container">
-            <el-text class="jackpot-amount">15800</el-text>
+            <el-text class="jackpot-amount">
+              {{ formatCurrency(outputValue) }}
+            </el-text>
             <div class="jackpot-text-container">
               <img :src="JackpotText" class="jackpot-text" alt="" />
             </div>
@@ -85,7 +87,7 @@ import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import CustomCardView from '@/components/CustomCardView.vue'
 import { Cards, chips } from '@/models/constants'
 import type { TCardType, TSelectedCard } from '@/models/type'
-import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted } from 'vue'
+import { onMounted, ref, watch, onBeforeUnmount, nextTick, onUnmounted, computed } from 'vue'
 
 import cardBack from '@/assets/cards/back/card_back_bg.png'
 import PlayerWins from '@/components/overlays/PlayerWins.vue'
@@ -97,6 +99,7 @@ import { useCreditStore } from '@/stores'
 import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
 import BetWin from '@/components/overlays/BetWin.vue'
 import JackpotText from '@/assets/jackpot-text.png'
+import { useTransition } from '@vueuse/core'
 
 const router = useRouter()
 
@@ -119,6 +122,23 @@ const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
 const FourCards = ref<TCardType[]>([])
 const selectedCard = ref<TSelectedCard[]>([])
 const allBets = ref<string[]>([])
+
+const accumulatedJackpot = ref(0)
+const source = ref(0)
+const outputValue = useTransition(source, { duration: 1000 })
+
+const totalBetAmount = computed(() =>
+  selectedCard.value.reduce((total, card) => total + card.betAmount, 0),
+)
+
+const fivePercentOfTotalBet = computed(() => totalBetAmount.value * 0.05)
+
+const handleEndOfGame = () => {
+  if (fivePercentOfTotalBet.value > 0) {
+    accumulatedJackpot.value += fivePercentOfTotalBet.value
+    localStorage.setItem('accumulatedJackpot', String(accumulatedJackpot.value))
+  }
+}
 
 const currentSelectedCard = ref<{
   index: number
@@ -213,6 +233,7 @@ const shuffleCard = () => {
 const handleSelectCard = (index: number | null) => {
   if (index === null) {
     selectedCard.value = []
+
     return
   }
 
@@ -267,8 +288,15 @@ const handleSelectBet = (betValue: number) => {
       ...currentSelectedCard.value.card,
       betAmount: betValue,
     })
+    // console.log(betValue)
+
     FourCards.value[currentSelectedCard.value.index].playerCount += 1
+    //total bet amount
+    // const totalBetAmount = selectedCard.value.reduce((total, card) => total + card.betAmount, 0)
+    // console.log('Total Bet Amount:', totalBetAmount)
   }
+  console.log(totalBetAmount.value)
+
   drawer.value = false
 }
 
@@ -358,6 +386,9 @@ const handleRevealCard = () => {
       console.log('Not the highest nor the lucky card')
     }
   })
+  setTimeout(() => {
+    handleEndOfGame()
+  }, 1000)
 }
 
 const handleCloseWheel = () => {
@@ -393,6 +424,28 @@ onUnmounted(() => {
     intervalId = undefined
   }
 })
+
+onMounted(() => {
+  const storedJackpot = localStorage.getItem('accumulatedJackpot')
+  accumulatedJackpot.value = storedJackpot ? parseFloat(storedJackpot) : 0 // Default to 0 if no value exists
+})
+
+watch(
+  selectedCard,
+  (newValue) => {
+    localStorage.setItem('selectedCard', JSON.stringify(newValue))
+  },
+  { deep: true },
+)
+
+// Watch for changes in accumulatedJackpot and update source
+watch(
+  accumulatedJackpot,
+  (newValue) => {
+    source.value = newValue
+  },
+  { immediate: true },
+)
 
 watch(startGame, (newValue) => {
   if (newValue === 'Start') {
@@ -817,13 +870,16 @@ watch(startGame, (newValue) => {
     width: 80px !important;
     height: 30px !important;
   }
+
   .chip-amount {
     width: 100px !important;
     height: 30px !important;
   }
+
   .chip-amount-text {
     font-size: 10px;
   }
+
   .jackpot-text-container {
     top: 110% !important;
   }
@@ -906,9 +962,11 @@ watch(startGame, (newValue) => {
     width: 80px !important;
     height: 30px !important;
   }
+
   .chip-amount-text {
     font-size: 8px !important;
   }
+
   .jackpot-text-container {
     top: 120% !important;
     right: 38%;
