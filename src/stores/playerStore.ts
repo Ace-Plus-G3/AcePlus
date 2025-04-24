@@ -1,6 +1,7 @@
 import type { TLoginParams, TSignupParams } from '@/models/type'
 import type { TUser } from '@/types/user'
 import { defineStore } from 'pinia'
+import { useCreditStore } from './creditStore'
 
 export const usePlayerStore = defineStore('playerStore', {
   state: () => ({
@@ -127,6 +128,7 @@ export const usePlayerStore = defineStore('playerStore', {
                 updated_at: foundPlayer.updated_at,
               }),
             )
+            useCreditStore().handlePersistCredits()
             console.log('Logged in successfully!')
             handleCloseModal()
           } else {
