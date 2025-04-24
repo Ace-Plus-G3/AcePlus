@@ -562,8 +562,7 @@ watch(startGame, (newValue) => {
 .jackpot-amount {
   font-family: 'Roboto', sans-serif !important;
   font-weight: 900 !important;
-  font-size: 3em;
-  background: #915a10;
+  font-size: clamp(16px, 32px, 48rem); /* Responsive font size */
   background: linear-gradient(180deg, rgba(145, 90, 16, 1) 15%, rgba(68, 40, 2, 1) 75%);
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -574,11 +573,12 @@ watch(startGame, (newValue) => {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  width: 300px;
+  width: 350px;
   height: 80px;
   margin-top: 55px;
   z-index: 50;
   display: flex;
+  align-items: center;
   justify-content: center;
   flex-direction: column;
   /* position: absolute;
@@ -1002,6 +1002,9 @@ watch(startGame, (newValue) => {
     background-size: contain !important;
     margin-top: 30px !important;
     margin-left: 10px;
+  }
+  .jackpot-amount {
+    font-size: 14px !important;
   }
 
   .timer-container {
