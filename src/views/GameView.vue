@@ -1,4 +1,5 @@
 <template>
+  <MusicBtn />
   <el-container>
     <el-header>
       <div class="el-header-top-bar">
@@ -100,6 +101,7 @@ import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
 import BetWin from '@/components/overlays/BetWin.vue'
 import JackpotText from '@/assets/jackpot-text.png'
 import { useTransition } from '@vueuse/core'
+import MusicBtn from '@/components/MusicButton.vue'
 
 const router = useRouter()
 

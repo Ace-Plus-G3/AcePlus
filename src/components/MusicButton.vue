@@ -1,6 +1,6 @@
 <template>
-  <audio ref="audioRef" controls class="audio">
-    <source src="#" type="audio/mpeg" />
+  <audio ref="audioRef" controls autoplay class="audio">
+    <source src="../assets/audio/jazz_mbg.MP3" type="audio/mpeg" />
   </audio>
 
   <div class="music-btn-container" @click="toggleMute">
@@ -20,8 +20,13 @@ const toggleMute = () => {
   if (audioRef.value) {
     isMuted.value = !isMuted.value
     audioRef.value.muted = isMuted.value
+    audioRef.value.play()
   }
 }
+
+// onMounted(() => {
+//   toggleMute()
+// })
 </script>
 
 <style scoped>
