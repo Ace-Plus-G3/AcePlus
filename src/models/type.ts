@@ -5,14 +5,16 @@ export type TCardType = {
   url: string
   playerCount: number
   randomMultiplier?: number
+  totalBet: number
 }
 
 export type TSelectedCard = {
   value: number
   url: string
   playerCount: number
-  betAmount: number
+  betAmount: number // player's bet
   randomMultiplier?: number
+  totalBet: number
 }
 
 export type TChips = {

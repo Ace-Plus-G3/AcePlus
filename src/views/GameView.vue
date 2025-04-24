@@ -128,7 +128,7 @@ const source = ref(0)
 const outputValue = useTransition(source, { duration: 1000 })
 
 const totalBetAmount = computed(() =>
-  selectedCard.value.reduce((total, card) => total + card.betAmount, 0),
+  FourCards.value.reduce((total, card) => total + card.totalBet, 0),
 )
 
 const fivePercentOfTotalBet = computed(() => totalBetAmount.value * 0.05)
@@ -194,6 +194,7 @@ const handleResetCard = () => {
   FourCards.value = []
   selectedCard.value = []
   allBets.value = []
+  allBots.value = []
   currentSelectedCard.value = null
   shuffleCard()
 
@@ -266,36 +267,38 @@ const handleSelectBet = (betValue: number) => {
     return
   }
 
-  const isAlreadySelected = selectedCard.value.some(
-    (card) => card.value === currentSelectedCard.value?.card.value,
+  const selectedCardIndex = selectedCard.value.findIndex(
+    (item) => item.value === currentSelectedCard.value?.card.value,
   )
 
-  if (isAlreadySelected) {
-    // Change bet of the selected card
-    const updatedSelectedCard = selectedCard.value.map((item) =>
-      item.value === currentSelectedCard.value?.card.value
-        ? {
-            ...currentSelectedCard.value.card,
-            betAmount: betValue,
-          }
-        : item,
-    )
-    selectedCard.value = updatedSelectedCard
-    // FourCards.value[index].playerCount -= 1
+  if (selectedCardIndex !== -1) {
+    // Update existing card
+    const oldBet = selectedCard.value[selectedCardIndex].betAmount
+    const newBet = betValue
+
+    console.log(`Old Bet: ${oldBet}`)
+    console.log(`New Bet: ${newBet}`)
+
+    // Update `FourCards` total bet by subtracting old bet and adding new bet
+    FourCards.value[currentSelectedCard.value.index].totalBet -= oldBet
+    FourCards.value[currentSelectedCard.value.index].totalBet += newBet
+
+    // Update `selectedCard` bet amount
+    selectedCard.value[selectedCardIndex] = {
+      ...selectedCard.value[selectedCardIndex],
+      betAmount: newBet,
+    }
   } else {
-    // Bet
+    // Add new card to `selectedCard`
     selectedCard.value.push({
       ...currentSelectedCard.value.card,
       betAmount: betValue,
     })
-    // console.log(betValue)
 
+    // Update `FourCards` total bet and player count
+    FourCards.value[currentSelectedCard.value.index].totalBet += betValue
     FourCards.value[currentSelectedCard.value.index].playerCount += 1
-    //total bet amount
-    // const totalBetAmount = selectedCard.value.reduce((total, card) => total + card.betAmount, 0)
-    // console.log('Total Bet Amount:', totalBetAmount)
   }
-  console.log(totalBetAmount.value)
 
   drawer.value = false
 }
@@ -386,6 +389,7 @@ const handleRevealCard = () => {
       console.log('Not the highest nor the lucky card')
     }
   })
+
   setTimeout(() => {
     handleEndOfGame()
   }, 1000)
@@ -400,7 +404,26 @@ const handleCancel = () => {
   currentSelectedCard.value = null
 }
 
-const handleBots = () => {
+const handleDistributeBot = () => {
+  let accumulatedDelay = 0 // Keeps track of total delay time
+
+  allBots.value.forEach((bot) => {
+    // Generate a random delay between 1 to 10 seconds (in milliseconds)
+    const randomDelay = Math.floor(Math.random() * 5000) + 500
+
+    // Accumulate the delay for sequential execution
+    accumulatedDelay += randomDelay
+
+    setTimeout(() => {
+      bot.bot_cards.forEach((bot_card) => {
+        FourCards.value[bot_card.card_index].totalBet += bot_card.bot_bet_amount
+        FourCards.value[bot_card.card_index].playerCount += 1
+      })
+    }, accumulatedDelay)
+  })
+}
+
+const handleGenerateBots = () => {
   const botRandomAmount = Math.floor(Math.random() * 20) // how many bots per game
   const bot_bet_choices = [1, 5, 10, 50, 500, 100, 500, 1000, 5000, 10000] // amount of bet they can choice
 
@@ -478,14 +501,6 @@ onMounted(() => {
   accumulatedJackpot.value = storedJackpot ? parseFloat(storedJackpot) : 0 // Default to 0 if no value exists
 })
 
-watch(
-  selectedCard,
-  (newValue) => {
-    localStorage.setItem('selectedCard', JSON.stringify(newValue))
-  },
-  { deep: true },
-)
-
 // Watch for changes in accumulatedJackpot and update source
 watch(
   accumulatedJackpot,
@@ -503,6 +518,8 @@ watch(startGame, (newValue) => {
     }
 
     setTimeout(() => {
+      handleGenerateBots()
+      handleDistributeBot()
       intervalId = setInterval(() => {
         if (timer.value > 0) {
           timer.value--
