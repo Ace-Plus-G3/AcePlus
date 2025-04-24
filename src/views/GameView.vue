@@ -15,7 +15,7 @@
           <div class="chip-amount">
             <el-text class="chip-amount-text" style="color: white" size="small">{{
               convertToReadableFormat(useCreditStore().getCurrentBalance)
-              }}</el-text>
+            }}</el-text>
           </div>
         </div>
       </div>
@@ -34,9 +34,20 @@
       <div class="game-container" ref="gameContainerRef" :disabled="startGame === 'Start'">
         <el-image fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
         <BetWin v-for="(item, index) in allBets" :key="item" :bet="item" :index="index" />
-        <CustomCardView v-for="(_, index) in FourCards" :key="index" :index="index" :length="4" :start="startGame"
-          :delay="index * 200" :reveal="reveal" @handle-select-card="handleSelectCard" :selected-card="selectedCard"
-          :four-cards="FourCards" :container-width="containerWidth" :container-height="containerHeight" />
+        <CustomCardView
+          v-for="(_, index) in FourCards"
+          :key="index"
+          :index="index"
+          :length="4"
+          :start="startGame"
+          :delay="index * 200"
+          :reveal="reveal"
+          @handle-select-card="handleSelectCard"
+          :selected-card="selectedCard"
+          :four-cards="FourCards"
+          :container-width="containerWidth"
+          :container-height="containerHeight"
+        />
       </div>
     </el-main>
 
@@ -44,8 +55,6 @@
       <div class="el-footer-bottom-bar">
         <div class="el-footer-image">
           <span class="title">Place your bets !</span>
-
-
         </div>
       </div>
     </el-footer>
@@ -58,7 +67,12 @@
         </div>
         <div class="drawer-content">
           <div class="bet-grid">
-            <div @click="handleSelectBet(chip.value)" v-for="chip in chips" :key="chip.value" class="chip">
+            <div
+              @click="handleSelectBet(chip.value)"
+              v-for="chip in chips"
+              :key="chip.value"
+              class="chip"
+            >
               <img :src="chip.image" :alt="String(chip.value)" />
             </div>
           </div>
@@ -87,10 +101,6 @@ import BetWin from '@/components/overlays/BetWin.vue'
 import JackpotText from '@/assets/jackpot-text.png'
 import { useTransition } from '@vueuse/core'
 
-
-
-
-
 const router = useRouter()
 
 const gameContainerRef = ref<HTMLElement | null>(null)
@@ -113,25 +123,22 @@ const FourCards = ref<TCardType[]>([])
 const selectedCard = ref<TSelectedCard[]>([])
 const allBets = ref<string[]>([])
 
-const accumulatedJackpot = ref(0);
-const source = ref(0);
-const outputValue = useTransition(source, { duration: 1500 });
+const accumulatedJackpot = ref(0)
+const source = ref(0)
+const outputValue = useTransition(source, { duration: 1000 })
 
 const totalBetAmount = computed(() =>
-  selectedCard.value.reduce((total, card) => total + card.betAmount, 0)
-);
+  selectedCard.value.reduce((total, card) => total + card.betAmount, 0),
+)
 
-const fivePercentOfTotalBet = computed(() => totalBetAmount.value * 0.05);
-
+const fivePercentOfTotalBet = computed(() => totalBetAmount.value * 0.05)
 
 const handleEndOfGame = () => {
   if (fivePercentOfTotalBet.value > 0) {
-    accumulatedJackpot.value += fivePercentOfTotalBet.value;
-    localStorage.setItem('accumulatedJackpot', String(accumulatedJackpot.value));
+    accumulatedJackpot.value += fivePercentOfTotalBet.value
+    localStorage.setItem('accumulatedJackpot', String(accumulatedJackpot.value))
   }
-};
-
-
+}
 
 const currentSelectedCard = ref<{
   index: number
@@ -268,9 +275,9 @@ const handleSelectBet = (betValue: number) => {
     const updatedSelectedCard = selectedCard.value.map((item) =>
       item.value === currentSelectedCard.value?.card.value
         ? {
-          ...currentSelectedCard.value.card,
-          betAmount: betValue,
-        }
+            ...currentSelectedCard.value.card,
+            betAmount: betValue,
+          }
         : item,
     )
     selectedCard.value = updatedSelectedCard
@@ -288,7 +295,7 @@ const handleSelectBet = (betValue: number) => {
     // const totalBetAmount = selectedCard.value.reduce((total, card) => total + card.betAmount, 0)
     // console.log('Total Bet Amount:', totalBetAmount)
   }
-  console.log(totalBetAmount.value);
+  console.log(totalBetAmount.value)
 
   drawer.value = false
 }
@@ -419,10 +426,9 @@ onUnmounted(() => {
 })
 
 onMounted(() => {
-  const storedJackpot = localStorage.getItem('accumulatedJackpot');
-  accumulatedJackpot.value = storedJackpot ? parseFloat(storedJackpot) : 0; // Default to 0 if no value exists
-});
-
+  const storedJackpot = localStorage.getItem('accumulatedJackpot')
+  accumulatedJackpot.value = storedJackpot ? parseFloat(storedJackpot) : 0 // Default to 0 if no value exists
+})
 
 watch(
   selectedCard,
@@ -436,11 +442,10 @@ watch(
 watch(
   accumulatedJackpot,
   (newValue) => {
-    source.value = newValue;
+    source.value = newValue
   },
-  { immediate: true }
-);
-
+  { immediate: true },
+)
 
 watch(startGame, (newValue) => {
   if (newValue === 'Start') {
@@ -767,12 +772,14 @@ watch(startGame, (newValue) => {
 
 .cancel-btn {
   background-color: #e8b839;
-  background: linear-gradient(90deg,
-      rgba(232, 184, 57, 1) 0%,
-      rgba(232, 184, 57, 1) 35%,
-      rgba(186, 129, 21, 1) 63%,
-      rgba(251, 246, 127, 1) 82%,
-      rgba(220, 188, 78, 1) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(232, 184, 57, 1) 0%,
+    rgba(232, 184, 57, 1) 35%,
+    rgba(186, 129, 21, 1) 63%,
+    rgba(251, 246, 127, 1) 82%,
+    rgba(220, 188, 78, 1) 100%
+  );
   border: none !important;
   border: none;
   border-radius: 20px;
@@ -879,7 +886,6 @@ watch(startGame, (newValue) => {
 }
 
 @media screen and (max-width: 800px) {
-
   .el-header,
   .el-footer {
     width: 90% !important;
@@ -919,7 +925,6 @@ watch(startGame, (newValue) => {
 }
 
 @media screen and (max-width: 425px) {
-
   .el-header-image,
   .el-footer-image,
   .custom-drawer-header {
