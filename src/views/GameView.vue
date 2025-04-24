@@ -25,9 +25,9 @@
     <PlayerWins :game_status="game_status" />
     <GameTimer :starting-in="startingIn" :timer="timer" />
     <StartingInView :starting-in="startingIn" />
-    <div class="spin-overlay" v-if="showSpinTheWheel && PlayAudioWheel">
+    <div class="spin-overlay" v-if="showSpinTheWheel">
       <SpinTheWheel @handle-close="handleCloseWheel" :bet-amount="betOnAce" />
-      <AudioWheel />
+     
     </div>
     <!-- End of Overlays -->
 
@@ -100,7 +100,6 @@ import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
 import BetWin from '@/components/overlays/BetWin.vue'
 import JackpotText from '@/assets/jackpot-text.png'
 import { useTransition } from '@vueuse/core'
-import AudioWheel from '@/components/sfx/SpinWheel.vue'
 
 const router = useRouter()
 
@@ -115,7 +114,6 @@ const startingIn = ref(5)
 const drawer = ref(false)
 const reveal = ref(false)
 const showSpinTheWheel = ref(false)
-const PlayAudioWheel = ref(false)
 const betOnAce = ref(0) // store here the player's, bet on ace card
 
 const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
@@ -370,7 +368,6 @@ const handleRevealCard = () => {
         setTimeout(() => {
           betOnAce.value = item.betAmount
           showSpinTheWheel.value = true
-          PlayAudioWheel.value = true
         }, 1000)
       }
     }
@@ -401,7 +398,6 @@ const handleRevealCard = () => {
 
 const handleCloseWheel = () => {
   showSpinTheWheel.value = false
-  PlayAudioWheel.value = false
 }
 
 const handleCancel = () => {

@@ -34,6 +34,8 @@ import congratulations from '@/assets/game/congratulations.png'
 import type { TSpinWheel } from '@/models/type'
 import { useCreditStore } from '@/stores'
 import { useTransition } from '@vueuse/core'
+import spinSound from '@/assets/audio/sample6_wheel.mp3';
+// import winSound from '@/assets/sounds/win.mp3';
 
 // const props = defineProps<{
 //   betAmount: number
@@ -54,6 +56,10 @@ const multiplierWin = ref<TSpinWheel | null>(null)
 const source = ref(0)
 const outputValue = useTransition(source, { duration: 1500 })
 
+const spinAudio = new Audio(spinSound);
+// const winAudio = new Audio(winSound);
+
+
 // Watch for changes and apply smooth transition
 watch(
   () => props.betAmount * (multiplierWin.value ? multiplierWin.value.multiplier : 0),
@@ -67,6 +73,10 @@ const spinWheel = () => {
 
   console.log('Wheel spinning...')
   isSpinning.value = true
+
+  spinAudio.loop = false; 
+  spinAudio.play();
+
 
   const fullRotations = 360 * 10
 
@@ -86,6 +96,10 @@ const spinWheel = () => {
 
   // Reset after animation completes
   setTimeout(() => {
+    spinAudio.pause();
+    spinAudio.currentTime = 0; // Reset the spinning sound
+
+    // winAudio.play();
     isSpinning.value = false
     multiplierWin.value = selectedSlice
     console.log(`Spin complete. Winner: Multiplier ${selectedSlice.multiplier}`)
@@ -106,7 +120,7 @@ onMounted(() => {
     if (!isSpinning.value) {
       spinWheel()
     }
-  }, 1000)
+  },4000)
 })
 </script>
 

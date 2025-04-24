@@ -1,5 +1,5 @@
 <template>
-  <audio ref="audioRef" controls autoplay class="audio">
+  <audio ref="audioRef" loop class="audio">
     <source src="../assets/audio/jazz_mbg.MP3" type="audio/mpeg" />
   </audio>
 
@@ -9,24 +9,31 @@
 </template>
 
 <script setup lang="ts">
-import UnMute from '@/assets/svg/unmute_svg.vue'
-import Mute from '@/assets/svg/mute_svg.vue'
-import { onMounted, ref } from 'vue'
+import UnMute from '@/assets/svg/unmute_svg.vue';
+import Mute from '@/assets/svg/mute_svg.vue';
+import { onMounted, ref } from 'vue';
 
-const audioRef = ref<HTMLAudioElement | null>(null)
-const isMuted = ref(false)
+const audioRef = ref<HTMLAudioElement | null>(null);
+const isMuted = ref(true); 
 
 const toggleMute = () => {
   if (audioRef.value) {
-    isMuted.value = !isMuted.value
-    audioRef.value.muted = isMuted.value
-    audioRef.value.play()
+    isMuted.value = !isMuted.value;
+    audioRef.value.muted = isMuted.value;
+
+    if (!isMuted.value) {
+      audioRef.value.play().catch((error) => {
+        console.warn('Playback failed. Waiting for user interaction.', error);
+      });
+    }
   }
-}
+};
 
 onMounted(() => {
-  toggleMute()
-})
+  if (audioRef.value) {
+    audioRef.value.muted = true;
+  }
+});
 </script>
 
 <style scoped>
