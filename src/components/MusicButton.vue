@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import UnMute from '@/assets/svg/unmute_svg.vue'
 import Mute from '@/assets/svg/mute_svg.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const audioRef = ref<HTMLAudioElement | null>(null)
 const isMuted = ref(false)
@@ -24,9 +24,9 @@ const toggleMute = () => {
   }
 }
 
-// onMounted(() => {
-//   toggleMute()
-// })
+onMounted(() => {
+  toggleMute()
+})
 </script>
 
 <style scoped>
