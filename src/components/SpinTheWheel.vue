@@ -106,7 +106,7 @@ onMounted(() => {
     if (!isSpinning.value) {
       spinWheel()
     }
-  }, 2000)
+  }, 1000)
 })
 </script>
 
