@@ -27,7 +27,6 @@
     <StartingInView :starting-in="startingIn" />
     <div class="spin-overlay" v-if="showSpinTheWheel">
       <SpinTheWheel @handle-close="handleCloseWheel" :bet-amount="betOnAce" />
-     
     </div>
     <!-- End of Overlays -->
 
@@ -100,6 +99,7 @@ import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
 import BetWin from '@/components/overlays/BetWin.vue'
 import JackpotText from '@/assets/jackpot-text.png'
 import { useTransition } from '@vueuse/core'
+import FlipCardSFX from '@/assets/audio/sample1_card_flip.mp3'
 
 const router = useRouter()
 
@@ -127,6 +127,8 @@ const allBots = ref<TBots[]>([])
 const accumulatedJackpot = ref(0)
 const source = ref(0)
 const outputValue = useTransition(source, { duration: 1000 })
+
+const cardFlipSound = new Audio(FlipCardSFX)
 
 const totalBetAmount = computed(() =>
   FourCards.value.reduce((total, card) => total + card.totalBet, 0),
@@ -338,6 +340,8 @@ const initializeGame = async () => {
 
 const handleRevealCard = () => {
   reveal.value = true
+  cardFlipSound.loop = false
+  cardFlipSound.play()
 
   if (FourCards.value.length === 0) {
     return null

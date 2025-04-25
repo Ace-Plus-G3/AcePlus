@@ -34,8 +34,8 @@ import congratulations from '@/assets/game/congratulations.png'
 import type { TSpinWheel } from '@/models/type'
 import { useCreditStore } from '@/stores'
 import { useTransition } from '@vueuse/core'
-import spinSound from '@/assets/audio/sample6_wheel.mp3';
-// import winSound from '@/assets/sounds/win.mp3';
+import spinSound from '@/assets/audio/sample6_wheel.mp3'
+import winSound from '@/assets/audio/sample1_spin_price.mp3'
 
 // const props = defineProps<{
 //   betAmount: number
@@ -54,11 +54,10 @@ const isSpinning = ref(false)
 const multiplierWin = ref<TSpinWheel | null>(null)
 
 const source = ref(0)
-const outputValue = useTransition(source, { duration: 1500 })
+const outputValue = useTransition(source, { duration: 3000 })
 
-const spinAudio = new Audio(spinSound);
-// const winAudio = new Audio(winSound);
-
+const spinAudio = new Audio(spinSound)
+const winAudio = new Audio(winSound)
 
 // Watch for changes and apply smooth transition
 watch(
@@ -74,14 +73,16 @@ const spinWheel = () => {
   console.log('Wheel spinning...')
   isSpinning.value = true
 
-  spinAudio.loop = false; 
-  spinAudio.play();
-
+  spinAudio.loop = false
+  spinAudio.play()
 
   const fullRotations = 360 * 10
 
   // 30% chance of bokya appearing
   const shouldBokyaAppear: boolean = Math.random() < 0.3
+  if (shouldBokyaAppear) {
+    winAudio.pause()
+  }
   console.log(shouldBokyaAppear)
 
   const randomIndex = Math.floor(Math.random() * wheelDeg.length)
@@ -96,10 +97,10 @@ const spinWheel = () => {
 
   // Reset after animation completes
   setTimeout(() => {
-    spinAudio.pause();
-    spinAudio.currentTime = 0; // Reset the spinning sound
+    spinAudio.pause()
+    spinAudio.currentTime = 0 // Reset the spinning sound
 
-    // winAudio.play();
+    winAudio.play()
     isSpinning.value = false
     multiplierWin.value = selectedSlice
     console.log(`Spin complete. Winner: Multiplier ${selectedSlice.multiplier}`)
@@ -120,7 +121,7 @@ onMounted(() => {
     if (!isSpinning.value) {
       spinWheel()
     }
-  },4000)
+  }, 4000)
 })
 </script>
 
