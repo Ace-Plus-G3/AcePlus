@@ -1,34 +1,31 @@
 <template>
-  <div class="card-container" ref="target" @click="handleCardClick(index)">
+  <div class="card-container" ref="target" @click="useGameStore().handleSelectCard(index)">
     <div
       class="flip-card"
       :class="{
-        flipped: reveal,
-        // selected: selectedCard.some((card) => card.value === fourCards[index].value),
+        flipped: useGameStore().getIsRevealCards,
+        selected: useGameStore().selectedCards.some(
+          (card) => card.value === useGameStore().getFourCards[index].value,
+        ),
       }"
     >
       <div class="flip-card-inner">
         <div class="flip-card-front">
           <div class="player-count">
             <el-image class="player-count-icon" :src="playerLogo" />
-            <span class="player-count-text">{{ fourCards[index].playerCount }}</span>
+            <span class="player-count-text">{{ card.playerCount }}</span>
           </div>
-          <div ref="scaleRef" class="card_random_multi" v-if="fourCards[index].randomMultiplier">
-            {{ `${fourCards[index].randomMultiplier}x` }}
+          <div ref="scaleRef" class="card_random_multi" v-if="card.randomMultiplier">
+            {{ `${card.randomMultiplier}x` }}
           </div>
           <div class="bet-count-container">
             <div class="bet-count">
-              <span class="bet-count-text">{{
-                convertToReadableFormat(fourCards[props.index].totalBet)
-              }}</span>
+              <span class="bet-count-text">{{ convertToReadableFormat(card.totalBet) }}</span>
               <el-image class="player-count-icon" :src="GoldIcon" />
             </div>
           </div>
         </div>
-        <div
-          class="flip-card-back"
-          :style="{ backgroundImage: 'url(' + fourCards[index].url + ')' }"
-        ></div>
+        <div class="flip-card-back" :style="{ backgroundImage: 'url(' + card.url + ')' }"></div>
       </div>
     </div>
   </div>
@@ -42,19 +39,15 @@ import GoldIcon from '@/assets/coins/gold.png'
 import playerLogo from '@/assets/icons/players_icon_xs.png'
 import { convertToReadableFormat } from '@/utils/convertMoney'
 import distributeCardSound from '@/assets/audio/sample2_card_distribute.mp3'
+import { useGameStore } from '@/stores'
 
 type Props = {
-  start: 'Start' | 'Pending' | 'Done'
   index: number
   card: TCardType
-  reveal: boolean
-  // selectedCard: TSelectedCard[]
-  fourCards: TCardType[]
   containerWidth: number
   containerHeight: number
 }
 
-const emit = defineEmits(['handleSelectCard'])
 const props = defineProps<Props>()
 
 const target = ref<HTMLElement>()
@@ -76,7 +69,8 @@ const calculateDistributionPosition = () => {
   }
 
   const TOTAL_WIDTH =
-    props.fourCards.length * CARD_WIDTH.value + (props.fourCards.length - 1) * CARD_SPACING.value
+    useGameStore().getFourCards.length * CARD_WIDTH.value +
+    (useGameStore().getFourCards.length - 1) * CARD_SPACING.value
   const startX = Math.max(10, (props.containerWidth - TOTAL_WIDTH) / 2)
   const distributedX = startX + props.index * (CARD_WIDTH.value + CARD_SPACING.value)
   const centerY = Math.max(10, (props.containerHeight - CARD_HEIGHT.value) / 2)
@@ -106,16 +100,12 @@ const updateCardPosition = (isDistributed: boolean) => {
   }
 }
 
-const handleCardClick = (index: number) => {
-  emit('handleSelectCard', index)
-}
-
 watch(
-  () => props.start,
+  () => useGameStore().getStartGame,
   (newValue) => {
-    if (newValue === 'Start') {
+    if (newValue === 'START') {
       updateCardPosition(true)
-    } else if (newValue === 'Done') {
+    } else if (newValue === 'DONE') {
       updateCardPosition(false)
       scaleRef.value?.classList.remove('scaleIn')
     }
@@ -125,7 +115,7 @@ watch(
 
 // Watch container size changes
 watch([() => props.containerWidth, () => props.containerHeight], ([newWidth, newHeight]) => {
-  if (props.start === 'Start' && newWidth > 10 && newHeight > 10) {
+  if (useGameStore().getStartGame === 'START' && newWidth > 10 && newHeight > 10) {
     updateCardPosition(true)
   }
 })
@@ -139,7 +129,11 @@ onMounted(async () => {
 
   await nextTick()
 
-  if (props.start === 'Start' && props.containerWidth > 10 && props.containerHeight > 10) {
+  if (
+    useGameStore().getStartGame === 'START' &&
+    props.containerWidth > 10 &&
+    props.containerHeight > 10
+  ) {
     updateCardPosition(true)
   }
 })

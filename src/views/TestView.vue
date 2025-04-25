@@ -3,57 +3,55 @@
     <HeaderView />
 
     <!-- Start of Overlays -->
-    <PlayerWins :game_status="game_status" />
-    <GameTimer :starting-in="startingIn" :timer="timer" />
-    <StartingInView :starting-in="startingIn" />
-    <!-- <div class="spin-overlay" v-if="showSpinTheWheel">
-      <SpinTheWheel @handle-close="handleCloseWheel" :bet-amount="betOnAce" />
-    </div> -->
+    <!-- <PlayerWins :game_status="game_status" /> -->
+    <GameTimer />
+    <StartingInView />
     <!-- End of Overlays -->
 
     <el-main>
-      <div class="game-container" ref="gameContainerRef" :disabled="startGame === 'Start'">
-        <CustomCard
-          v-for="(card, index) in FourCards"
-          :key="index"
-          :start="startGame"
+      <div
+        class="game-container"
+        ref="gameContainerRef"
+        :disabled="useGameStore().getStartGame === 'START'"
+      >
+        <el-image fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
+        <BetWin
+          v-for="(item, index) in useGameStore().getAllBets"
+          :key="item"
+          :bet="item"
           :index="index"
-          :four-cards="FourCards"
+        />
+        <CustomCard
+          v-for="(card, index) in useGameStore().getFourCards"
+          :key="index"
+          :index="index"
           :card="card"
           :container-height="containerHeight"
           :container-width="containerWidth"
-          :reveal="reveal"
         />
       </div>
     </el-main>
+
+    <FooterView />
+    <BetDrawer />
   </el-container>
 </template>
 
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch } from 'vue'
 import HeaderView from '@/components/game/HeaderView.vue'
-import type { TCardType } from '@/models/type'
 import CustomCard from '@/components/game/CustomCard.vue'
-import { getRandomCards } from '@/utils/getRandomCards'
-import { Cards } from '@/models/constants'
-import PlayerWins from '@/components/overlays/PlayerWins.vue'
-import GameTimer from '@/components/overlays/GameTimer.vue'
-import StartingInView from '@/components/overlays/StartingInView.vue'
+import { useGameStore } from '@/stores'
+
+// images
+import cardBack from '@/assets/cards/back/card_back_bg.png'
+import FooterView from '@/components/game/FooterView.vue'
+import BetDrawer from '@/components/game/BetDrawer.vue'
 
 let intervalId: number | undefined = undefined
-const timer = ref(3)
-const startingIn = ref(2)
-
 const gameContainerRef = ref<HTMLElement | null>(null)
-
-const FourCards = ref<TCardType[]>([])
-const startGame = ref<'Start' | 'Pending' | 'Done'>('Pending')
-const game_status = ref<'WIN' | 'LOSE' | 'PENDING'>('PENDING')
-
 const containerWidth = ref(0)
 const containerHeight = ref(0)
-
-const reveal = ref(false)
 
 const updateContainerDimensions = async () => {
   await nextTick()
@@ -64,33 +62,33 @@ const updateContainerDimensions = async () => {
   }
 }
 
-const initializeGame = async () => {
-  await updateContainerDimensions()
+// const initializeGame = async () => {
+//   await updateContainerDimensions()
 
-  FourCards.value = getRandomCards(Cards)
+//   FourCards.value = getRandomCards(Cards)
 
-  // Initial game state
-  startGame.value = 'Pending'
+//   // Initial game state
+//   startGame.value = 'PENDING'
 
-  if (intervalId !== undefined) {
-    clearInterval(intervalId)
-  }
+//   if (intervalId !== undefined) {
+//     clearInterval(intervalId)
+//   }
 
-  intervalId = setInterval(() => {
-    if (startingIn.value > 0) {
-      startingIn.value--
-    } else {
-      clearInterval(intervalId)
-      intervalId = undefined
+//   intervalId = setInterval(() => {
+//     if (startingIn.value > 0) {
+//       startingIn.value--
+//     } else {
+//       clearInterval(intervalId)
+//       intervalId = undefined
 
-      updateContainerDimensions().then(() => {
-        setTimeout(() => {
-          startGame.value = 'Start'
-        }, 200)
-      })
-    }
-  }, 1000)
-}
+//       updateContainerDimensions().then(() => {
+//         setTimeout(() => {
+//           startGame.value = 'START'
+//         }, 200)
+//       })
+//     }
+//   }, 1000)
+// }
 
 onMounted(async () => {
   window.addEventListener('resize', updateContainerDimensions)
@@ -99,46 +97,50 @@ onMounted(async () => {
 
   await updateContainerDimensions()
 
-  initializeGame()
+  useGameStore().initializeGame()
 })
 
-watch(startGame, (newValue) => {
-  if (newValue === 'Start') {
-    if (intervalId !== undefined) {
-      clearInterval(intervalId)
-      intervalId = undefined
+watch(
+  () => useGameStore().getStartGame,
+  (newValue) => {
+    if (newValue === 'START') {
+      if (intervalId !== undefined) {
+        clearInterval(intervalId)
+        intervalId = undefined
+      }
+
+      setTimeout(() => {
+        // handleGenerateBots()
+        // handleDistributeBot()
+        intervalId = setInterval(() => {
+          if (useGameStore().getTimer > 0) {
+            useGameStore().decreaseTimer()
+          } else {
+            clearInterval(intervalId)
+            intervalId = undefined
+          }
+        }, 1000)
+      }, 500)
+
+      // After timer completes, reveal cards
+      setTimeout(() => {
+        // useGameStore().handleCancelBet()
+        useGameStore().getHighestCard()
+        useGameStore().handleRevealCard()
+      }, 10500)
+
+      // Reset after reveal
+      setTimeout(() => {
+        useGameStore().handleResetCard()
+      }, 12000)
     }
-
-    setTimeout(() => {
-      // handleGenerateBots()
-      // handleDistributeBot()
-      intervalId = setInterval(() => {
-        if (timer.value > 0) {
-          timer.value--
-        } else {
-          clearInterval(intervalId)
-          intervalId = undefined
-        }
-      }, 1000)
-    }, 500)
-
-    // After timer completes, reveal cards
-    setTimeout(() => {
-      // handleCancel()
-      // getHighestCard()
-      // handleRevealCard()
-    }, 10500)
-
-    // Reset after reveal
-    setTimeout(() => {
-      // handleResetCard()
-    }, 12000)
-  }
-})
+  },
+)
 </script>
 
 <style scoped>
 .el-container {
+  position: relative;
   height: 100dvh;
   background-image: url('@/assets/homepage_bg.png');
   display: flex;
