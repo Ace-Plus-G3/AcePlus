@@ -19,7 +19,9 @@
         <el-image :src="multiplierWin?.url" class="" />
         <el-text class="text">+{{ Math.round(outputValue) }}</el-text>
       </div>
-      <el-text class="close-text" @click="emit('handleClose', false)">Click here to close</el-text>
+      <el-text class="close-text" @click="useGameStore().setShowSpinTheWheel(false)">
+        Click here to close
+      </el-text>
     </div>
   </div>
 </template>
@@ -32,22 +34,10 @@ import { wheelDeg } from '@/models/constants'
 import vfxLight from '@/assets/game/vfx-light.png'
 import congratulations from '@/assets/game/congratulations.png'
 import type { TSpinWheel } from '@/models/type'
-import { useCreditStore } from '@/stores'
+import { useCreditStore, useGameStore } from '@/stores'
 import { useTransition } from '@vueuse/core'
 import spinSound from '@/assets/audio/sample6_wheel.mp3'
 import winSound from '@/assets/audio/sample1_spin_price.mp3'
-
-// const props = defineProps<{
-//   betAmount: number
-//   multiplierWin: { multiplier: number } | null
-// }>()
-
-type Props = {
-  betAmount: number
-}
-
-const emit = defineEmits(['handleClose'])
-const props = defineProps<Props>()
 
 const rotation = ref(0)
 const isSpinning = ref(false)
@@ -61,7 +51,7 @@ const winAudio = new Audio(winSound)
 
 // Watch for changes and apply smooth transition
 watch(
-  () => props.betAmount * (multiplierWin.value ? multiplierWin.value.multiplier : 0),
+  () => useGameStore().getBetOnAce * (multiplierWin.value ? multiplierWin.value.multiplier : 0),
   (newValue) => {
     source.value = newValue
   },
@@ -79,33 +69,50 @@ const spinWheel = () => {
   const fullRotations = 360 * 10
 
   // 30% chance of bokya appearing
-  const shouldBokyaAppear: boolean = Math.random() < 0.3
+  const shouldBokyaAppear: boolean = Math.random() < 1
   if (shouldBokyaAppear) {
     winAudio.pause()
   }
+
   console.log(shouldBokyaAppear)
 
-  const randomIndex = Math.floor(Math.random() * wheelDeg.length)
-  const selectedSlice = wheelDeg[randomIndex]
-  const stopAtDegree = fullRotations - selectedSlice.deg
+  let selectedSlice = { deg: 0, multiplier: 0, url: '' }
 
-  // Set the new rotation value
-  rotation.value = stopAtDegree
+  if (shouldBokyaAppear) {
+    selectedSlice = wheelDeg[7]
+    const stopAtDegree = fullRotations - selectedSlice.deg
 
-  console.log(`Spinning to: ${stopAtDegree}°`)
-  console.log(`Selected slice: ${selectedSlice.deg}°, Multiplier: ${selectedSlice.multiplier}`)
+    // rotate to bokya!
+    rotation.value = stopAtDegree
+
+    console.log(`Spinning to: ${stopAtDegree}°`)
+    console.log(`Selected slice: ${selectedSlice.deg}°, Multiplier: ${selectedSlice.multiplier}`)
+  } else {
+    const randomIndex = Math.floor(Math.random() * wheelDeg.length)
+    selectedSlice = wheelDeg[randomIndex]
+    const stopAtDegree = fullRotations - selectedSlice.deg
+
+    // Set the new rotation value
+    rotation.value = stopAtDegree
+
+    console.log(`Spinning to: ${stopAtDegree}°`)
+    console.log(`Selected slice: ${selectedSlice.deg}°, Multiplier: ${selectedSlice.multiplier}`)
+  }
 
   // Reset after animation completes
   setTimeout(() => {
     spinAudio.pause()
     spinAudio.currentTime = 0 // Reset the spinning sound
 
-    winAudio.play()
+    if (shouldBokyaAppear) {
+      winAudio.pause()
+    }
     isSpinning.value = false
     multiplierWin.value = selectedSlice
     console.log(`Spin complete. Winner: Multiplier ${selectedSlice.multiplier}`)
     useCreditStore().setCurrentBalance(
-      useCreditStore().getCurrentBalance + props.betAmount * multiplierWin.value.multiplier,
+      useCreditStore().getCurrentBalance +
+        useGameStore().getBetOnAce * multiplierWin.value.multiplier,
     )
   }, 8000)
 }
@@ -121,7 +128,7 @@ onMounted(() => {
     if (!isSpinning.value) {
       spinWheel()
     }
-  }, 4000)
+  }, 3000)
 })
 </script>
 

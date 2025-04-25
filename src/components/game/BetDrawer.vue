@@ -2,18 +2,18 @@
   <el-drawer
     direction="btt"
     @close="useGameStore().setDrawer(false)"
-    v-model="useGameStore().getShowBetDrawer"
+    v-model="useGameStore().showBetDrawer"
     :with-header="false"
   >
     <div class="custom-drawer">
       <div class="custom-drawer-header">
         <span class="title">Place your bets !</span>
-        <button class="cancel-btn" @click="useGameStore().handleCancelBet">Cancel</button>
+        <button class="cancel-btn" @click="gameLogic.handleCancelBet">Cancel</button>
       </div>
       <div class="drawer-content">
         <div class="bet-grid">
           <div
-            @click="useGameStore().handleSelectBet(chip.value)"
+            @click="gameLogic.handleSelectBet(chip.value)"
             v-for="chip in chips"
             :key="chip.value"
             class="chip"
@@ -29,10 +29,55 @@
 <script setup lang="ts">
 import { chips } from '@/models/constants'
 import { useGameStore } from '@/stores'
+
+import gameLogic from '@/composables/useGameLogic'
 </script>
 
 <style scoped>
 /* Drawer Styles*/
+:deep(.el-overlay) {
+  overflow: hidden !important;
+  display: flex;
+  justify-content: center;
+}
+
+:deep(.el-drawer) {
+  height: 50% !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+:deep(.el-overlay) {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: end !important;
+}
+
+:deep(.el-drawer__body) {
+  padding: 0;
+  margin: 0;
+  max-width: 800px;
+  min-width: 375px;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.custom-drawer {
+  max-width: 800px;
+  min-width: 375px;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 :deep(.el-overlay) {
   overflow: hidden !important;
   display: flex;
@@ -50,8 +95,6 @@ import { useGameStore } from '@/stores'
   justify-content: center;
   margin: 0;
   padding: 0;
-
-  background: red !important;
 }
 
 :deep(.el-drawer__body) {
@@ -61,8 +104,6 @@ import { useGameStore } from '@/stores'
   min-width: 375px;
   width: 100%;
   height: 100%;
-
-  background: red !important;
 }
 
 .custom-drawer {
@@ -75,8 +116,6 @@ import { useGameStore } from '@/stores'
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  background: red !important;
 }
 
 /* Custom header */
@@ -162,5 +201,31 @@ import { useGameStore } from '@/stores'
 
 .cancel-btn:hover {
   background: #ffd54f;
+}
+
+@media screen and (max-width: 425px) {
+  .custom-drawer-header {
+    padding: 0 15px !important;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .custom-drawer-header {
+    width: 90% !important;
+  }
+
+  :deep(.el-drawer__body) {
+    width: 100%;
+  }
+
+  .chip img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .bet-grid {
+    gap: 1em;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  }
 }
 </style>

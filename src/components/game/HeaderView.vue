@@ -23,15 +23,28 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { useCreditStore } from '@/stores'
+import { useCreditStore, useGameStore } from '@/stores'
 import JackpotText from '@/assets/jackpot-text.png'
 import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
 import { useTransition } from '@vueuse/core'
-import { ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const source = ref(0)
 const router = useRouter()
 const outputValue = useTransition(source, { duration: 1000 })
+
+onMounted(() => {
+  const storedJackpot = localStorage.getItem('accumulatedJackpot')
+  useGameStore().setAccumulatedJackpot(storedJackpot ? parseFloat(storedJackpot) : 0) // Default to 0 if no value exists
+})
+
+watch(
+  () => useGameStore().accumulatedJackpot,
+  (newValue) => {
+    source.value = newValue
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>
@@ -145,5 +158,87 @@ const outputValue = useTransition(source, { duration: 1000 })
   /* position: absolute;
   right: 30%;
   top: 40%; */
+}
+
+@media screen and (max-width: 768px) {
+  .jackpot-text {
+    top: 103%;
+    right: 38%;
+  }
+
+  .jackpot-text img {
+    width: 140px !important;
+    height: 30px !important;
+  }
+
+  .leave-btn {
+    font-size: 12px !important;
+    width: 80px !important;
+    height: 30px !important;
+  }
+
+  .chip-amount {
+    width: 100px !important;
+    height: 30px !important;
+  }
+
+  .chip-amount-text {
+    font-size: 10px;
+  }
+
+  .jackpot-text-container {
+    top: 110% !important;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .el-header {
+    width: 90% !important;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .el-header-image {
+    padding: 0 15px !important;
+  }
+
+  .jackpot-container {
+    width: 160px !important;
+    height: 70px !important;
+    background-size: contain !important;
+    margin-top: 30px !important;
+    margin-left: 10px;
+  }
+  .jackpot-amount {
+    font-size: 14px !important;
+  }
+
+  .leave-btn {
+    width: 50px !important;
+    font-size: 10px !important;
+    height: 20px !important;
+  }
+
+  .jackpot-amount {
+    font-size: 1.5em;
+  }
+
+  .chip-amount {
+    width: 80px !important;
+    height: 30px !important;
+  }
+
+  .chip-amount-text {
+    font-size: 8px !important;
+  }
+
+  .jackpot-text-container {
+    top: 120% !important;
+    right: 38%;
+  }
+
+  .jackpot-text {
+    width: 96px;
+  }
 }
 </style>

@@ -58,4 +58,55 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .title {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .el-header,
+  .el-footer {
+    width: 90% !important;
+  }
+
+  .custom-drawer-header {
+    width: 90% !important;
+  }
+
+  :deep(.el-drawer__body) {
+    width: 100%;
+  }
+
+  .chip img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .bet-grid {
+    gap: 1em;
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  }
+
+  .timer-container {
+    width: 80px;
+    height: 80px;
+  }
+
+  .timer {
+    font-size: 46px;
+  }
+
+  .countdown-text,
+  .countdown-number {
+    font-size: 28px;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .el-footer-image {
+    padding: 0 15px !important;
+  }
+}
 </style>

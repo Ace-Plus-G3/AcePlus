@@ -6,6 +6,9 @@
     <!-- <PlayerWins :game_status="game_status" /> -->
     <GameTimer />
     <StartingInView />
+    <div class="spin-overlay" v-if="useGameStore().getSpinTheWheel">
+      <SpinTheWheel />
+    </div>
     <!-- End of Overlays -->
 
     <el-main>
@@ -38,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from 'vue'
 import HeaderView from '@/components/game/HeaderView.vue'
 import CustomCard from '@/components/game/CustomCard.vue'
 import { useGameStore } from '@/stores'
@@ -46,9 +49,10 @@ import { useGameStore } from '@/stores'
 // images
 import cardBack from '@/assets/cards/back/card_back_bg.png'
 import FooterView from '@/components/game/FooterView.vue'
+import gameLogic from '@/composables/useGameLogic'
+import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import BetDrawer from '@/components/game/BetDrawer.vue'
 
-let intervalId: number | undefined = undefined
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
 const containerHeight = ref(0)
@@ -62,76 +66,57 @@ const updateContainerDimensions = async () => {
   }
 }
 
-// const initializeGame = async () => {
-//   await updateContainerDimensions()
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateContainerDimensions)
+  // Ensure we clean up any existing interval
+  gameLogic.setIntervalId(undefined)
+})
 
-//   FourCards.value = getRandomCards(Cards)
-
-//   // Initial game state
-//   startGame.value = 'PENDING'
-
-//   if (intervalId !== undefined) {
-//     clearInterval(intervalId)
-//   }
-
-//   intervalId = setInterval(() => {
-//     if (startingIn.value > 0) {
-//       startingIn.value--
-//     } else {
-//       clearInterval(intervalId)
-//       intervalId = undefined
-
-//       updateContainerDimensions().then(() => {
-//         setTimeout(() => {
-//           startGame.value = 'START'
-//         }, 200)
-//       })
-//     }
-//   }, 1000)
-// }
+onUnmounted(() => {
+  // Ensure we clean up any existing interval
+  gameLogic.setIntervalId(undefined)
+})
 
 onMounted(async () => {
   window.addEventListener('resize', updateContainerDimensions)
-
   await nextTick()
-
   await updateContainerDimensions()
-
-  useGameStore().initializeGame()
+  gameLogic.initializeGame()
 })
 
 watch(
   () => useGameStore().getStartGame,
   (newValue) => {
     if (newValue === 'START') {
-      if (intervalId !== undefined) {
-        clearInterval(intervalId)
-        intervalId = undefined
-      }
+      // Always ensure we clear any existing interval first
+      gameLogic.setIntervalId(undefined)
 
       setTimeout(() => {
-        // handleGenerateBots()
-        // handleDistributeBot()
-        intervalId = setInterval(() => {
+        gameLogic.handleGenerateBots()
+        gameLogic.handleDistributeBot()
+
+        // Start a new timer
+        const newIntervalId = setInterval(() => {
           if (useGameStore().getTimer > 0) {
             useGameStore().decreaseTimer()
+            console.log('Timer tick!')
           } else {
-            clearInterval(intervalId)
-            intervalId = undefined
+            // Clear interval when timer reaches zero
+            gameLogic.setIntervalId(undefined)
           }
         }, 1000)
+
+        gameLogic.setIntervalId(newIntervalId)
       }, 500)
 
-      // After timer completes, reveal cards
       setTimeout(() => {
-        // useGameStore().handleCancelBet()
-        useGameStore().getHighestCard()
-        useGameStore().handleRevealCard()
+        gameLogic.handleCancelBet()
+        gameLogic.getHighestCard()
+        gameLogic.handleRevealCard()
       }, 10500)
 
-      // Reset after reveal
       setTimeout(() => {
-        useGameStore().handleResetCard()
+        gameLogic.handleResetCard()
       }, 12000)
     }
   },
@@ -185,5 +170,89 @@ watch(
     z-index: 1000;
     transform: translate(10px, -60px);
   }
+}
+
+.spin-overlay {
+  z-index: 2000;
+  position: fixed;
+  top: 0;
+
+  width: 100%;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 780px) {
+  :deep(.card) {
+    width: 60px !important;
+    height: 90px !important;
+  }
+}
+
+/* Drawer Styles*/
+
+:deep(.el-drawer) {
+  height: 50% !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+:deep(.el-drawer__body) {
+  padding: 0;
+  margin: 0;
+  max-width: 800px;
+  min-width: 375px;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.custom-drawer {
+  max-width: 800px;
+  min-width: 375px;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Custom header */
+/* Drawer Styles*/
+:deep(.el-overlay) {
+  overflow: hidden !important;
+  display: flex;
+  justify-content: center;
+}
+
+:deep(.el-drawer) {
+  overflow: hidden;
+  background: none;
+  height: 50% !important;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+:deep(.el-drawer__body) {
+  padding: 0;
+  margin: 0;
+  max-width: 800px;
+  min-width: 375px;
+  width: 100%;
+  height: 100%;
 }
 </style>

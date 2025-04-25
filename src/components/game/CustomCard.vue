@@ -1,5 +1,5 @@
 <template>
-  <div class="card-container" ref="target" @click="useGameStore().handleSelectCard(index)">
+  <div class="card-container" ref="target" @click="gameLogic.handleSelectCard(index)">
     <div
       class="flip-card"
       :class="{
@@ -38,8 +38,10 @@ import { useWindowSize } from '@vueuse/core'
 import GoldIcon from '@/assets/coins/gold.png'
 import playerLogo from '@/assets/icons/players_icon_xs.png'
 import { convertToReadableFormat } from '@/utils/convertMoney'
-import distributeCardSound from '@/assets/audio/sample2_card_distribute.mp3'
 import { useGameStore } from '@/stores'
+import gameLogic from '@/composables/useGameLogic'
+
+// import distributeCardSound from '@/assets/audio/sample2_card_distribute.mp3'
 
 type Props = {
   index: number
@@ -55,11 +57,11 @@ const scaleRef = ref<HTMLElement>()
 const { width } = useWindowSize()
 
 // Card sizing based on screen width
-const CARD_WIDTH = computed(() => (width.value > 1280 ? 80 : 60))
-const CARD_HEIGHT = computed(() => (width.value > 1280 ? 120 : 90))
-const CARD_SPACING = computed(() => (width.value > 1280 ? 20 : 10))
+const CARD_WIDTH = computed(() => (width.value > 780 ? 80 : 60))
+const CARD_HEIGHT = computed(() => (width.value > 780 ? 120 : 90))
+const CARD_SPACING = computed(() => (width.value > 780 ? 20 : 10))
 
-const cardDistributeSound = new Audio(distributeCardSound)
+// const cardDistributeSound = new Audio(distributeCardSound)
 
 // Calculate distribution positions
 const calculateDistributionPosition = () => {
@@ -87,8 +89,8 @@ const updateCardPosition = (isDistributed: boolean) => {
     target.value.style.transform = `translate(${position.x}px, ${position.y}px) rotate(360deg)`
     target.value.style.zIndex = '10'
 
-    cardDistributeSound.loop = false
-    cardDistributeSound.play()
+    // cardDistributeSound.loop = false
+    // cardDistributeSound.play()
     setTimeout(() => {
       if (!scaleRef.value) return
       scaleRef.value.classList.add('scaleIn')
@@ -290,7 +292,7 @@ onMounted(async () => {
   }
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 780px) {
   .flip-card,
   .flip-card-inner,
   .flip-card-front,
