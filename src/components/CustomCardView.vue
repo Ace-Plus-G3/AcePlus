@@ -41,6 +41,7 @@ import { useWindowSize } from '@vueuse/core'
 import GoldIcon from '@/assets/coins/gold.png'
 import playerLogo from '@/assets/icons/players_icon_xs.png'
 import { convertToReadableFormat } from '@/utils/convertMoney'
+import distributeCardSound from '@/assets/audio/sample2_card_distribute.mp3'
 
 type Props = {
   start: 'Start' | 'Pending' | 'Done'
@@ -66,6 +67,8 @@ const CARD_WIDTH = computed(() => (width.value > 1280 ? 80 : 60))
 const CARD_HEIGHT = computed(() => (width.value > 1280 ? 120 : 90))
 const CARD_SPACING = computed(() => (width.value > 1280 ? 20 : 10))
 
+const cardDistributeSound = new Audio(distributeCardSound)
+
 // Calculate distribution positions
 const calculateDistributionPosition = () => {
   if (props.containerWidth <= 10 || props.containerHeight <= 10) {
@@ -90,6 +93,8 @@ const updateCardPosition = (isDistributed: boolean) => {
     target.value.style.transform = `translate(${position.x}px, ${position.y}px) rotate(360deg)`
     target.value.style.zIndex = '10'
 
+    cardDistributeSound.loop = false
+    cardDistributeSound.play()
     setTimeout(() => {
       if (!scaleRef.value) return
       scaleRef.value.classList.add('scaleIn')
