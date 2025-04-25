@@ -155,7 +155,7 @@ span {
 #ReceiptView {
   background-color: var(--primary-black);
   max-width: 800px;
-  height: 100vh;
+  height: 100dvh;
   margin: 0 auto;
 }
 

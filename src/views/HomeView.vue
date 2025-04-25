@@ -56,7 +56,7 @@ const logout = () => {
 
 <style scoped>
 #home-page {
-  height: 100vh;
+  height: 100dvh;
   background-image: url(../assets/homepage_bg.png);
   display: flex;
   flex-direction: column;

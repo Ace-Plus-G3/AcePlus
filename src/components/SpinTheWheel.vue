@@ -262,4 +262,17 @@ onMounted(() => {
     scale: 1;
   }
 }
+
+/* Responsive styles */
+
+@media screen and (max-width: 420px) {
+  .wheel {
+    width: 500px;
+    height: 500px;
+  }
+
+  .close-text {
+    bottom: 5%;
+  }
+}
 </style>

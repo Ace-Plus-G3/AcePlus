@@ -279,7 +279,7 @@ const goToCashTransact = () => {
   background-position: center;
   margin: 0 auto;
   /* background-image: url(../assets/homepage_bg.png); */
-  height: 100vh;
+  height: 100dvh;
 }
 
 /* .card-amount-main-container {

@@ -52,7 +52,7 @@
 <style scoped>
 .main-container {
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;

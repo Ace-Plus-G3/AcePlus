@@ -596,7 +596,7 @@ watch(startGame, (newValue) => {
 }
 
 .el-container {
-  height: 100vh;
+  height: 100dvh;
   background-image: url('@/assets/homepage_bg.png');
   display: flex;
   flex-direction: column;
@@ -621,7 +621,7 @@ watch(startGame, (newValue) => {
 
   .el-header-top-bar {
     max-width: 800px;
-    min-width: 320px;
+    min-width: 350px;
     width: 100%;
     aspect-ratio: 8.88 / 1;
     position: relative;
@@ -726,7 +726,7 @@ watch(startGame, (newValue) => {
 
   .el-footer-bottom-bar {
     max-width: 800px;
-    min-width: 320px;
+    min-width: 350px;
     width: 100%;
     aspect-ratio: 8.88 / 1;
     position: relative;
@@ -772,7 +772,7 @@ watch(startGame, (newValue) => {
 :deep(.el-drawer) {
   overflow: hidden;
   background: none;
-  height: 40% !important;
+  height: 50% !important;
 
   display: flex;
   flex-direction: column;
@@ -894,7 +894,7 @@ watch(startGame, (newValue) => {
   top: 0;
 
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   background: rgba(0, 0, 0, 0.5);
 
   display: flex;
