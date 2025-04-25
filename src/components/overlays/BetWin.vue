@@ -39,4 +39,11 @@ const { variant } = useMotion(target, {
   font-size: 26px;
   top: 20%;
 }
+
+@media screen and (max-width: 1280px) {
+  .bet-win {
+    top: -10%;
+    right: 0;
+  }
+}
 </style>
