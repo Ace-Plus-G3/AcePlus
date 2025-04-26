@@ -66,21 +66,26 @@ const updateContainerDimensions = async () => {
   }
 }
 
+const cleanupAllTimers = () => {
+  gameLogic.cleanupAllIntervals()
+}
+
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateContainerDimensions)
-  // Ensure we clean up any existing interval
-  gameLogic.setIntervalId(undefined)
+  cleanupAllTimers()
 })
 
 onUnmounted(() => {
-  // Ensure we clean up any existing interval
-  gameLogic.setIntervalId(undefined)
+  cleanupAllTimers()
 })
 
 onMounted(async () => {
   window.addEventListener('resize', updateContainerDimensions)
   await nextTick()
   await updateContainerDimensions()
+
+  // Clean up any existing timers before initializing the game
+  cleanupAllTimers()
   gameLogic.initializeGame()
 })
 
@@ -88,8 +93,7 @@ watch(
   () => useGameStore().getStartGame,
   (newValue) => {
     if (newValue === 'START') {
-      // Always ensure we clear any existing interval first
-      gameLogic.setIntervalId(undefined)
+      gameLogic.cleanupAllIntervals()
 
       setTimeout(() => {
         gameLogic.handleGenerateBots()
@@ -99,9 +103,7 @@ watch(
         const newIntervalId = setInterval(() => {
           if (useGameStore().getTimer > 0) {
             useGameStore().decreaseTimer()
-            console.log('Timer tick!')
           } else {
-            // Clear interval when timer reaches zero
             gameLogic.setIntervalId(undefined)
           }
         }, 1000)

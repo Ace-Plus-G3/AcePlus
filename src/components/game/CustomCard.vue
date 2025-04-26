@@ -63,7 +63,6 @@ const CARD_SPACING = computed(() => (width.value > 780 ? 20 : 10))
 
 // const cardDistributeSound = new Audio(distributeCardSound)
 
-// Calculate distribution positions
 const calculateDistributionPosition = () => {
   if (props.containerWidth <= 10 || props.containerHeight <= 10) {
     console.error(`Invalid container dimensions: ${props.containerWidth}x${props.containerHeight}`)
@@ -115,14 +114,12 @@ watch(
   { immediate: true },
 )
 
-// Watch container size changes
 watch([() => props.containerWidth, () => props.containerHeight], ([newWidth, newHeight]) => {
   if (useGameStore().getStartGame === 'START' && newWidth > 10 && newHeight > 10) {
     updateCardPosition(true)
   }
 })
 
-// Initialize position at top left corner
 onMounted(async () => {
   if (target.value) {
     target.value.style.transform = 'translate(10px, -60px)'
@@ -148,6 +145,7 @@ onMounted(async () => {
   left: 0;
   z-index: 10;
   will-change: transform;
+  cursor: pointer;
 }
 
 .flip-card {
@@ -192,6 +190,7 @@ onMounted(async () => {
     font-size: 12px;
   }
 }
+
 .player-count {
   display: flex;
   align-items: center;

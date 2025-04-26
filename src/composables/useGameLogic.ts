@@ -6,17 +6,31 @@ import { getRandomCards } from '@/utils/getRandomCards'
 
 export class GameLogic {
   private intervalId: number | undefined = undefined
+  private resetCountdownId: number | undefined = undefined
 
   getIntervalId() {
     return this.intervalId
   }
 
   setIntervalId(value: number | undefined) {
-    // Clear any existing interval when setting a new one or clearing
     if (this.intervalId !== undefined) {
       clearInterval(this.intervalId)
+      this.intervalId = undefined
     }
     this.intervalId = value
+  }
+
+  setResetCountdownId(value: number | undefined) {
+    if (this.resetCountdownId !== undefined) {
+      clearInterval(this.resetCountdownId)
+      this.resetCountdownId = undefined
+    }
+    this.resetCountdownId = value
+  }
+
+  cleanupAllIntervals() {
+    this.setIntervalId(undefined)
+    this.setResetCountdownId(undefined)
   }
 
   handleEndOfGame() {
@@ -31,12 +45,13 @@ export class GameLogic {
   }
 
   initializeGame() {
+    // Clean up any existing intervals first
+    this.cleanupAllIntervals()
+
     const cards = getRandomCards(Cards)
     useGameStore().setFourCards(cards)
     useGameStore().setStartGame('PENDING')
-
-    // Always clear existing interval first
-    this.setIntervalId(undefined)
+    useGameStore().setStartingIn(5) // Reset starting timer to initial value
 
     const newIntervalId = setInterval(() => {
       if (useGameStore().getStartinIn > 0) {
@@ -131,8 +146,7 @@ export class GameLogic {
   }
 
   handleResetCard() {
-    // Make sure any existing timer is cleared first
-    this.setIntervalId(undefined)
+    this.cleanupAllIntervals()
 
     useGameStore().setTimer(3)
     useGameStore().setRevealCard(false)
@@ -146,21 +160,21 @@ export class GameLogic {
     const newCards = getRandomCards(Cards)
     useGameStore().setFourCards(newCards)
 
-    // Create a temporary interval for the reset countdown
     setTimeout(() => {
       const countdownIntervalId = setInterval(() => {
         if (useGameStore().getTimer > 0) {
           useGameStore().decreaseTimer()
         } else {
-          // Clear and reset intervalId when countdown completes
-          clearInterval(countdownIntervalId)
+          // Clear the reset countdown interval
+          this.setResetCountdownId(undefined)
         }
       }, 1000)
 
-      // We don't set this as the main intervalId to avoid conflicts
+      this.setResetCountdownId(countdownIntervalId)
     }, 500)
 
     setTimeout(() => {
+      this.cleanupAllIntervals()
       useGameStore().setTimer(10)
       useGameStore().setStartGame('START')
     }, 4000)
@@ -216,7 +230,7 @@ export class GameLogic {
     useGameStore().setDrawer(false)
   }
 
-  handleDistributeBot = () => {
+  handleDistributeBot() {
     let accumulatedDelay = 0
 
     useGameStore().getAllBots.forEach((bot) => {
@@ -232,7 +246,7 @@ export class GameLogic {
     })
   }
 
-  handleGenerateBots = () => {
+  handleGenerateBots() {
     const botRandomAmount = Math.floor(Math.random() * 20)
     const bot_bet_choices = [1, 5, 10, 50, 500, 100, 500, 1000, 5000, 10000]
 
