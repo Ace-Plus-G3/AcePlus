@@ -73,11 +73,11 @@ const cleanupAllTimers = () => {
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateContainerDimensions)
-  cleanupAllTimers()
+  gameLogic.cleanupAll()
 })
 
 onUnmounted(() => {
-  cleanupAllTimers()
+  gameLogic.resetGameState()
 })
 
 onMounted(async () => {
@@ -96,7 +96,7 @@ watch(
     if (newValue === 'START') {
       gameLogic.cleanupAllIntervals()
 
-      setTimeout(() => {
+      const newGameTimeoutId = setTimeout(() => {
         gameLogic.handleGenerateBots()
 
         const newIntervalId = setInterval(() => {
@@ -109,22 +109,26 @@ watch(
 
         gameLogic.setIntervalId(newIntervalId)
       }, 500)
+      gameLogic.addTimeout(newGameTimeoutId)
 
-      setTimeout(() => {
+      const distributeBotTimeout = setTimeout(() => {
         // console.log('DISTRIBUTE!')
         gameLogic.handleDistributeBot()
       }, 1500)
+      gameLogic.addTimeout(distributeBotTimeout)
 
-      setTimeout(() => {
+      const resetGameTImeout = setTimeout(() => {
         // console.log('10 secs done')
         gameLogic.handleCancelBet()
         gameLogic.getHighestCard()
         gameLogic.handleRevealCard()
       }, 10500)
+      gameLogic.addTimeout(resetGameTImeout)
 
-      setTimeout(() => {
+      const resetCardTimeout = setTimeout(() => {
         gameLogic.handleResetCard()
       }, 12000)
+      gameLogic.addTimeout(resetCardTimeout)
     }
   },
 )
@@ -134,7 +138,7 @@ watch(
 .el-container {
   position: relative;
   height: 100dvh;
-  background-image: url('@/assets/homepage_bg.png');
+  /* background-image: url('@/assets/homepage_bg.png'); */
   display: flex;
   flex-direction: column;
   justify-content: space-between;

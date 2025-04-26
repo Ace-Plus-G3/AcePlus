@@ -6,6 +6,16 @@ import { getRandomCards } from '@/utils/getRandomCards'
 export class GameLogic {
   private intervalId: number | undefined = undefined
   private resetCountdownId: number | undefined = undefined
+  private timeouts: number[] = []
+
+  addTimeout(timeoutId: number) {
+    this.timeouts.push(timeoutId)
+  }
+
+  clearAllTimeouts() {
+    this.timeouts.forEach(clearTimeout)
+    this.timeouts = []
+  }
 
   getIntervalId() {
     return this.intervalId
@@ -47,10 +57,19 @@ export class GameLogic {
     // Clean up any existing intervals first
     this.cleanupAllIntervals()
 
+    useGameStore().setStartingIn(5) // Reset starting timer to initial value
+    useGameStore().setRevealCard(false)
+    useGameStore().setStartGame('PENDING')
+    useGameStore().setGameStatus('PENDING')
+    useGameStore().setFourCards([])
+    useGameStore().setSelectedCards([])
+    useGameStore().setAllBets([])
+    useGameStore().setAllBots([])
+    useGameStore().setTotalPlayers(0)
+
     const cards = getRandomCards(Cards)
     useGameStore().setFourCards(cards)
     useGameStore().setStartGame('PENDING')
-    useGameStore().setStartingIn(5) // Reset starting timer to initial value
 
     const newIntervalId = setInterval(() => {
       if (useGameStore().getStartinIn > 0) {
@@ -59,9 +78,10 @@ export class GameLogic {
         // Clear interval and reset the intervalId
         this.setIntervalId(undefined)
 
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           useGameStore().setStartGame('START')
         }, 200)
+        this.addTimeout(timeoutId)
       }
     }, 1000)
 
@@ -79,7 +99,7 @@ export class GameLogic {
 
     const highestCard = cards.reduce((max, curr) => (curr.value > max.value ? curr : max))
 
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       const selectedCards = useGameStore().getSelectedCards
       const hasLuckyCard = selectedCards.some((card) => card.value === 1)
 
@@ -91,7 +111,7 @@ export class GameLogic {
       const hasHighestCard = selectedCards.some((card) => card.value === highestCard.value)
       useGameStore().setGameStatus(hasHighestCard ? 'WIN' : 'LOSE')
     }, 500)
-
+    this.addTimeout(timeoutId)
     return highestCard
   }
 
@@ -110,16 +130,18 @@ export class GameLogic {
 
       if (luckyCardIndex >= 0 && item.value === luckyCard.value) {
         const withMultiplier = item.betAmount * (item.randomMultiplier ?? 1)
-        setTimeout(() => {
+        const updateBalanceTimeoutId = setTimeout(() => {
           const updatedBets = [...useGameStore().getAllBets, `+${formatCurrency(withMultiplier)}`]
           useGameStore().setAllBets(updatedBets)
           useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + withMultiplier)
         }, 500)
+        this.addTimeout(updateBalanceTimeoutId)
 
-        setTimeout(() => {
+        const updateSpinTheWheelTimeoutId = setTimeout(() => {
           useGameStore().setBetOnAce(item.betAmount)
           useGameStore().setShowSpinTheWheel(true)
         }, 1000)
+        this.addTimeout(updateSpinTheWheelTimeoutId)
       }
 
       if (item.value === highestCard.value && luckyCardIndex < 0) {
@@ -139,9 +161,10 @@ export class GameLogic {
       }
     })
 
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       this.handleEndOfGame()
     }, 1000)
+    this.addTimeout(timeoutId)
   }
 
   handleResetCard() {
@@ -160,7 +183,7 @@ export class GameLogic {
     const newCards = getRandomCards(Cards)
     useGameStore().setFourCards(newCards)
 
-    setTimeout(() => {
+    const countDownTimer = setTimeout(() => {
       const countdownIntervalId = setInterval(() => {
         if (useGameStore().getTimer > 0) {
           useGameStore().decreaseTimer()
@@ -172,12 +195,14 @@ export class GameLogic {
 
       this.setResetCountdownId(countdownIntervalId)
     }, 500)
+    this.addTimeout(countDownTimer)
 
-    setTimeout(() => {
+    const resetTimer = setTimeout(() => {
       this.cleanupAllIntervals()
       useGameStore().setTimer(10)
       useGameStore().setStartGame('START')
     }, 4000)
+    this.addTimeout(resetTimer)
   }
 
   handleSelectCard(index: number) {
@@ -231,7 +256,6 @@ export class GameLogic {
   }
 
   handleGenerateBots() {
-    // Clear existing bots first
     useGameStore().setAllBots([])
 
     const availableBotNames = [...botNames]
@@ -270,14 +294,45 @@ export class GameLogic {
       const botDelay = Math.floor(Math.random() * 300) + 200
       accumulatedDelay += botDelay
 
-      setTimeout(() => {
+      const addBotTimeout = setTimeout(() => {
         useGameStore().setTotalPlayers((useGameStore().totalPlayers += 1))
         bot.bot_cards.forEach(({ card_index, bot_bet_amount }) => {
           useGameStore().getFourCards[card_index].totalBet += bot_bet_amount
           useGameStore().getFourCards[card_index].playerCount += 1
         })
       }, accumulatedDelay)
+      this.addTimeout(addBotTimeout)
     })
+  }
+  // In GameLogic class
+  cleanupAll() {
+    // Clear all intervals
+    this.setIntervalId(undefined)
+    this.setResetCountdownId(undefined)
+
+    // Clear all timeouts
+    this.clearAllTimeouts()
+  }
+
+  resetGameState() {
+    this.setIntervalId(undefined)
+    this.setResetCountdownId(undefined)
+    this.clearAllTimeouts()
+
+    // Reset all game state
+    useGameStore().setStartingIn(5)
+    useGameStore().setTimer(10)
+    useGameStore().setRevealCard(false)
+    useGameStore().setStartGame('PENDING')
+    useGameStore().setGameStatus('PENDING')
+    useGameStore().setFourCards([])
+    useGameStore().setSelectedCards([])
+    useGameStore().setAllBets([])
+    useGameStore().setAllBots([])
+    useGameStore().setTotalPlayers(0)
+    useGameStore().setCurrentSelectedCard(null)
+    useGameStore().setDrawer(false)
+    useGameStore().setShowSpinTheWheel(false)
   }
 }
 

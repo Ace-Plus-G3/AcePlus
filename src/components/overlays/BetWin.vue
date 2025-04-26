@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { useMotion } from '@vueuse/motion'
-import { ref, defineProps } from 'vue'
+import { ref } from 'vue'
 
 type Props = {
   bet: string
