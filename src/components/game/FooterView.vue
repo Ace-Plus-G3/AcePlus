@@ -107,16 +107,15 @@ watch(
   }
 }
 
-@media screen and (max-width: 768px) {
-  .title {
-    font-size: 14px;
-  }
-}
-
 @media screen and (max-width: 800px) {
   .el-header,
   .el-footer {
     width: 90% !important;
+  }
+
+  .title,
+  .total-bet-text {
+    font-size: 12px !important;
   }
 
   .custom-drawer-header {
@@ -149,6 +148,12 @@ watch(
   .countdown-text,
   .countdown-number {
     font-size: 28px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .title {
+    font-size: 14px;
   }
 }
 

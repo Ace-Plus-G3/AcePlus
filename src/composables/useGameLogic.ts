@@ -68,6 +68,9 @@ export class GameLogic {
     useGameStore().setTotalPlayers(0)
 
     const cards = getRandomCards(Cards)
+    cards.forEach((item) => {
+      console.log(`${item.value}`)
+    })
     useGameStore().setFourCards(cards)
     useGameStore().setStartGame('PENDING')
 
@@ -129,13 +132,13 @@ export class GameLogic {
       const luckyCard = selectedCards[luckyCardIndex]
 
       if (luckyCardIndex >= 0 && item.value === luckyCard.value) {
-        const withMultiplier = item.betAmount * (item.randomMultiplier ?? 1)
-        const updateBalanceTimeoutId = setTimeout(() => {
-          const updatedBets = [...useGameStore().getAllBets, `+${formatCurrency(withMultiplier)}`]
-          useGameStore().setAllBets(updatedBets)
-          useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + withMultiplier)
-        }, 500)
-        this.addTimeout(updateBalanceTimeoutId)
+        // const withMultiplier = item.betAmount * (item.randomMultiplier ?? 1)
+        // const updateBalanceTimeoutId = setTimeout(() => {
+        //   const updatedBets = [...useGameStore().getAllBets, `+${formatCurrency(withMultiplier)}`]
+        //   useGameStore().setAllBets(updatedBets)
+        //   useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + withMultiplier)
+        // }, 500)
+        // this.addTimeout(updateBalanceTimeoutId)
 
         const updateSpinTheWheelTimeoutId = setTimeout(() => {
           useGameStore().setBetOnAce(item.betAmount)
@@ -286,7 +289,6 @@ export class GameLogic {
 
   handleDistributeBot() {
     const bots = useGameStore().getAllBots
-    console.log(`Distributing ${bots.length} bots to cards`)
 
     let accumulatedDelay = Math.floor(Math.random() * 1001) + 500 // 2000–4000ms initial delay
 

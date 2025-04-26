@@ -3,7 +3,7 @@
     <HeaderView />
 
     <!-- Start of Overlays -->
-    <PlayerWins />
+    <!-- <PlayerWins /> -->
     <GameTimer />
     <StartingInView />
     <div class="spin-overlay" v-if="useGameStore().getSpinTheWheel">
@@ -52,7 +52,7 @@ import FooterView from '@/components/game/FooterView.vue'
 import gameLogic from '@/composables/useGameLogic'
 import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import BetDrawer from '@/components/game/BetDrawer.vue'
-import PlayerWins from '@/components/overlays/PlayerWins.vue'
+// import PlayerWins from '@/components/overlays/PlayerWins.vue'
 
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)

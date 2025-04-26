@@ -41,7 +41,7 @@ import { convertToReadableFormat } from '@/utils/convertMoney'
 import { useGameStore } from '@/stores'
 import gameLogic from '@/composables/useGameLogic'
 
-// import distributeCardSound from '@/assets/audio/sample2_card_distribute.mp3'
+import distributeCardSound from '@/assets/audio/new-card-audio.mp3'
 
 type Props = {
   index: number
@@ -61,7 +61,7 @@ const CARD_WIDTH = computed(() => (width.value > 780 ? 80 : 60))
 const CARD_HEIGHT = computed(() => (width.value > 780 ? 120 : 90))
 const CARD_SPACING = computed(() => (width.value > 780 ? 40 : 20))
 
-// const cardDistributeSound = new Audio(distributeCardSound)
+const cardDistributeSound = new Audio(distributeCardSound)
 
 const calculateDistributionPosition = () => {
   if (props.containerWidth <= 10 || props.containerHeight <= 10) {
@@ -82,25 +82,41 @@ const calculateDistributionPosition = () => {
 const updateCardPosition = (isDistributed: boolean) => {
   if (!target.value) return
 
+  const soundTimeout = setTimeout(() => {
+    cardDistributeSound.volume = 0.5
+    cardDistributeSound.loop = false
+    cardDistributeSound.play()
+  }, props.index * 150)
+  gameLogic.addTimeout(soundTimeout)
+
   if (isDistributed) {
     const position = calculateDistributionPosition()
     target.value.style.transition = `transform ${200 + props.index * 200}ms ease-out`
     target.value.style.transform = `translate(${position.x}px, ${position.y}px) rotate(360deg)`
     target.value.style.zIndex = '10'
 
-    // cardDistributeSound.loop = false
-    // cardDistributeSound.play()
-
-    setTimeout(() => {
+    const cardTimeout = setTimeout(() => {
       if (!scaleRef.value) return
       scaleRef.value.classList.add('scaleIn')
     }, 1500)
+    gameLogic.addTimeout(cardTimeout)
   } else {
     target.value.style.transition = `transform ${200 + props.index * 200}ms ease-in`
     target.value.style.transform = `translate(10px, -60px) rotate(0deg)`
     target.value.style.zIndex = `${10 - props.index}`
   }
 }
+
+watch(
+  () => useGameStore().getIsRevealCards,
+  (newValue) => {
+    if (newValue) {
+      cardDistributeSound.volume = 0.3
+      cardDistributeSound.loop = false
+      cardDistributeSound.play()
+    }
+  },
+)
 
 watch(
   () => useGameStore().getStartGame,

@@ -30,12 +30,12 @@ import { useGameStore } from '@/stores'
     0 3px var(--primary-red),
     3px 0 var(--primary-red),
     0 -3px var(--primary-red);
-  font-size: 46px;
+  font-size: 36px;
 }
 
 .countdown-number-container {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   border-radius: 100%;
   display: flex;
   align-items: center;

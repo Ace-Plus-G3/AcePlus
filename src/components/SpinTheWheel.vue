@@ -78,6 +78,7 @@ const spinWheel = () => {
   isSpinning.value = true
 
   // Play the spin sound
+  spinAudio.volume = 0.3
   spinAudio.loop = false
   spinAudio.currentTime = 0
   spinAudio.play()
