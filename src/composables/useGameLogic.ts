@@ -1,5 +1,4 @@
 import { botNames, Cards } from '@/models/constants'
-import type { TBotsCards } from '@/models/type'
 import { useCreditStore, useGameStore } from '@/stores'
 import { formatCurrency } from '@/utils/convertMoney'
 import { getRandomCards } from '@/utils/getRandomCards'
@@ -156,6 +155,7 @@ export class GameLogic {
     useGameStore().setSelectedCards([])
     useGameStore().setAllBets([])
     useGameStore().setAllBots([])
+    useGameStore().setTotalPlayers(0)
 
     const newCards = getRandomCards(Cards)
     useGameStore().setFourCards(newCards)
@@ -230,42 +230,54 @@ export class GameLogic {
     useGameStore().setDrawer(false)
   }
 
-  handleDistributeBot() {
-    let accumulatedDelay = 0
-
-    useGameStore().getAllBots.forEach((bot) => {
-      const randomDelay = Math.floor(Math.random() * 5000) + 500
-      accumulatedDelay += randomDelay
-
-      setTimeout(() => {
-        bot.bot_cards.forEach((bot_card) => {
-          useGameStore().getFourCards[bot_card.card_index].totalBet += bot_card.bot_bet_amount
-          useGameStore().getFourCards[bot_card.card_index].playerCount += 1
-        })
-      }, accumulatedDelay)
-    })
-  }
-
   handleGenerateBots() {
-    const botRandomAmount = Math.floor(Math.random() * 20)
+    // Clear existing bots first
+    useGameStore().setAllBots([])
+
+    const availableBotNames = [...botNames]
+    const botRandomAmount = Math.floor(Math.random() * 21) // 0 to 20
     const bot_bet_choices = [1, 5, 10, 50, 500, 100, 500, 1000, 5000, 10000]
 
-    for (let i = 0; i <= botRandomAmount; i++) {
-      const bot_random_choice_of_card = Math.floor(Math.random() * 4)
+    for (let i = 0; i < botRandomAmount; i++) {
+      const bot_name_index = Math.floor(Math.random() * availableBotNames.length)
+      const bot_name = availableBotNames[bot_name_index]
+      availableBotNames.splice(bot_name_index, 1)
 
-      const bot_name = botNames[Math.floor(Math.random() * botNames.length)]
-      botNames.splice(Math.floor(Math.random() * botNames.length), 1)
+      const numberOfBets = Math.floor(Math.random() * 4) + 1 // bot can bet on 1 - 4  no. of cards
+      const uniqueCardIndexes = new Set<number>()
 
-      const bot_cards: TBotsCards[] = []
-      for (let j = 0; j <= bot_random_choice_of_card; j++) {
-        bot_cards.push({
-          card_index: j,
-          bot_bet_amount: bot_bet_choices[Math.floor(Math.random() * bot_bet_choices.length)],
-        })
+      while (uniqueCardIndexes.size < numberOfBets) {
+        uniqueCardIndexes.add(Math.floor(Math.random() * 4))
       }
+
+      const bot_cards = Array.from(uniqueCardIndexes).map((card_index) => ({
+        card_index,
+        bot_bet_amount: bot_bet_choices[Math.floor(Math.random() * bot_bet_choices.length)],
+      }))
+
       const updatedBots = [...useGameStore().getAllBots, { bot_name, bot_cards }]
       useGameStore().setAllBots(updatedBots)
     }
+  }
+
+  handleDistributeBot() {
+    const bots = useGameStore().getAllBots
+    console.log(`Distributing ${bots.length} bots to cards`)
+
+    let accumulatedDelay = Math.floor(Math.random() * 1001) + 500 // 2000–4000ms initial delay
+
+    bots.forEach((bot) => {
+      const botDelay = Math.floor(Math.random() * 300) + 200
+      accumulatedDelay += botDelay
+
+      setTimeout(() => {
+        useGameStore().setTotalPlayers((useGameStore().totalPlayers += 1))
+        bot.bot_cards.forEach(({ card_index, bot_bet_amount }) => {
+          useGameStore().getFourCards[card_index].totalBet += bot_bet_amount
+          useGameStore().getFourCards[card_index].playerCount += 1
+        })
+      }, accumulatedDelay)
+    })
   }
 }
 

@@ -2,13 +2,54 @@
   <el-footer>
     <div class="el-footer-bottom-bar">
       <div class="el-footer-image">
-        <span class="title">Place your bets !</span>
+        <div class="text-container">
+          <span class="title">Total Bets:</span>
+          <el-text class="total-bet-text">
+            {{ formatCurrency(outputValue) }}
+          </el-text>
+        </div>
+        <div class="text-container">
+          <span class="title">Total Players:</span>
+          <el-text class="total-bet-text">
+            {{ formatCurrency(totalPlayersCountValue) }}
+          </el-text>
+        </div>
       </div>
     </div>
   </el-footer>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useGameStore } from '@/stores'
+import { formatCurrency } from '@/utils/convertMoney.ts'
+import { useTransition } from '@vueuse/core'
+import { ref, watch } from 'vue'
+
+const source = ref(0)
+const outputValue = useTransition(source, { duration: 300 })
+
+const totalPlayersCount = ref(0)
+const totalPlayersCountValue = useTransition(totalPlayersCount, { duration: 300 })
+
+watch(
+  [
+    () => useGameStore().getTotalPlayers,
+    () => (useGameStore().getSelectedCards.length > 0 ? 1 : 0),
+  ],
+  ([newValue, newPlayerValue]) => {
+    totalPlayersCount.value = newValue + newPlayerValue
+  },
+  { immediate: true },
+)
+
+watch(
+  () => useGameStore().getFourCards.reduce((total, card) => total + card.totalBet, 0),
+  (newValue) => {
+    source.value = newValue
+  },
+  { immediate: true },
+)
+</script>
 
 <style scoped>
 .el-footer {
@@ -46,16 +87,23 @@
     background-repeat: no-repeat;
 
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     padding: 0 40px;
     z-index: 2;
 
-    .title {
+    .title,
+    .total-bet-text {
       color: #ffca28;
       font-weight: bold;
       font-size: 16px;
     }
+  }
+
+  .text-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 }
 

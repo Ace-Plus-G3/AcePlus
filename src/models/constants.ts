@@ -101,7 +101,7 @@ export const wheelDeg: Array<TSpinWheel> = [
   },
   {
     deg: 315,
-    multiplier: 0,
+    multiplier: 1,
     url: new URL('@/assets/game/spin-value/bokya.png', import.meta.url).href,
   },
 ]

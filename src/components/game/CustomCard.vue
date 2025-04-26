@@ -59,7 +59,7 @@ const { width } = useWindowSize()
 // Card sizing based on screen width
 const CARD_WIDTH = computed(() => (width.value > 780 ? 80 : 60))
 const CARD_HEIGHT = computed(() => (width.value > 780 ? 120 : 90))
-const CARD_SPACING = computed(() => (width.value > 780 ? 20 : 10))
+const CARD_SPACING = computed(() => (width.value > 780 ? 40 : 20))
 
 // const cardDistributeSound = new Audio(distributeCardSound)
 
@@ -90,6 +90,7 @@ const updateCardPosition = (isDistributed: boolean) => {
 
     // cardDistributeSound.loop = false
     // cardDistributeSound.play()
+
     setTimeout(() => {
       if (!scaleRef.value) return
       scaleRef.value.classList.add('scaleIn')

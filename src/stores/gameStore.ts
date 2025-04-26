@@ -23,6 +23,8 @@ export const useGameStore = defineStore('gameStore', {
     revealCards: false as boolean,
     accumulatedJackpot: 0 as number,
 
+    totalPlayers: 0 as number,
+
     // cardFlipSound: new Audio(FlipCardSFX),
   }),
   getters: {
@@ -44,6 +46,8 @@ export const useGameStore = defineStore('gameStore', {
     getIsRevealCards: (state) => state.revealCards,
     getShowBetDrawer: (state) => state.showBetDrawer,
     getAccumulatedJackpot: (state) => state.accumulatedJackpot,
+
+    getTotalPlayers: (state) => state.totalPlayers,
   },
   actions: {
     setStartGame(newValue: 'PENDING' | 'START' | 'DONE') {
@@ -108,6 +112,10 @@ export const useGameStore = defineStore('gameStore', {
 
     setAccumulatedJackpot(newBalance: number) {
       this.accumulatedJackpot = newBalance
+    },
+
+    setTotalPlayers(newValue: number) {
+      this.totalPlayers = newValue
     },
   },
 })
