@@ -1,5 +1,5 @@
 <template>
-  <div v-if="multiplierWin === null" class="wheel-container" @click="handleSpin">
+  <div v-if="!showResult" class="wheel-container" @click="handleSpin">
     <img
       draggable="false"
       :src="Wheel"
@@ -9,8 +9,7 @@
     <img draggable="false" src="../assets/feet_wheel.png" class="wheel-bg" />
     <el-image draggable="false" :src="BorderWheel" class="border-wheel"></el-image>
   </div>
-  <div class="win-overlay" v-if="multiplierWin?.multiplier === 0 || multiplierWin">
-    <!-- <div class="win-overlay"> -->
+  <div class="win-overlay" v-if="showResult">
     <div class="banner">
       <el-image fit="cover" :src="congratulations" class="congratulations" />
       <el-image fit="cover" :src="vfxLight" class="light-1" />
@@ -19,39 +18,30 @@
         <el-image :src="multiplierWin?.url" class="" />
         <el-text class="text">+{{ Math.round(outputValue) }}</el-text>
       </div>
-      <el-text class="close-text" @click="emit('handleClose', false)">Click here to close</el-text>
+      <el-text class="close-text" @click="handleClose"> Click here to close </el-text>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import BorderWheel from '@/assets/border_wheel.png'
 import Wheel from '@/assets/wheel-new-new.png'
 import { wheelDeg } from '@/models/constants'
 import vfxLight from '@/assets/game/vfx-light.png'
 import congratulations from '@/assets/game/congratulations.png'
 import type { TSpinWheel } from '@/models/type'
-import { useCreditStore } from '@/stores'
+import { useCreditStore, useGameStore } from '@/stores'
 import { useTransition } from '@vueuse/core'
 import spinSound from '@/assets/audio/sample6_wheel.mp3'
 import winSound from '@/assets/audio/sample1_spin_price.mp3'
-
-// const props = defineProps<{
-//   betAmount: number
-//   multiplierWin: { multiplier: number } | null
-// }>()
-
-type Props = {
-  betAmount: number
-}
-
-const emit = defineEmits(['handleClose'])
-const props = defineProps<Props>()
+import { formatCurrency } from '@/utils/convertMoney'
 
 const rotation = ref(0)
 const isSpinning = ref(false)
 const multiplierWin = ref<TSpinWheel | null>(null)
+const showResult = ref(false)
+const autoSpinTimeout = ref<number | null>(null)
 
 const source = ref(0)
 const outputValue = useTransition(source, { duration: 3000 })
@@ -59,69 +49,115 @@ const outputValue = useTransition(source, { duration: 3000 })
 const spinAudio = new Audio(spinSound)
 const winAudio = new Audio(winSound)
 
-// Watch for changes and apply smooth transition
 watch(
-  () => props.betAmount * (multiplierWin.value ? multiplierWin.value.multiplier : 0),
+  () => useGameStore().getBetOnAce * (multiplierWin.value ? multiplierWin.value.multiplier : 1),
   (newValue) => {
     source.value = newValue
   },
 )
 
+// Cleanup function to prevent memory leaks
+const cleanup = () => {
+  if (autoSpinTimeout.value) {
+    clearTimeout(autoSpinTimeout.value)
+    autoSpinTimeout.value = null
+  }
+  spinAudio.pause()
+  spinAudio.currentTime = 0
+  winAudio.pause()
+  winAudio.currentTime = 0
+}
+
 const spinWheel = () => {
   if (isSpinning.value) return
 
-  console.log('Wheel spinning...')
+  // Reset in case we're respinning
+  showResult.value = false
+  multiplierWin.value = null
+
   isSpinning.value = true
 
+  // Play the spin sound
+  spinAudio.volume = 0.3
   spinAudio.loop = false
+  spinAudio.currentTime = 0
   spinAudio.play()
 
   const fullRotations = 360 * 10
 
   // 30% chance of bokya appearing
-  const shouldBokyaAppear: boolean = Math.random() < 0.3
+  const randomValue = Math.random()
+  const shouldBokyaAppear = randomValue < 0.3
+
+  let selectedSlice: TSpinWheel
+
   if (shouldBokyaAppear) {
-    winAudio.pause()
+    selectedSlice = wheelDeg.find((slice) => slice.multiplier === 1) || wheelDeg[7]
+  } else {
+    const nonBokyaSlices = wheelDeg.filter((slice) => slice.multiplier > 1)
+    const randomIndex = Math.floor(Math.random() * nonBokyaSlices.length)
+    selectedSlice = nonBokyaSlices[randomIndex]
   }
-  console.log(shouldBokyaAppear)
 
-  const randomIndex = Math.floor(Math.random() * wheelDeg.length)
-  const selectedSlice = wheelDeg[randomIndex]
   const stopAtDegree = fullRotations - selectedSlice.deg
-
-  // Set the new rotation value
   rotation.value = stopAtDegree
 
-  console.log(`Spinning to: ${stopAtDegree}°`)
-  console.log(`Selected slice: ${selectedSlice.deg}°, Multiplier: ${selectedSlice.multiplier}`)
-
-  // Reset after animation completes
   setTimeout(() => {
     spinAudio.pause()
-    spinAudio.currentTime = 0 // Reset the spinning sound
+    spinAudio.currentTime = 0
 
-    winAudio.play()
     isSpinning.value = false
     multiplierWin.value = selectedSlice
-    console.log(`Spin complete. Winner: Multiplier ${selectedSlice.multiplier}`)
+    showResult.value = true
+
+    if (selectedSlice.multiplier > 1) {
+      winAudio.currentTime = 0
+      winAudio.play()
+    }
+
+    // Update user's balance
     useCreditStore().setCurrentBalance(
-      useCreditStore().getCurrentBalance + props.betAmount * multiplierWin.value.multiplier,
+      useCreditStore().getCurrentBalance +
+        useGameStore().getBetOnAce * multiplierWin.value.multiplier,
     )
   }, 8000)
 }
 
 const handleSpin = () => {
-  if (!isSpinning.value) {
+  if (!isSpinning.value && !showResult.value) {
     spinWheel()
   }
 }
 
+const handleClose = () => {
+  if (multiplierWin.value) {
+    const updatedBets = [
+      ...useGameStore().getAllBets,
+      `+${formatCurrency(useGameStore().getBetOnAce * multiplierWin.value.multiplier)}`,
+    ]
+    useGameStore().setAllBets(updatedBets)
+  }
+  cleanup()
+  useGameStore().setShowSpinTheWheel(false)
+}
+
 onMounted(() => {
-  setTimeout(() => {
-    if (!isSpinning.value) {
+  // Reset state on mount
+  rotation.value = 0
+  isSpinning.value = false
+  showResult.value = false
+  multiplierWin.value = null
+
+  // Auto-spin after a delay
+  autoSpinTimeout.value = setTimeout(() => {
+    if (!isSpinning.value && !showResult.value) {
       spinWheel()
     }
-  }, 4000)
+  }, 1000) as unknown as number
+})
+
+onUnmounted(() => {
+  cleanup()
 })
 </script>
 
@@ -135,7 +171,6 @@ onMounted(() => {
   position: relative;
   width: 700px;
   height: 700px;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -144,7 +179,8 @@ onMounted(() => {
 .wheel {
   z-index: 99;
   position: absolute;
-
+  width: 700px;
+  height: 700px;
   transform-origin: center center;
   transition: transform 8s cubic-bezier(0.33, 1, 0.68, 1);
   will-change: transform;
@@ -152,28 +188,27 @@ onMounted(() => {
 }
 
 .border-wheel {
-  z-index: 99;
+  z-index: 100;
   position: absolute;
+  width: 600px;
+  height: 600px;
 }
 
 .wheel-bg {
   z-index: 98;
   position: absolute;
-  bottom: 0;
+  bottom: -10%;
 }
 
 .win-overlay {
   width: 100%;
   height: 100dvh;
-
   position: fixed;
   top: 0;
   left: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   animation: popup 0.25s ease-in-out;
 }
 
@@ -184,7 +219,6 @@ onMounted(() => {
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -199,7 +233,6 @@ onMounted(() => {
 .text-container {
   position: absolute;
   animation: popup 0.25s ease-in-out;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -209,6 +242,8 @@ onMounted(() => {
 .text {
   font-size: 48px;
   color: #f9c80e;
+  position: absolute;
+  bottom: -20%;
 }
 
 .close-text {
@@ -265,10 +300,67 @@ onMounted(() => {
 
 /* Responsive styles */
 
-@media screen and (max-width: 420px) {
+@media screen and (max-width: 768px) {
+  .wheel-container {
+    width: 500px;
+    height: 500px;
+  }
+
   .wheel {
     width: 500px;
     height: 500px;
+  }
+
+  .border-wheel {
+    width: 400px;
+    height: 400px;
+  }
+
+  .wheel-bg {
+    bottom: -8%;
+    width: 500px;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .wheel-container {
+    width: 350px;
+    height: 350px;
+  }
+
+  .wheel {
+    width: 350px;
+    height: 350px;
+  }
+
+  .border-wheel {
+    width: 300px;
+    height: 300px;
+  }
+
+  .wheel-bg {
+    bottom: -10%;
+    width: 300px;
+  }
+
+  .banner {
+    width: 300px;
+    height: 425px;
+  }
+
+  .text {
+    font-size: 36px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .banner {
+    width: 250px;
+    height: 354px;
+  }
+
+  .text {
+    font-size: 32px;
   }
 
   .close-text {

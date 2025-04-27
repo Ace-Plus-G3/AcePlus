@@ -1,5 +1,5 @@
 <template>
-  <div class="overlay" v-if="game_status === 'WIN'">
+  <div class="overlay" v-if="useGameStore().getGameStatus === 'WIN'">
     <div class="win-overlay">
       <el-image :src="WIN_ICON" />
     </div>
@@ -8,11 +8,7 @@
 
 <script setup lang="ts">
 import WIN_ICON from '@/assets/game/title_win.png'
-type TProps = {
-  game_status: 'WIN' | 'LOSE' | 'PENDING'
-}
-
-defineProps<TProps>()
+import { useGameStore } from '@/stores'
 </script>
 
 <style scoped>
@@ -31,6 +27,12 @@ defineProps<TProps>()
 }
 .win-overlay {
   animation: popup 0.5s ease-in-out;
+}
+
+@media screen and (max-width: 780px) {
+  .el-image {
+    width: 300px;
+  }
 }
 
 /* Responsive styles */

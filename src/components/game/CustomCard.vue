@@ -1,61 +1,55 @@
 <template>
-  <div class="card-container" ref="target" @click="handleCardClick(index)">
+  <div class="card-container" ref="target" @click="gameLogic.handleSelectCard(index)">
     <div
       class="flip-card"
       :class="{
-        flipped: reveal,
-        selected: selectedCard.some((card) => card.value === fourCards[index].value),
+        flipped: useGameStore().getIsRevealCards,
+        selected: useGameStore().selectedCards.some(
+          (card) => card.value === useGameStore().getFourCards[index].value,
+        ),
       }"
     >
       <div class="flip-card-inner">
         <div class="flip-card-front">
           <div class="player-count">
             <el-image class="player-count-icon" :src="playerLogo" />
-            <span class="player-count-text">{{ fourCards[index].playerCount }}</span>
+            <span class="player-count-text">{{ card.playerCount }}</span>
           </div>
-          <div ref="scaleRef" class="card_random_multi" v-if="fourCards[index].randomMultiplier">
-            {{ `${fourCards[index].randomMultiplier}x` }}
+          <div ref="scaleRef" class="card_random_multi" v-if="card.randomMultiplier">
+            {{ `${card.randomMultiplier}x` }}
           </div>
           <div class="bet-count-container">
             <div class="bet-count">
-              <span class="bet-count-text">{{
-                convertToReadableFormat(fourCards[props.index].totalBet)
-              }}</span>
+              <span class="bet-count-text">{{ convertToReadableFormat(card.totalBet) }}</span>
               <el-image class="player-count-icon" :src="GoldIcon" />
             </div>
           </div>
         </div>
-        <div
-          class="flip-card-back"
-          :style="{ backgroundImage: 'url(' + fourCards[index].url + ')' }"
-        ></div>
+        <div class="flip-card-back" :style="{ backgroundImage: 'url(' + card.url + ')' }"></div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { TCardType, TSelectedCard } from '@/models/type'
+import type { TCardType } from '@/models/type'
 import { onMounted, ref, watch, computed, nextTick } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import GoldIcon from '@/assets/coins/gold.png'
 import playerLogo from '@/assets/icons/players_icon_xs.png'
 import { convertToReadableFormat } from '@/utils/convertMoney'
-import distributeCardSound from '@/assets/audio/sample2_card_distribute.mp3'
+import { useGameStore } from '@/stores'
+import gameLogic from '@/composables/useGameLogic'
+
+import distributeCardSound from '@/assets/audio/new-card-audio.mp3'
 
 type Props = {
-  start: 'Start' | 'Pending' | 'Done'
-  delay: number
   index: number
-  length: number
-  reveal: boolean
-  selectedCard: TSelectedCard[]
-  fourCards: TCardType[]
+  card: TCardType
   containerWidth: number
   containerHeight: number
 }
 
-const emit = defineEmits(['handleSelectCard'])
 const props = defineProps<Props>()
 
 const target = ref<HTMLElement>()
@@ -63,20 +57,21 @@ const scaleRef = ref<HTMLElement>()
 const { width } = useWindowSize()
 
 // Card sizing based on screen width
-const CARD_WIDTH = computed(() => (width.value > 1280 ? 80 : 60))
-const CARD_HEIGHT = computed(() => (width.value > 1280 ? 120 : 90))
-const CARD_SPACING = computed(() => (width.value > 1280 ? 20 : 10))
+const CARD_WIDTH = computed(() => (width.value > 780 ? 80 : 60))
+const CARD_HEIGHT = computed(() => (width.value > 780 ? 120 : 90))
+const CARD_SPACING = computed(() => (width.value > 780 ? 40 : 20))
 
 const cardDistributeSound = new Audio(distributeCardSound)
 
-// Calculate distribution positions
 const calculateDistributionPosition = () => {
   if (props.containerWidth <= 10 || props.containerHeight <= 10) {
     console.error(`Invalid container dimensions: ${props.containerWidth}x${props.containerHeight}`)
     return { x: 10, y: -60 }
   }
 
-  const TOTAL_WIDTH = props.length * CARD_WIDTH.value + (props.length - 1) * CARD_SPACING.value
+  const TOTAL_WIDTH =
+    useGameStore().getFourCards.length * CARD_WIDTH.value +
+    (useGameStore().getFourCards.length - 1) * CARD_SPACING.value
   const startX = Math.max(10, (props.containerWidth - TOTAL_WIDTH) / 2)
   const distributedX = startX + props.index * (CARD_WIDTH.value + CARD_SPACING.value)
   const centerY = Math.max(10, (props.containerHeight - CARD_HEIGHT.value) / 2)
@@ -87,35 +82,48 @@ const calculateDistributionPosition = () => {
 const updateCardPosition = (isDistributed: boolean) => {
   if (!target.value) return
 
+  const soundTimeout = setTimeout(() => {
+    cardDistributeSound.volume = 0.5
+    cardDistributeSound.loop = false
+    cardDistributeSound.play()
+  }, props.index * 150)
+  gameLogic.addTimeout(soundTimeout)
+
   if (isDistributed) {
     const position = calculateDistributionPosition()
-    target.value.style.transition = `transform ${200 + props.delay}ms ease-out`
+    target.value.style.transition = `transform ${200 + props.index * 200}ms ease-out`
     target.value.style.transform = `translate(${position.x}px, ${position.y}px) rotate(360deg)`
     target.value.style.zIndex = '10'
 
-    cardDistributeSound.loop = false
-    cardDistributeSound.play()
-    setTimeout(() => {
+    const cardTimeout = setTimeout(() => {
       if (!scaleRef.value) return
       scaleRef.value.classList.add('scaleIn')
     }, 1500)
+    gameLogic.addTimeout(cardTimeout)
   } else {
-    target.value.style.transition = `transform ${200 + props.delay}ms ease-in`
+    target.value.style.transition = `transform ${200 + props.index * 200}ms ease-in`
     target.value.style.transform = `translate(10px, -60px) rotate(0deg)`
     target.value.style.zIndex = `${10 - props.index}`
   }
 }
 
-const handleCardClick = (index: number) => {
-  emit('handleSelectCard', index)
-}
+watch(
+  () => useGameStore().getIsRevealCards,
+  (newValue) => {
+    if (newValue) {
+      cardDistributeSound.volume = 0.3
+      cardDistributeSound.loop = false
+      cardDistributeSound.play()
+    }
+  },
+)
 
 watch(
-  () => props.start,
+  () => useGameStore().getStartGame,
   (newValue) => {
-    if (newValue === 'Start') {
+    if (newValue === 'START') {
       updateCardPosition(true)
-    } else if (newValue === 'Done') {
+    } else if (newValue === 'DONE') {
       updateCardPosition(false)
       scaleRef.value?.classList.remove('scaleIn')
     }
@@ -123,14 +131,12 @@ watch(
   { immediate: true },
 )
 
-// Watch container size changes
 watch([() => props.containerWidth, () => props.containerHeight], ([newWidth, newHeight]) => {
-  if (props.start === 'Start' && newWidth > 10 && newHeight > 10) {
+  if (useGameStore().getStartGame === 'START' && newWidth > 10 && newHeight > 10) {
     updateCardPosition(true)
   }
 })
 
-// Initialize position at top left corner
 onMounted(async () => {
   if (target.value) {
     target.value.style.transform = 'translate(10px, -60px)'
@@ -139,7 +145,11 @@ onMounted(async () => {
 
   await nextTick()
 
-  if (props.start === 'Start' && props.containerWidth > 10 && props.containerHeight > 10) {
+  if (
+    useGameStore().getStartGame === 'START' &&
+    props.containerWidth > 10 &&
+    props.containerHeight > 10
+  ) {
     updateCardPosition(true)
   }
 })
@@ -152,6 +162,7 @@ onMounted(async () => {
   left: 0;
   z-index: 10;
   will-change: transform;
+  cursor: pointer;
 }
 
 .flip-card {
@@ -196,6 +207,7 @@ onMounted(async () => {
     font-size: 12px;
   }
 }
+
 .player-count {
   display: flex;
   align-items: center;
@@ -296,7 +308,7 @@ onMounted(async () => {
   }
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 780px) {
   .flip-card,
   .flip-card-inner,
   .flip-card-front,

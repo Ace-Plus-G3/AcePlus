@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { useMotion } from '@vueuse/motion'
-import { ref, defineProps } from 'vue'
+import { ref } from 'vue'
 
 type Props = {
   bet: string
@@ -23,8 +23,8 @@ const { variant } = useMotion(target, {
     opacity: 1,
     y: 0,
     transition: {
-      delay: props.index * 300,
-      duration: 1000,
+      delay: props.index * 200,
+      duration: 750,
       onComplete: () => (variant.value = 'leave'),
     },
   },

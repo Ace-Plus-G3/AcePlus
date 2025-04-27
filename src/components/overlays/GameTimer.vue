@@ -1,16 +1,11 @@
 <template>
-  <div v-if="startingIn === 0" class="timer-container">
-    <div class="timer">{{ timer }}</div>
+  <div v-if="useGameStore().getStartinIn === 0" class="timer-container">
+    <div class="timer">{{ useGameStore().getTimer }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
-type TProps = {
-  startingIn: number
-  timer: number
-}
-
-defineProps<TProps>()
+import { useGameStore } from '@/stores'
 </script>
 
 <style scoped>
@@ -18,8 +13,8 @@ defineProps<TProps>()
   position: fixed;
   top: 15%;
   z-index: 1;
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   border-radius: 100%;
   display: flex;
   align-items: center;
@@ -35,6 +30,6 @@ defineProps<TProps>()
     0 3px var(--primary-red),
     3px 0 var(--primary-red),
     0 -3px var(--primary-red);
-  font-size: 46px;
+  font-size: 36px;
 }
 </style>

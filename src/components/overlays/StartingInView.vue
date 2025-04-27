@@ -1,18 +1,14 @@
 <template>
-  <div v-if="startingIn > 0" class="starting-countdown">
+  <div v-if="useGameStore().getStartinIn > 0" class="starting-countdown">
     <div class="countdown-text">Starting in:</div>
     <div class="countdown-number-container">
-      <div class="countdown-number">{{ startingIn }}</div>
+      <div class="countdown-number">{{ useGameStore().getStartinIn }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-type TProps = {
-  startingIn: number
-}
-
-defineProps<TProps>()
+import { useGameStore } from '@/stores'
 </script>
 
 <style scoped>
@@ -34,12 +30,12 @@ defineProps<TProps>()
     0 3px var(--primary-red),
     3px 0 var(--primary-red),
     0 -3px var(--primary-red);
-  font-size: 46px;
+  font-size: 36px;
 }
 
 .countdown-number-container {
-  width: 100px;
-  height: 100px;
+  width: 70px;
+  height: 70px;
   border-radius: 100%;
   display: flex;
   align-items: center;

@@ -4,7 +4,7 @@ export function getRandomCards(cards: Array<TCardType>): Array<TCardType> {
   const cardsDeck: Array<TCardType> = JSON.parse(JSON.stringify(cards))
   const selectedCards: Array<TCardType> = []
 
-  const shouldIncludeAce: boolean = Math.random() < 0.9
+  const shouldIncludeAce: boolean = Math.random() < 0.1 // 10% chance of appearing
   const aceIndex: number = cardsDeck.findIndex((card: TCardType) => card.value === 1)
 
   if (shouldIncludeAce && aceIndex !== -1) {
@@ -29,7 +29,7 @@ export function getRandomCards(cards: Array<TCardType>): Array<TCardType> {
     }
   }
 
-  const multipliersChanceOfAppearing = Math.random() < 0.3
+  const multipliersChanceOfAppearing = Math.random() < 0.3 // 30% chance of appearing
 
   if (multipliersChanceOfAppearing) {
     // multipliers

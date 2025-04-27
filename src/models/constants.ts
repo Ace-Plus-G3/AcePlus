@@ -101,7 +101,30 @@ export const wheelDeg: Array<TSpinWheel> = [
   },
   {
     deg: 315,
-    multiplier: 0,
+    multiplier: 1,
     url: new URL('@/assets/game/spin-value/bokya.png', import.meta.url).href,
   },
+]
+
+export const botNames: Array<string> = [
+  'Sophia',
+  'Liam',
+  'Olivia',
+  'Noah',
+  'Emma',
+  'James',
+  'Ava',
+  'Elijah',
+  'Isabella',
+  'Lucas',
+  'Mia',
+  'Ethan',
+  'Amelia',
+  'Alexander',
+  'Charlotte',
+  'Benjamin',
+  'Harper',
+  'Henry',
+  'Evelyn',
+  'Sebastian',
 ]
