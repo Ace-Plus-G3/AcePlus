@@ -3,7 +3,7 @@
     <div class="el-header-top-bar">
       <div class="el-header-image">
         <button class="leave-btn" @click="router.push('/')">Leave</button>
-        <div class="jackpot-container">
+        <div id="jackpot-container" class="jackpot-container">
           <el-text class="jackpot-amount">
             {{ formatCurrency(outputValue) }}
           </el-text>

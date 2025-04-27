@@ -10,7 +10,7 @@
       <!-- Add a conditional rendering for this buttons if the user logged -->
       <template v-if="usePlayerStore().getToken">
         <el-button @click="gotoGame" class="btn btn-start"><el-text>Start</el-text></el-button>
-        <el-button class="btn btn-instructions"><el-text>Instructions</el-text></el-button>
+        <el-button @click="openTutorial" class="btn btn-instructions"><el-text>Instructions</el-text></el-button>
         <el-button @click="goToWallet" class="btn btn-wallet"><el-text>Wallet</el-text></el-button>
         <el-button @click="logout()" class="btn btn-logout"><el-text>Logout</el-text></el-button>
       </template>
@@ -26,11 +26,15 @@ import { ref } from 'vue'
 import { usePlayerStore } from '@/stores/playerStore'
 import { useRouter } from 'vue-router'
 import AuthModal from '@/components/AuthModal.vue'
-
 import { showNotify } from '@/utils/notify'
 
 const router = useRouter()
 const isModalVisible = ref(false)
+
+
+const openTutorial = () => {
+  router.push({ name: 'game', query: { tutorial: 'true' } });
+}
 
 const openModal = () => {
   isModalVisible.value = true

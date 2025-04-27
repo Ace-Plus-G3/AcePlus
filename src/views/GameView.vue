@@ -37,6 +37,7 @@
 
     <FooterView />
     <BetDrawer />
+    <TutorialComponent :isOpen="isTutorialOpen" />
   </el-container>
 </template>
 
@@ -52,6 +53,8 @@ import FooterView from '@/components/game/FooterView.vue'
 import gameLogic from '@/composables/useGameLogic'
 import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import BetDrawer from '@/components/game/BetDrawer.vue'
+import TutorialComponent from '@/components/TutorialComponent.vue'
+import { useRoute } from 'vue-router';
 // import PlayerWins from '@/components/overlays/PlayerWins.vue'
 
 const gameContainerRef = ref<HTMLElement | null>(null)
@@ -75,6 +78,13 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', updateContainerDimensions)
   gameLogic.cleanupAll()
 })
+
+const route = useRoute();
+const isTutorialOpen = ref(false);
+
+onMounted(() => {
+  isTutorialOpen.value = route.query.tutorial === 'true';
+});
 
 onUnmounted(() => {
   gameLogic.resetGameState()
