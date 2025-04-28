@@ -1,18 +1,14 @@
 <template>
-  <el-drawer
-    direction="btt"
-    @close="useGameStore().setDrawer(false)"
-    v-model="useGameStore().showBetDrawer"
-    :with-header="false"
-  >
+  <el-drawer direction="btt" v-model="useGameStore().setDrawer" :with-header="false">
     <div id="drawer" class="custom-drawer">
       <div class="custom-drawer-header">
         <span class="title">Place your bets !</span>
-        <button class="cancel-btn" @click="gameLogic.handleCancelBet">Cancel</button>
+        <button class="cancel-btn">Cancel</button>
       </div>
       <div class="drawer-content">
         <div class="bet-grid">
           <div
+            id="bet-grid"
             @click="gameLogic.handleSelectBet(chip.value)"
             v-for="chip in chips"
             :key="chip.value"
@@ -35,27 +31,6 @@ import gameLogic from '@/composables/useGameLogic'
 
 <style scoped>
 /* Drawer Styles*/
-:deep(.el-overlay) {
-  overflow: hidden !important;
-  display: flex;
-  justify-content: center;
-}
-
-:deep(.el-drawer) {
-  height: 50% !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-}
-
-:deep(.el-overlay) {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: end !important;
-}
 
 :deep(.el-drawer__body) {
   padding: 0;
@@ -78,16 +53,10 @@ import gameLogic from '@/composables/useGameLogic'
   justify-content: center;
 }
 
-:deep(.el-overlay) {
-  overflow: hidden !important;
-  display: flex;
-  justify-content: center;
-}
-
 :deep(.el-drawer) {
   overflow: hidden;
   background: none;
-  height: 50% !important;
+  height: 33% !important;
 
   display: flex;
   flex-direction: column;
@@ -203,9 +172,20 @@ import gameLogic from '@/composables/useGameLogic'
   background: #ffd54f;
 }
 
+@media screen and (max-width: 320px) {
+  .chip-img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
+
 @media screen and (max-width: 425px) {
   .custom-drawer-header {
     padding: 0 15px !important;
+  }
+  .chip img {
+    width: 50px !important;
+    height: 50px !important;
   }
 }
 
