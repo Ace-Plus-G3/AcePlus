@@ -39,7 +39,7 @@ onMounted(() => {
 })
 
 watch(
-  () => useGameStore().accumulatedJackpot,
+  () => useGameStore().getAccumulatedJackpot,
   (newValue) => {
     source.value = newValue
   },

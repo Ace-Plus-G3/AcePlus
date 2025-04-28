@@ -10,6 +10,9 @@
     <div class="spin-overlay" v-if="useGameStore().getSpinTheWheel">
       <SpinTheWheel />
     </div>
+    <div class="spin-overlay" v-if="useGameStore().getJackpotSpinTheWheel">
+      <JackpotWheel />
+    </div>
     <!-- End of Overlays -->
 
     <el-main>
@@ -55,6 +58,7 @@ import gameLogic from '@/composables/useGameLogic'
 import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import BetDrawer from '@/components/game/BetDrawer.vue'
 import WinBanner from '@/components/game/WinBanner.vue'
+import JackpotWheel from '@/components/JackpotWheel.vue'
 // import PlayerWins from '@/components/overlays/PlayerWins.vue'
 
 const gameContainerRef = ref<HTMLElement | null>(null)

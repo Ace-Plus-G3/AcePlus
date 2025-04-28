@@ -25,6 +25,7 @@ type TState = {
   revealCards: boolean
   showBetDrawer: boolean
   showSpinTheWheel: boolean
+  showJackpotSpinTheWheel: boolean
   showWinBanner: boolean
 }
 
@@ -50,6 +51,7 @@ export const useGameStore = defineStore('gameStore', {
     revealCards: false,
     showBetDrawer: false,
     showSpinTheWheel: false,
+    showJackpotSpinTheWheel: false,
     showWinBanner: false,
   }),
   getters: {
@@ -69,6 +71,7 @@ export const useGameStore = defineStore('gameStore', {
     getBetOnCard: (state) => state.betOnCard,
 
     getSpinTheWheel: (state) => state.showSpinTheWheel,
+    getJackpotSpinTheWheel: (state) => state.showJackpotSpinTheWheel,
     getIsRevealCards: (state) => state.revealCards,
     getShowBetDrawer: (state) => state.showBetDrawer,
     getAccumulatedJackpot: (state) => state.accumulatedJackpot,
@@ -131,6 +134,10 @@ export const useGameStore = defineStore('gameStore', {
 
     setShowSpinTheWheel(newValue: boolean) {
       this.showSpinTheWheel = newValue
+    },
+
+    setShowJackpotSpinTheWheel(newValue: boolean) {
+      this.showJackpotSpinTheWheel = newValue
     },
 
     setDrawer(newValue: boolean) {

@@ -106,6 +106,49 @@ export const wheelDeg: Array<TSpinWheel> = [
   },
 ]
 
+export const jackpotWheelDeg: Array<TSpinWheel> = [
+  {
+    deg: 0,
+    multiplier: 10,
+    url: new URL('@/assets/game/jackpot-spin-value/10X.png', import.meta.url).href,
+  },
+  {
+    deg: 20,
+    multiplier: 20,
+    url: new URL('@/assets/game/jackpot-spin-value/20X.png', import.meta.url).href,
+  },
+  {
+    deg: 30,
+    multiplier: 30,
+    url: new URL('@/assets/game/jackpot-spin-value/30X.png', import.meta.url).href,
+  },
+  {
+    deg: 50,
+    multiplier: 50,
+    url: new URL('@/assets/game/jackpot-spin-value/50X.png', import.meta.url).href,
+  },
+  {
+    deg: 100,
+    multiplier: 100,
+    url: new URL('@/assets/game/jackpot-spin-value/100X.png', import.meta.url).href,
+  },
+  {
+    deg: 225,
+    multiplier: 200,
+    url: new URL('@/assets/game/jackpot-spin-value/200X.png', import.meta.url).href,
+  },
+  {
+    deg: 270,
+    multiplier: 500,
+    url: new URL('@/assets/game/jackpot-spin-value/500X.png', import.meta.url).href,
+  },
+  {
+    deg: 315,
+    multiplier: 1,
+    url: new URL('@/assets/game/jackpot-spin-value/JACKPOT.png', import.meta.url).href,
+  },
+]
+
 export const botNames: Array<string> = [
   'Sophia',
   'Liam',

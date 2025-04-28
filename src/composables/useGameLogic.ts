@@ -193,8 +193,8 @@ export class GameLogic {
     useGameStore().setAllBots([])
     useGameStore().setTotalPlayers(0)
     useGameStore().setWinBanner(false)
-    useGameStore().setBetOnAce(0)
-    useGameStore().setBetOnCard(0)
+    // useGameStore().setBetOnAce(0)
+    // useGameStore().setBetOnCard(0)
 
     const newCards = getRandomCards(Cards)
     useGameStore().setFourCards(newCards)
