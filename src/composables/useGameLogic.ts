@@ -152,8 +152,13 @@ export class GameLogic {
       if (item.value === highestCard.value && luckyCardIndex < 0) {
         console.log('highest!')
         const win = item.betAmount * (item.randomMultiplier ?? 1)
-        useGameStore().setBetOnCard(win)
-        useGameStore().setWinBanner(true)
+
+        const winBannerDelay = setTimeout(() => {
+          useGameStore().setBetOnCard(win)
+          useGameStore().setWinBanner(true)
+        }, 1000)
+        this.addTimeout(winBannerDelay)
+
         const updatedBets = [...useGameStore().getAllBets, `+${formatCurrency(win)}`]
         useGameStore().setAllBets(updatedBets)
         useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + win)
