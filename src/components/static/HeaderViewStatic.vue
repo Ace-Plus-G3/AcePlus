@@ -11,7 +11,7 @@
             <img :src="JackpotText" class="jackpot-text" alt="" />
           </div>
         </div>
-        <div class="chip-amount">
+        <div class="chip-amount" id="chip-amount">
           <el-text class="chip-amount-text" style="color: white" size="small">{{
             convertToReadableFormat(useCreditStore().getCurrentBalance)
           }}</el-text>
@@ -156,8 +156,8 @@ watch(
   justify-content: center;
   flex-direction: column;
   /* position: absolute;
-  right: 30%;
-  top: 40%; */
+    right: 30%;
+    top: 40%; */
 }
 
 @media screen and (max-width: 768px) {
