@@ -1,15 +1,6 @@
 <template>
   <el-container>
-    <HeaderView />
-
-    <!-- Start of Overlays -->
-    <!-- <PlayerWins /> -->
-    <GameTimer />
-    <StartingInView />
-    <div class="spin-overlay" v-if="useGameStore().getSpinTheWheel">
-      <SpinTheWheel />
-    </div>
-    <!-- End of Overlays -->
+    <HeaderViewStatic />
 
     <el-main>
       <div
@@ -18,13 +9,7 @@
         :disabled="useGameStore().getStartGame === 'START'"
       >
         <el-image id="card-back" fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
-        <BetWin
-          v-for="(item, index) in useGameStore().getAllBets"
-          :key="item"
-          :bet="item"
-          :index="index"
-        />
-        <CustomCard
+        <CustomCardStatic
           id="custom-card"
           v-for="(card, index) in useGameStore().getFourCards"
           :key="index"
@@ -36,24 +21,25 @@
       </div>
     </el-main>
 
-    <FooterView />
-    <BetDrawer />
+    <FooterViewStatic />
+    <BetDrawerStatic />
+    <TutorialComponent :isOpen="isTutorialOpen" />
   </el-container>
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from 'vue'
-import HeaderView from '@/components/game/HeaderView.vue'
-import CustomCard from '@/components/game/CustomCard.vue'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import HeaderViewStatic from '@/components/static/HeaderViewStatic.vue'
+import CustomCardStatic from '@/components/static/CustomCardStatic.vue'
 import { useGameStore } from '@/stores'
 
 // images
 import cardBack from '@/assets/cards/back/card_back_bg.png'
-import FooterView from '@/components/game/FooterView.vue'
+import FooterViewStatic from '@/components/static/FooterViewStatic.vue'
 import gameLogic from '@/composables/useGameLogic'
-import SpinTheWheel from '@/components/SpinTheWheel.vue'
-import BetDrawer from '@/components/game/BetDrawer.vue'
-// import PlayerWins from '@/components/overlays/PlayerWins.vue'
+import BetDrawerStatic from '@/components/static/BetDrawerStatic.vue'
+import TutorialComponent from '@/components/TutorialComponent.vue'
+import { useRoute } from 'vue-router'
 
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
@@ -68,17 +54,16 @@ const updateContainerDimensions = async () => {
   }
 }
 
-const cleanupAllTimers = () => {
-  gameLogic.cleanupAllIntervals()
-}
-
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateContainerDimensions)
   gameLogic.cleanupAll()
 })
 
-onUnmounted(() => {
-  gameLogic.resetGameState()
+const route = useRoute()
+const isTutorialOpen = ref(false)
+
+onMounted(() => {
+  isTutorialOpen.value = route.query.tutorial === 'true'
 })
 
 onMounted(async () => {
@@ -86,53 +71,8 @@ onMounted(async () => {
   await nextTick()
   await updateContainerDimensions()
 
-  // Clean up any existing timers before initializing the game
-  cleanupAllTimers()
   gameLogic.initializeGame()
 })
-
-watch(
-  () => useGameStore().getStartGame,
-  (newValue) => {
-    if (newValue === 'START') {
-      gameLogic.cleanupAllIntervals()
-
-      const newGameTimeoutId = setTimeout(() => {
-        gameLogic.handleGenerateBots()
-
-        const newIntervalId = setInterval(() => {
-          if (useGameStore().getTimer > 0) {
-            useGameStore().decreaseTimer()
-          } else {
-            gameLogic.setIntervalId(undefined)
-          }
-        }, 1000)
-
-        gameLogic.setIntervalId(newIntervalId)
-      }, 500)
-      gameLogic.addTimeout(newGameTimeoutId)
-
-      const distributeBotTimeout = setTimeout(() => {
-        // console.log('DISTRIBUTE!')
-        gameLogic.handleDistributeBot()
-      }, 1500)
-      gameLogic.addTimeout(distributeBotTimeout)
-
-      const resetGameTImeout = setTimeout(() => {
-        // console.log('10 secs done')
-        gameLogic.handleCancelBet()
-        gameLogic.getHighestCard()
-        gameLogic.handleRevealCard()
-      }, 10500)
-      gameLogic.addTimeout(resetGameTImeout)
-
-      const resetCardTimeout = setTimeout(() => {
-        gameLogic.handleResetCard()
-      }, 12000)
-      gameLogic.addTimeout(resetCardTimeout)
-    }
-  },
-)
 </script>
 
 <style scoped>
@@ -207,16 +147,6 @@ watch(
 
 /* Drawer Styles*/
 
-:deep(.el-drawer) {
-  height: 50% !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-}
-
 :deep(.el-drawer__body) {
   padding: 0;
   margin: 0;
@@ -241,6 +171,7 @@ watch(
 /* Custom header */
 /* Drawer Styles*/
 :deep(.el-overlay) {
+  background-color: inherit;
   overflow: hidden !important;
   display: flex;
   justify-content: center;
@@ -249,7 +180,7 @@ watch(
 :deep(.el-drawer) {
   overflow: hidden;
   background: none;
-  height: 50% !important;
+  height: 33% !important;
 
   display: flex;
   flex-direction: column;
