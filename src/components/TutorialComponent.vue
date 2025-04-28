@@ -1,5 +1,5 @@
 <template>
-  <el-tour v-model="open" @finish="handleFinish">
+  <el-tour v-model="open" :show-close="false" @finish="handleFinish">
     <el-tour-step
       target="#jackpot-container"
       title="Community Jackpot"
