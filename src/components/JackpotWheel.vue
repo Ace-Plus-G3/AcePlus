@@ -53,16 +53,6 @@ const outputValue = useTransition(source, { duration: 3000 })
 const spinAudio = new Audio(spinSound)
 const winAudio = new Audio(winSound)
 
-// watch(
-//   [
-//     () => useGameStore().getBetOnAce * (multiplierWin.value ? multiplierWin.value.multiplier : 1),
-//     () => useGameStore().getAccumulatedJackpot,
-//   ],
-//   ([newValue, newJackpotValue]) => {
-//     source.value = newValue ? newValue : newJackpotValue
-//   },
-// )
-
 // Cleanup function to prevent memory leaks
 const cleanup = () => {
   if (autoSpinTimeout.value) {
@@ -148,13 +138,13 @@ const handleSpin = () => {
 }
 
 const handleClose = () => {
-  if (shouldJackpotAppear.value) {
-    const updatedBets = [
-      ...useGameStore().getAllBets,
-      `+${formatCurrency(useGameStore().getAccumulatedJackpot)}`,
-    ]
-    useGameStore().setAllBets(updatedBets)
-  }
+  // if (shouldJackpotAppear.value) {
+  //   const updatedBets = [
+  //     ...useGameStore().getAllBets,
+  //     `+${formatCurrency(useGameStore().getAccumulatedJackpot)}`,
+  //   ]
+  //   useGameStore().setAllBets(updatedBets)
+  // }
   if (multiplierWin.value && !shouldJackpotAppear.value) {
     const updatedBets = [
       ...useGameStore().getAllBets,
@@ -356,9 +346,9 @@ onUnmounted(() => {
     height: 350px;
   }
 
-  .border-wheel {
-    width: 300px;
-    height: 300px;
+  .wheel-arrow {
+    width: 100px;
+    height: 100px;
   }
 
   .wheel-bg {

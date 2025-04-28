@@ -145,8 +145,10 @@ const handleClose = () => {
   if (
     multiplierWin.value &&
     (multiplierWin.value.multiplier === 6 || multiplierWin.value.multiplier === 1)
-  )
-    return
+  ) {
+    useGameStore().setShowSpinTheWheel(false)
+    multiplierWin.value = null
+  }
 
   if (multiplierWin.value) {
     const updatedBets = [
@@ -351,9 +353,9 @@ onUnmounted(() => {
     height: 350px;
   }
 
-  .border-wheel {
-    width: 300px;
-    height: 300px;
+  .wheel-arrow {
+    width: 100px;
+    height: 100px;
   }
 
   .wheel-bg {
