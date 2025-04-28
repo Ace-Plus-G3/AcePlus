@@ -83,7 +83,7 @@ export class GameLogic {
 
         const timeoutId = setTimeout(() => {
           useGameStore().setStartGame('START')
-        }, 200)
+        }, 500)
         this.addTimeout(timeoutId)
       }
     }, 1000)
@@ -131,6 +131,7 @@ export class GameLogic {
     selectedCards.forEach((item) => {
       const luckyCard = selectedCards[luckyCardIndex]
 
+      // item is lucky ace card
       if (luckyCardIndex >= 0 && item.value === luckyCard.value) {
         // const withMultiplier = item.betAmount * (item.randomMultiplier ?? 1)
         // const updateBalanceTimeoutId = setTimeout(() => {
@@ -147,8 +148,17 @@ export class GameLogic {
         this.addTimeout(updateSpinTheWheelTimeoutId)
       }
 
+      // item is highest card (and not the lucky ace card)
       if (item.value === highestCard.value && luckyCardIndex < 0) {
+        console.log('highest!')
         const win = item.betAmount * (item.randomMultiplier ?? 1)
+
+        const winBannerDelay = setTimeout(() => {
+          useGameStore().setBetOnCard(win)
+          useGameStore().setWinBanner(true)
+        }, 1000)
+        this.addTimeout(winBannerDelay)
+
         const updatedBets = [...useGameStore().getAllBets, `+${formatCurrency(win)}`]
         useGameStore().setAllBets(updatedBets)
         useCreditStore().setCurrentBalance(useCreditStore().getCurrentBalance + win)
@@ -173,7 +183,7 @@ export class GameLogic {
   handleResetCard() {
     this.cleanupAllIntervals()
 
-    useGameStore().setTimer(3)
+    useGameStore().setTimer(5)
     useGameStore().setRevealCard(false)
     useGameStore().setStartGame('DONE')
     useGameStore().setGameStatus('PENDING')
@@ -182,9 +192,15 @@ export class GameLogic {
     useGameStore().setAllBets([])
     useGameStore().setAllBots([])
     useGameStore().setTotalPlayers(0)
+    useGameStore().setWinBanner(false)
+    useGameStore().setBetOnAce(0)
+    useGameStore().setBetOnCard(0)
 
     const newCards = getRandomCards(Cards)
     useGameStore().setFourCards(newCards)
+    newCards.forEach((item) => {
+      console.log(`${item.value}`)
+    })
 
     const countDownTimer = setTimeout(() => {
       const countdownIntervalId = setInterval(() => {
@@ -204,7 +220,7 @@ export class GameLogic {
       this.cleanupAllIntervals()
       useGameStore().setTimer(10)
       useGameStore().setStartGame('START')
-    }, 4000)
+    }, 7000)
     this.addTimeout(resetTimer)
   }
 

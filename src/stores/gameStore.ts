@@ -1,31 +1,56 @@
 import type { TBots, TCardType, TSelectedCard } from '@/models/type'
 import { defineStore } from 'pinia'
-// import FlipCardSFX from '@/assets/audio/sample1_card_flip.mp3'
+
+type TState = {
+  start_game: 'PENDING' | 'START' | 'DONE'
+  game_status: 'PENDING' | 'WIN' | 'LOSE'
+
+  four_random_cards: TCardType[]
+  selectedCards: TSelectedCard[]
+  currentSelectedCard: {
+    index: number
+    card: TCardType
+  } | null
+
+  allBets: string[]
+  allBots: TBots[]
+
+  timer: number
+  betOnAce: number
+  betOnCard: number
+  startingIn: number
+  totalPlayers: number
+  accumulatedJackpot: number
+
+  revealCards: boolean
+  showBetDrawer: boolean
+  showSpinTheWheel: boolean
+  showWinBanner: boolean
+}
 
 export const useGameStore = defineStore('gameStore', {
-  state: () => ({
-    start_game: 'PENDING' as 'PENDING' | 'START' | 'DONE',
-    game_status: 'PENDING' as 'PENDING' | 'WIN' | 'LOSE',
+  state: (): TState => ({
+    start_game: 'PENDING',
+    game_status: 'PENDING',
 
-    four_random_cards: [] as TCardType[],
-    selectedCards: [] as TSelectedCard[],
-    currentSelectedCard: null as { index: number; card: TCardType } | null,
+    selectedCards: [],
+    four_random_cards: [],
+    currentSelectedCard: null,
 
-    allBets: [] as string[],
-    allBots: [] as TBots[],
+    allBets: [],
+    allBots: [],
 
-    startingIn: 5 as number,
-    timer: 10 as number,
-    betOnAce: 0 as number,
+    timer: 10,
+    betOnAce: 0,
+    betOnCard: 0,
+    startingIn: 5,
+    totalPlayers: 0,
+    accumulatedJackpot: 0,
 
-    showSpinTheWheel: false as boolean,
-    showBetDrawer: false as boolean,
-    revealCards: false as boolean,
-    accumulatedJackpot: 0 as number,
-
-    totalPlayers: 0 as number,
-
-    // cardFlipSound: new Audio(FlipCardSFX),
+    revealCards: false,
+    showBetDrawer: false,
+    showSpinTheWheel: false,
+    showWinBanner: false,
   }),
   getters: {
     getStartGame: (state) => state.start_game,
@@ -41,6 +66,7 @@ export const useGameStore = defineStore('gameStore', {
     getStartinIn: (state) => state.startingIn,
     getTimer: (state) => state.timer,
     getBetOnAce: (state) => state.betOnAce,
+    getBetOnCard: (state) => state.betOnCard,
 
     getSpinTheWheel: (state) => state.showSpinTheWheel,
     getIsRevealCards: (state) => state.revealCards,
@@ -48,6 +74,7 @@ export const useGameStore = defineStore('gameStore', {
     getAccumulatedJackpot: (state) => state.accumulatedJackpot,
 
     getTotalPlayers: (state) => state.totalPlayers,
+    getShowWinBanner: (state) => state.showWinBanner,
   },
   actions: {
     setStartGame(newValue: 'PENDING' | 'START' | 'DONE') {
@@ -98,6 +125,10 @@ export const useGameStore = defineStore('gameStore', {
       this.betOnAce = newValue
     },
 
+    setBetOnCard(newValue: number) {
+      this.betOnCard = newValue
+    },
+
     setShowSpinTheWheel(newValue: boolean) {
       this.showSpinTheWheel = newValue
     },
@@ -116,6 +147,10 @@ export const useGameStore = defineStore('gameStore', {
 
     setTotalPlayers(newValue: number) {
       this.totalPlayers = newValue
+    },
+
+    setWinBanner(newValue: boolean) {
+      this.showWinBanner = newValue
     },
   },
 })
