@@ -4,7 +4,7 @@ export function getRandomCards(cards: Array<TCardType>): Array<TCardType> {
   const cardsDeck: Array<TCardType> = JSON.parse(JSON.stringify(cards))
   const selectedCards: Array<TCardType> = []
 
-  const shouldIncludeAce: boolean = Math.random() < 0.1 // 10% chance of appearing
+  const shouldIncludeAce: boolean = Math.random() < 1 // 10% chance of appearing
   const aceIndex: number = cardsDeck.findIndex((card: TCardType) => card.value === 1)
 
   if (shouldIncludeAce && aceIndex !== -1) {

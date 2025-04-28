@@ -6,6 +6,7 @@
       class="wheel"
       :style="{ transform: `rotate(${rotation}deg)` }"
     />
+
     <img draggable="false" :src="WheelArrow" class="wheel-arrow" />
     <img draggable="false" src="../assets/feet_wheel.png" class="wheel-bg" />
   </div>
@@ -16,7 +17,7 @@
       <el-image fit="cover" :src="vfxLight" class="light-2" />
       <div class="text-container">
         <el-image :src="multiplierWin?.url" class="" />
-        <el-text class="text">+{{ Math.round(outputValue) }}</el-text>
+        <el-text class="text">+{{ formatCurrency(Math.round(outputValue)) }}</el-text>
       </div>
       <el-text class="close-text" @click="handleClose"> Click here to close </el-text>
     </div>
@@ -25,17 +26,16 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import { wheelDeg } from '@/models/constants'
+import { jackpotWheelDeg } from '@/models/constants'
 import type { TSpinWheel } from '@/models/type'
 import { useCreditStore, useGameStore } from '@/stores'
 import { useTransition } from '@vueuse/core'
 import spinSound from '@/assets/audio/sample6_wheel.mp3'
 import winSound from '@/assets/audio/sample1_spin_price.mp3'
 import { formatCurrency } from '@/utils/convertMoney'
-import gameLogic from '@/composables/useGameLogic'
 
 // images
-import Wheel from '@/assets/default_wheel.png'
+import Wheel from '@/assets/jackpot_wheel.png'
 import WheelArrow from '@/assets/wheel_arrow.png'
 import vfxLight from '@/assets/game/vfx-light.png'
 import congratulations from '@/assets/game/congratulations.png'
@@ -45,7 +45,8 @@ const isSpinning = ref(false)
 const multiplierWin = ref<TSpinWheel | null>(null)
 const showResult = ref(false)
 const autoSpinTimeout = ref<number | null>(null)
-const selectedSlice = ref<TSpinWheel | null>(null)
+const shouldJackpotAppear = ref(false)
+
 const source = ref(0)
 const outputValue = useTransition(source, { duration: 3000 })
 
@@ -70,6 +71,7 @@ const spinWheel = () => {
   // Reset in case we're respinning
   showResult.value = false
   multiplierWin.value = null
+
   isSpinning.value = true
 
   // Play the spin sound
@@ -80,58 +82,53 @@ const spinWheel = () => {
 
   const fullRotations = 360 * 10
 
-  // Randomly determine if "bokya" or "bonus" should appear
+  // 30% chance of jackpot appearing
   const randomValue = Math.random()
+  shouldJackpotAppear.value = randomValue < 1
 
-  if (randomValue < 0.3) {
-    // 30% chance of "bokya" appearing
-    selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 1) || wheelDeg[7]
-  } else if (randomValue >= 0.3 && randomValue < 2) {
-    // 30% chance of "bonus" appearing
-    selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 6) || wheelDeg[3]
+  let selectedSlice: TSpinWheel
+  console.log(shouldJackpotAppear.value)
+  if (shouldJackpotAppear.value) {
+    selectedSlice = jackpotWheelDeg.find((slice) => slice.multiplier === 1) || jackpotWheelDeg[7]
   } else {
-    // For other outcomes
-    const nonBokyaOrBonusSlices = wheelDeg.filter(
-      (slice) => slice.multiplier > 1 && slice.multiplier !== 6,
-    )
-    const randomIndex = Math.floor(Math.random() * nonBokyaOrBonusSlices.length)
-    selectedSlice.value = nonBokyaOrBonusSlices[randomIndex]
+    const nonBokyaSlices = jackpotWheelDeg.filter((slice) => slice.multiplier > 1)
+    const randomIndex = Math.floor(Math.random() * nonBokyaSlices.length)
+    selectedSlice = nonBokyaSlices[randomIndex]
   }
 
-  const stopAtDegree = fullRotations - selectedSlice.value.deg
+  const stopAtDegree = fullRotations - selectedSlice.deg
   rotation.value = stopAtDegree
 
-  const spinWheelTimeout = setTimeout(() => {
+  setTimeout(() => {
     spinAudio.pause()
     spinAudio.currentTime = 0
 
     isSpinning.value = false
-    multiplierWin.value = selectedSlice.value
+    showResult.value = true
+    multiplierWin.value = selectedSlice
 
-    if (multiplierWin.value && multiplierWin.value.multiplier === 6) {
-      // 6 is bonus wheel
-      useGameStore().setShowJackpotSpinTheWheel(true)
-      useGameStore().setShowSpinTheWheel(false)
+    if (selectedSlice.multiplier > 1) {
+      winAudio.currentTime = 0
+      winAudio.play()
+    }
+
+    if (shouldJackpotAppear.value) {
+      useCreditStore().setCurrentBalance(
+        useCreditStore().getCurrentBalance + useGameStore().getAccumulatedJackpot,
+      )
+      source.value = useGameStore().getAccumulatedJackpot
+      useGameStore().setAccumulatedJackpot(0)
     } else {
-      showResult.value = true
+      // Update user's balance
+      multiplierWin.value = selectedSlice
+      useCreditStore().setCurrentBalance(
+        useCreditStore().getCurrentBalance +
+          useGameStore().getBetOnAce * multiplierWin.value.multiplier,
+      )
 
-      if (selectedSlice.value && selectedSlice.value.multiplier > 1) {
-        winAudio.currentTime = 0
-        winAudio.play()
-
-        // Update user's balance
-        if (multiplierWin.value) {
-          useCreditStore().setCurrentBalance(
-            useCreditStore().getCurrentBalance +
-              useGameStore().getBetOnAce * multiplierWin.value.multiplier,
-          )
-          source.value = useGameStore().getBetOnAce * multiplierWin.value.multiplier
-        }
-      }
+      source.value = useGameStore().getBetOnAce * multiplierWin.value.multiplier
     }
   }, 8000)
-
-  gameLogic.addTimeout(spinWheelTimeout)
 }
 
 const handleSpin = () => {
@@ -141,27 +138,23 @@ const handleSpin = () => {
 }
 
 const handleClose = () => {
-  // Include multipliers of 6 or 1
-  if (
-    multiplierWin.value &&
-    (multiplierWin.value.multiplier === 6 || multiplierWin.value.multiplier === 1)
-  ) {
-    useGameStore().setShowSpinTheWheel(false)
-    multiplierWin.value = null
-  }
-
-  if (multiplierWin.value) {
+  // if (shouldJackpotAppear.value) {
+  //   const updatedBets = [
+  //     ...useGameStore().getAllBets,
+  //     `+${formatCurrency(useGameStore().getAccumulatedJackpot)}`,
+  //   ]
+  //   useGameStore().setAllBets(updatedBets)
+  // }
+  if (multiplierWin.value && !shouldJackpotAppear.value) {
     const updatedBets = [
       ...useGameStore().getAllBets,
       `+${formatCurrency(useGameStore().getBetOnAce * multiplierWin.value.multiplier)}`,
     ]
     useGameStore().setAllBets(updatedBets)
-    useGameStore().setBetOnAce(0)
   }
-
   cleanup()
-  useGameStore().setShowSpinTheWheel(false)
-  multiplierWin.value = null
+  useGameStore().setShowJackpotSpinTheWheel(false)
+  useGameStore().setBetOnAce(0)
 }
 
 onMounted(() => {
