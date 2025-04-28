@@ -6,6 +6,7 @@
     <!-- <PlayerWins /> -->
     <GameTimer />
     <StartingInView />
+    <WinBanner />
     <div class="spin-overlay" v-if="useGameStore().getSpinTheWheel">
       <SpinTheWheel />
     </div>
@@ -52,6 +53,7 @@ import FooterView from '@/components/game/FooterView.vue'
 import gameLogic from '@/composables/useGameLogic'
 import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import BetDrawer from '@/components/game/BetDrawer.vue'
+import WinBanner from '@/components/game/WinBanner.vue'
 // import PlayerWins from '@/components/overlays/PlayerWins.vue'
 
 const gameContainerRef = ref<HTMLElement | null>(null)
@@ -96,6 +98,7 @@ watch(
     if (newValue === 'START') {
       gameLogic.cleanupAllIntervals()
 
+      // 10 secs of countdown
       const newGameTimeoutId = setTimeout(() => {
         gameLogic.handleGenerateBots()
 
@@ -111,6 +114,7 @@ watch(
       }, 500)
       gameLogic.addTimeout(newGameTimeoutId)
 
+      // after 1.5 secs, distribute bots
       const distributeBotTimeout = setTimeout(() => {
         // console.log('DISTRIBUTE!')
         gameLogic.handleDistributeBot()
@@ -118,16 +122,17 @@ watch(
       gameLogic.addTimeout(distributeBotTimeout)
 
       const resetGameTImeout = setTimeout(() => {
-        // console.log('10 secs done')
+        console.log('11.5 secs done')
         gameLogic.handleCancelBet()
         gameLogic.getHighestCard()
         gameLogic.handleRevealCard()
-      }, 10500)
+      }, 11500)
       gameLogic.addTimeout(resetGameTImeout)
 
+      // after 15.5 secs, reset the card ( 5 seconds delay)
       const resetCardTimeout = setTimeout(() => {
         gameLogic.handleResetCard()
-      }, 12000)
+      }, 15500)
       gameLogic.addTimeout(resetCardTimeout)
     }
   },

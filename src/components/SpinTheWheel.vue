@@ -25,17 +25,19 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from 'vue'
-import BorderWheel from '@/assets/border_wheel.png'
-import Wheel from '@/assets/wheel-new-new.png'
 import { wheelDeg } from '@/models/constants'
-import vfxLight from '@/assets/game/vfx-light.png'
-import congratulations from '@/assets/game/congratulations.png'
 import type { TSpinWheel } from '@/models/type'
 import { useCreditStore, useGameStore } from '@/stores'
 import { useTransition } from '@vueuse/core'
 import spinSound from '@/assets/audio/sample6_wheel.mp3'
 import winSound from '@/assets/audio/sample1_spin_price.mp3'
 import { formatCurrency } from '@/utils/convertMoney'
+
+// images
+import Wheel from '@/assets/wheel-new-new.png'
+import BorderWheel from '@/assets/border_wheel.png'
+import vfxLight from '@/assets/game/vfx-light.png'
+import congratulations from '@/assets/game/congratulations.png'
 
 const rotation = ref(0)
 const isSpinning = ref(false)
