@@ -86,7 +86,7 @@ const spinWheel = () => {
   if (randomValue < 0.3) {
     // 30% chance of "bokya" appearing
     selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 1) || wheelDeg[7]
-  } else if (randomValue >= 0.3 && randomValue < 2) {
+  } else if (randomValue >= 0.3 && randomValue < 0.6) {
     // 30% chance of "bonus" appearing
     selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 6) || wheelDeg[3]
   } else {

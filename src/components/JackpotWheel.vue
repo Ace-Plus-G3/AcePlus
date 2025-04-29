@@ -84,7 +84,7 @@ const spinWheel = () => {
 
   // 30% chance of jackpot appearing
   const randomValue = Math.random()
-  shouldJackpotAppear.value = randomValue < 1
+  shouldJackpotAppear.value = randomValue < 0.01
 
   let selectedSlice: TSpinWheel
   console.log(shouldJackpotAppear.value)
