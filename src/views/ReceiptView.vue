@@ -41,13 +41,13 @@
 import { watch, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCreditStore } from '@/stores'
-import type { Transaction } from '@/types/user'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import ReceiptSVG from '@/assets/svg/receipt_svg.vue'
 import CopySVG from '@/assets/svg/copy_svg.vue'
 import moment from 'moment'
 import { ElMessage } from 'element-plus'
 import { formatCurrency } from '@/utils/convertMoney'
+import type { Transaction } from '@/models/type'
 
 const route = useRoute()
 const transactionId = computed(() => String(route.params.id))
