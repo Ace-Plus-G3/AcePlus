@@ -39,7 +39,7 @@ import TransactionStatusDialog from '@/components/TransactionStatusDialog.vue'
 
 import { ElLoading } from 'element-plus'
 
-import { useCreditStore } from '@/stores/'
+import { useCreditStore } from '@/stores'
 import { useDialogStore } from '@/stores'
 
 const dialogStore = useDialogStore()
