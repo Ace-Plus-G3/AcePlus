@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import { wheelDeg } from '@/models/constants'
+import { probabilityRate, wheelDeg } from '@/models/constants'
 import type { TSpinWheel } from '@/models/type'
 import { useCreditStore, useGameStore } from '@/stores'
 import { useTransition } from '@vueuse/core'
@@ -83,10 +83,10 @@ const spinWheel = () => {
   // Randomly determine if "bokya" or "bonus" should appear
   const randomValue = Math.random()
 
-  if (randomValue < 0.3) {
+  if (randomValue < probabilityRate.bokyaRate) {
     // 30% chance of "bokya" appearing
     selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 1) || wheelDeg[7]
-  } else if (randomValue >= 0.3 && randomValue < 0.6) {
+  } else if (randomValue >= probabilityRate.bokyaRate && randomValue < probabilityRate.BonusRate) {
     // 30% chance of "bonus" appearing
     selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 6) || wheelDeg[3]
   } else {

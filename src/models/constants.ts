@@ -171,3 +171,11 @@ export const botNames: Array<string> = [
   'Evelyn',
   'Sebastian',
 ]
+
+export const probabilityRate = {
+  aceCardRate: 0.1, // 10% chance of ace card appearing
+  multipliersRate: 0.3, // 30% chance of multipliers appear on cards
+  bokyaRate: 0.3, // 30% chance of bokya
+  BonusRate: 0.6, // 30% chance of bonus
+  JackpotRate: 0.01, // 0.1% chance of jackpot
+}
