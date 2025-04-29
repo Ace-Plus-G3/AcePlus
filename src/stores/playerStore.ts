@@ -1,5 +1,4 @@
-import type { TLoginParams, TSignupParams } from '@/models/type'
-import type { TUser } from '@/types/user'
+import type { TLoginParams, TSignupParams, TUser } from '@/models/type'
 import { defineStore } from 'pinia'
 import { useCreditStore } from './creditStore'
 

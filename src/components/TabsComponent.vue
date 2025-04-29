@@ -1,5 +1,5 @@
 <template>
-  <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick" stretch>
+  <el-tabs v-model="activeName" class="demo-tabs" stretch>
     <el-tab-pane label="Cash-In" name="first">
       <slot name="cashin"></slot>
     </el-tab-pane>
@@ -11,12 +11,5 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { TabsPaneContext } from 'element-plus'
 const activeName = ref('first')
-
-const handleClick = (tab: TabsPaneContext, event: Event) => {
-  console.log(tab, event)
-}
 </script>
-
-<style scoped></style>

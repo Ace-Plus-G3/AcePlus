@@ -62,15 +62,11 @@ const logout = () => {
 <style scoped>
 #home-page {
   height: 100dvh;
-  background-image: url(../assets/homepage_bg.png);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 67px;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
 }
 
 .title {

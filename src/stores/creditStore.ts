@@ -1,7 +1,7 @@
-import type { Cashin, Cashout } from '@/types/user'
 import { defineStore } from 'pinia'
 import { usePlayerStore } from './playerStore'
 import { loadFromLocalStorage } from '@/utils/loadFromLocalStorage'
+import type { Cashin, Cashout } from '@/models/type'
 
 export const useCreditStore = defineStore('creditStore', {
   state: () => ({

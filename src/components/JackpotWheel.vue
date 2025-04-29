@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import { jackpotWheelDeg } from '@/models/constants'
+import { jackpotWheelDeg, probabilityRate } from '@/models/constants'
 import type { TSpinWheel } from '@/models/type'
 import { useCreditStore, useGameStore } from '@/stores'
 import { useTransition } from '@vueuse/core'
@@ -84,7 +84,7 @@ const spinWheel = () => {
 
   // 30% chance of jackpot appearing
   const randomValue = Math.random()
-  shouldJackpotAppear.value = randomValue < 1
+  shouldJackpotAppear.value = randomValue < probabilityRate.JackpotRate
 
   let selectedSlice: TSpinWheel
   console.log(shouldJackpotAppear.value)
