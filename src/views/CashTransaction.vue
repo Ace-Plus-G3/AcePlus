@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import HeaderComponent from '@/components/HeaderComponent.vue'
+import HeaderComponent from '@/components/HeaderComponent-Latest.vue'
 import TabsComponent from '@/components/TabsComponent.vue'
 import TransactionStatusDialog from '@/components/TransactionStatusDialog.vue'
 

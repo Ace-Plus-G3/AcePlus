@@ -41,7 +41,7 @@
 import { watch, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCreditStore } from '@/stores'
-import HeaderComponent from '@/components/HeaderComponent.vue'
+import HeaderComponent from '@/components/HeaderComponent-Latest.vue'
 import ReceiptSVG from '@/assets/svg/receipt_svg.vue'
 import CopySVG from '@/assets/svg/copy_svg.vue'
 import moment from 'moment'

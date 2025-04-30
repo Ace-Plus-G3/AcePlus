@@ -1,31 +1,22 @@
 <template>
   <el-header>
-    <div class="back-container">
-      <el-icon @click="goToBack" :size="30" :color="'var(--primary-yellow)'">
-        <Back />
-      </el-icon>
+    <div class="logo-container">
+      <el-image :src="Logo" />
+      <h3>ACE+</h3>
     </div>
-    <div>
-      <div class="text">
-        <h3 @click="goToTransact">E - Wallet</h3>
+    <div class="right-container">
+      <Wallet />
+      <div class="btn-container">
+        <el-button link class="btn-login">Login</el-button>
+        <el-button class="gold-bg btn-register">Register</el-button>
       </div>
     </div>
   </el-header>
 </template>
 
 <script setup lang="ts">
-import { Back } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-
-const goToBack = () => {
-  router.push({ name: 'home' })
-}
-
-const goToTransact = () => {
-  router.push({ name: 'transaction-history' })
-}
+import Wallet from '@/assets/svg/wallet_svg.vue'
+import Logo from '@/assets/logo_new.png'
 </script>
 
 <style scoped>
@@ -33,27 +24,49 @@ const goToTransact = () => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  background-color: var(--primary-black);
   align-items: center;
-  padding-top: 4px;
-  padding-bottom: 3px;
+  /* padding-inline: 96px; */
+  padding: 45px 96px 45px 96px;
 }
 
-.text {
-  display: flex;
-}
-
-.text h3 {
+.logo-container h3 {
   color: #f9c80e;
+  font-size: 36px;
 }
 
-.text h3:hover {
-  cursor: pointer;
+:deep(.el-button) {
+  margin: 0 !important;
+  font-family: 'Poppins', sans-serif !important;
 }
 
-.line {
-  width: 25px;
-  height: 3px;
-  background-color: var(--primary-yellow);
+.btn-container {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  background-color: #2c2929;
+  padding: 4px;
+  border-radius: 30px;
+  padding-left: 8px;
+}
+
+.btn-register {
+  border-radius: 30px;
+  color: #2c2121;
+  border: none;
+}
+
+.btn-login {
+  color: #ffffff !important;
+}
+
+.right-container {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
 }
 </style>

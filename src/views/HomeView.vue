@@ -1,132 +1,105 @@
 <template>
-  <div id="home-page">
-    <div class="title-container">
-      <h1 class="title">Ace+</h1>
+  <el-container>
+    <HeaderComponent />
+    <div id="home-page">
+      <div class="left">
+        <el-image :src="Star" class="star" />
+        <h1>ACE+</h1>
+        <h5>Banker Game Plus</h5>
+        <p>But on highest card and win up to billions</p>
+        <div class="btn-container">
+          <el-button class="gold-bg">Play Now!</el-button>
+          <el-button class="gold-bg">Instructions</el-button>
+        </div>
+      </div>
+      <div class="right">
+        <el-image :src="RoulleteLeft" class="roullete" />
+        <el-image :src="RoulleteRight" class="roullete" />
+      </div>
+      <div class="card-main-container">
+        <CardHomeView />
+      </div>
     </div>
-    <div class="btn-container">
-      <el-button v-if="!usePlayerStore().getToken" @click="openModal" class="btn btn-play-not-log">
-        <el-text> Play Now </el-text>
-      </el-button>
-      <!-- Add a conditional rendering for this buttons if the user logged -->
-      <template v-if="usePlayerStore().getToken">
-        <el-button @click="gotoGame" class="btn btn-start"><el-text>Start</el-text></el-button>
-        <el-button @click="openTutorial" class="btn btn-instructions"
-          ><el-text>Instructions</el-text></el-button
-        >
-        <el-button @click="goToWallet" class="btn btn-wallet"><el-text>Wallet</el-text></el-button>
-        <el-button @click="logout()" class="btn btn-logout"><el-text>Logout</el-text></el-button>
-      </template>
-    </div>
-  </div>
-  <div>
-    <AuthModal v-model="isModalVisible" />
-  </div>
+  </el-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { usePlayerStore } from '@/stores/playerStore'
-import { useRouter } from 'vue-router'
-import AuthModal from '@/components/AuthModal.vue'
-import { showNotify } from '@/utils/notify'
-
-const router = useRouter()
-const isModalVisible = ref(false)
-
-const openTutorial = () => {
-  router.push({ name: 'tutorial', query: { tutorial: 'true' } })
-}
-
-const openModal = () => {
-  isModalVisible.value = true
-}
-
-const playerStore = usePlayerStore()
-
-const gotoGame = () => {
-  if (playerStore.isNewUser) {
-    router.push({ name: 'tutorial', query: { tutorial: 'true' } })
-
-    if (playerStore.getUser) {
-      playerStore.setUser({
-        ...playerStore.getUser,
-        isNewUser: false,
-      })
-
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          ...playerStore.getUser,
-          isNewUser: false,
-        }),
-      )
-    }
-  } else {
-    router.push({ name: 'game' })
-  }
-}
-
-const goToWallet = () => {
-  router.push('/transaction-history')
-}
-
-const logout = () => {
-  usePlayerStore().handleLogout()
-  showNotify({
-    title: 'Success!',
-    message: 'You have logout successfully.',
-    type: 'success',
-  })
-}
+import HeaderComponent from '@/components/HeaderComponent.vue'
+import RoulleteLeft from '@/assets/roullete/roullete-left.png'
+import RoulleteRight from '@/assets/roullete/roullete-right.png'
+import Star from '@/assets/invite_star.png'
+import CardHomeView from '@/components/CardHomeView.vue'
 </script>
 
 <style scoped>
-#home-page {
-  height: 100dvh;
+.el-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 67px;
+  background: #0a0a0a;
+  background: linear-gradient(90deg, rgba(10, 10, 10, 1) 0%, rgba(50, 50, 50, 1) 50%);
 }
 
-.title {
-  font-family: 'Lemon', sans-serif;
-  font-size: 170px;
-  background: linear-gradient(
-    90deg,
-    rgba(232, 184, 57, 1) 0%,
-    rgba(232, 184, 57, 1) 35%,
-    rgba(186, 129, 21, 1) 63%,
-    rgba(251, 246, 127, 1) 82%,
-    rgba(220, 188, 78, 1) 100%
-  );
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  padding-left: 0.1em;
+.card-main-container {
+  display: flex;
+  position: absolute;
+  top: 51%;
 }
 
 .btn-container {
+  padding-top: 7%;
+}
+
+.star {
+  position: absolute;
+  right: 53%;
+  top: -3%;
+  z-index: 100 !important;
+  width: 200px;
+  height: 200px;
+}
+
+.right {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  gap: 50em;
+  position: relative;
+}
+
+.roullete {
+  width: 350px;
+  height: 350px;
+  opacity: 0.25;
+}
+
+.left {
+  text-align: center;
+  padding-top: 2%;
+}
+
+.left p {
+  font-size: 14px;
+  color: #6c6c6c;
+  font-family: 'Poppins', sans-serif;
+}
+
+.left h1 {
+  font-size: 128px;
+  color: #f9c80e;
+  text-shadow: 4px 4px 15px rgba(125, 31, 34, 0.72);
+}
+
+.left h5 {
+  font-size: 38px;
+  color: #f9c80e;
+  text-shadow: 4px 4px 15px rgba(125, 31, 34, 0.72);
 }
 
 :deep(.el-button) {
-  margin: 0;
-  width: 200px;
-  height: 60px;
+  border: none;
   border-radius: 30px;
-  background-color: #e8b839;
-  background: linear-gradient(
-    90deg,
-    rgba(232, 184, 57, 1) 0%,
-    rgba(232, 184, 57, 1) 35%,
-    rgba(186, 129, 21, 1) 63%,
-    rgba(251, 246, 127, 1) 82%,
-    rgba(220, 188, 78, 1) 100%
-  );
-  border: none !important;
+  color: #2c2121;
+  font-size: 14px;
+  width: 120px;
+  height: 40px;
 }
 
 :deep(.el-button):hover {
@@ -134,20 +107,13 @@ const logout = () => {
   cursor: pointer;
 }
 
-:deep(.el-text) {
-  color: var(--primary-black);
-}
-
-@media screen and (min-width: 320px) and (max-width: 680px) {
-  .title {
-    font-size: 100px;
-  }
-  .btn {
-    width: 180px;
-    height: 50px;
-  }
-  .btn-container {
-    gap: 15px;
-  }
+#home-page {
+  position: relative;
+  overflow: hidden !important;
+  height: 90.5dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 45px;
 }
 </style>
