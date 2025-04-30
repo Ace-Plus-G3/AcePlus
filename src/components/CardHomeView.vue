@@ -1,14 +1,22 @@
 <template>
   <div
-    class="card"
-    :class="{
-      ace: props.index === 1 ? 'first' : 'back',
-    }"
     ref="aceRef"
-  />
+    class="card-container"
+    :class="{
+      ace: props.index === 3 && 'first',
+    }"
+  >
+    <el-image
+      fit="cover"
+      class="card"
+      :src="HomeCards[props.index - 1]?.url"
+      :alt="HomeCards[props.index - 1]?.url"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
+import { HomeCards } from '@/models/constants'
 import { useMotion } from '@vueuse/motion'
 import { ref } from 'vue'
 
@@ -17,72 +25,71 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-
 const aceRef = ref<HTMLElement>()
 
-const { variant } = useMotion(aceRef, {
-  initial: { opacity: 0, y: 200 },
+useMotion(aceRef, {
+  initial: { opacity: 0, y: 300 },
   enter: {
     opacity: 1,
     y: 20,
     transition: {
       delay: 200,
-      duration: 1000,
-      onComplete: () => handleClick(),
+      duration: 500,
+      onComplete: () => handleAnimation(),
     },
   },
 })
 
-const handleClick = () => {
+const handleAnimation = () => {
   if (!aceRef.value) {
     console.log('No aceRef value!')
     return
   }
 
-  if (props.index === 1) {
-    aceRef.value.style.zIndex = '1000'
-  }
-
-  if (props.index === 2) {
+  if (props.index - 1 === 0) {
     aceRef.value.style.zIndex = '999'
-    aceRef.value.style.transition = `transform ${1000}ms ease-in-out`
-    aceRef.value.style.transform = `translate(350px,60px) rotate(8deg)`
-    aceRef.value.style.backgroundColor = 'blue'
+    aceRef.value.style.transition = `transform ${300}ms ease-in-out`
+    aceRef.value.style.transform = `translate(350px,90px) rotate(16deg)`
   }
-  if (props.index === 3) {
+  if (props.index - 1 === 1) {
     aceRef.value.style.zIndex = '998'
-    aceRef.value.style.transition = `transform ${1000}ms ease-in-out`
-    aceRef.value.style.transform = `translate(650px,140px) rotate(16deg)`
+    aceRef.value.style.transition = `transform ${500}ms ease-in-out`
+    aceRef.value.style.transform = `translate(650px,260px) rotate(32deg)`
   }
-  if (props.index === 4) {
+  if (props.index - 1 === 3) {
     aceRef.value.style.zIndex = '999'
-    aceRef.value.style.transition = `transform ${1000}ms ease-in-out`
-    aceRef.value.style.transform = `translate(-350px,60px) rotate(-8deg)`
-    aceRef.value.style.backgroundColor = 'blue'
+    aceRef.value.style.transition = `transform ${300}ms ease-in-out`
+    aceRef.value.style.transform = `translate(-350px,90px) rotate(-16deg)`
   }
-  if (props.index === 5) {
+  if (props.index - 1 === 4) {
     aceRef.value.style.zIndex = '998'
-    aceRef.value.style.transition = `transform ${1000}ms ease-in-out`
-    aceRef.value.style.transform = `translate(-650px,140px) rotate(-16deg)`
+    aceRef.value.style.transition = `transform ${500}ms ease-in-out`
+    aceRef.value.style.transform = `translate(-650px,260px) rotate(-32deg)`
   }
 }
 </script>
 
 <style scoped>
-.card {
+.card-container {
   position: absolute;
-  width: 450px;
-  height: 600px;
-  border-radius: 10px;
-  background: red;
   bottom: -10%;
+  padding: 0;
+  margin: 0;
+  width: 480px;
+  height: 650px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0px 5px 10px 0px black;
 }
 
-.first {
+.ace {
   z-index: 1000;
-}
-
-.back {
-  z-index: 999;
 }
 </style>
