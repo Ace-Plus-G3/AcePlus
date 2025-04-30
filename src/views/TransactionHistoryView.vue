@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import HeaderComponent from '@/components/HeaderComponent.vue'
+import HeaderComponent from '@/components/HeaderComponent-Latest.vue'
 import moment from 'moment'
 
 import { Plus, Minus } from '@element-plus/icons-vue'
