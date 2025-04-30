@@ -1,7 +1,11 @@
 <template>
-  <div class="card-main-container">
-    <div class="card" ref="aceRef" />
-  </div>
+  <div
+    class="card"
+    :class="{
+      ace: props.index === 1 ? 'first' : 'back',
+    }"
+    ref="aceRef"
+  />
 </template>
 
 <script setup lang="ts">
@@ -24,23 +28,61 @@ const { variant } = useMotion(aceRef, {
     transition: {
       delay: 200,
       duration: 1000,
+      onComplete: () => handleClick(),
     },
   },
-  leave: { opacity: 0 },
 })
+
+const handleClick = () => {
+  if (!aceRef.value) {
+    console.log('No aceRef value!')
+    return
+  }
+
+  if (props.index === 1) {
+    aceRef.value.style.zIndex = '1000'
+  }
+
+  if (props.index === 2) {
+    aceRef.value.style.zIndex = '999'
+    aceRef.value.style.transition = `transform ${1000}ms ease-in-out`
+    aceRef.value.style.transform = `translate(350px,60px) rotate(8deg)`
+    aceRef.value.style.backgroundColor = 'blue'
+  }
+  if (props.index === 3) {
+    aceRef.value.style.zIndex = '998'
+    aceRef.value.style.transition = `transform ${1000}ms ease-in-out`
+    aceRef.value.style.transform = `translate(650px,140px) rotate(16deg)`
+  }
+  if (props.index === 4) {
+    aceRef.value.style.zIndex = '999'
+    aceRef.value.style.transition = `transform ${1000}ms ease-in-out`
+    aceRef.value.style.transform = `translate(-350px,60px) rotate(-8deg)`
+    aceRef.value.style.backgroundColor = 'blue'
+  }
+  if (props.index === 5) {
+    aceRef.value.style.zIndex = '998'
+    aceRef.value.style.transition = `transform ${1000}ms ease-in-out`
+    aceRef.value.style.transform = `translate(-650px,140px) rotate(-16deg)`
+  }
+}
 </script>
 
 <style scoped>
-.card-main-container {
-  position: absolute;
-  display: flex;
-  overflow: hidden;
-  bottom: 0;
-}
 .card {
+  position: absolute;
   width: 450px;
   height: 600px;
   border-radius: 10px;
   background: red;
+  bottom: -10%;
+}
+
+.first {
+  z-index: 1000;
+}
+
+.back {
+  z-index: 999;
 }
 </style>

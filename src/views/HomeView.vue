@@ -38,12 +38,14 @@ import CardHomeView from '@/components/CardHomeView.vue'
 }
 
 .main-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-
-  margin-top: 4em;
+  justify-content: start;
+  padding-top: 8em;
 }
 
 .title-container {
