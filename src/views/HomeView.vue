@@ -41,8 +41,29 @@ const openModal = () => {
   isModalVisible.value = true
 }
 
+const playerStore = usePlayerStore()
+
 const gotoGame = () => {
-  router.push({ name: 'game' })
+  if (playerStore.isNewUser) {
+    router.push({ name: 'tutorial', query: { tutorial: 'true' } })
+
+    if (playerStore.getUser) {
+      playerStore.setUser({
+        ...playerStore.getUser,
+        isNewUser: false,
+      })
+
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          ...playerStore.getUser,
+          isNewUser: false,
+        }),
+      )
+    }
+  } else {
+    router.push({ name: 'game' })
+  }
 }
 
 const goToWallet = () => {
