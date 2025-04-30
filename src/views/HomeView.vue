@@ -50,19 +50,20 @@ const gotoGame = () => {
     if (playerStore.getUser) {
       playerStore.setUser({
         ...playerStore.getUser,
-        isNewUser: false
+        isNewUser: false,
       })
 
-      localStorage.setItem('user', JSON.stringify({
-        ...playerStore.getUser,
-        isNewUser: false
-      }))
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          ...playerStore.getUser,
+          isNewUser: false,
+        }),
+      )
     }
   } else {
     router.push({ name: 'game' })
   }
-
-
 }
 
 const goToWallet = () => {
