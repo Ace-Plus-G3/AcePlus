@@ -181,9 +181,9 @@ export const probabilityRate = {
 }
 
 export const HomeCards: Array<THomeCards> = [
-  { value: 2, url: new URL('@/assets/home-card/2.png', import.meta.url).href },
-  { value: 3, url: new URL('@/assets/home-card/3.png', import.meta.url).href },
-  { value: 1, url: new URL('@/assets/home-card/1.png', import.meta.url).href },
-  { value: 4, url: new URL('@/assets/home-card/4.png', import.meta.url).href },
-  { value: 5, url: new URL('@/assets/home-card/5.png', import.meta.url).href },
+  { value: 2, url: new URL('@/assets/cards/front/card_2.png', import.meta.url).href },
+  { value: 3, url: new URL('@/assets/cards/front/card_3.png', import.meta.url).href },
+  { value: 1, url: new URL('@/assets/cards/front/card_a.png', import.meta.url).href },
+  { value: 4, url: new URL('@/assets/cards/front/card_4.png', import.meta.url).href },
+  { value: 5, url: new URL('@/assets/cards/front/card_5.png', import.meta.url).href },
 ]

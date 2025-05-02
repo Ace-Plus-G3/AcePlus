@@ -45,7 +45,7 @@ import CardHomeView from '@/components/CardHomeView.vue'
   flex-direction: column;
   align-items: center;
   justify-content: start;
-  padding-top: 8em;
+  padding-top: 4em;
 }
 
 .title-container {
@@ -103,5 +103,11 @@ import CardHomeView from '@/components/CardHomeView.vue'
 :deep(.el-button):hover {
   scale: 1.1;
   cursor: pointer;
+}
+
+@media screen and (max-width:1360px) {
+  .main-container{
+    padding-top: 0em;
+  }
 }
 </style>
