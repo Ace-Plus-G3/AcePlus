@@ -1,36 +1,25 @@
 <template>
-  <div
-    ref="cardRef"
-    class="card-container"
-    :class="{ ace: isAce }"
-  >
-    <el-image
-      fit="cover"
-      class="card"
-      :src="currentCard?.url"
-      :alt="currentCard?.url"
-    />
+  <div ref="cardRef" class="card-container" :class="{ ace: isAce }">
+    <el-image fit="cover" class="card" :src="currentCard?.url" :alt="currentCard?.url" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { HomeCards } from '@/models/constants'
-import { useMotion } from '@vueuse/motion'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useWindowSize } from '@vueuse/core'
-import type { THomeCards } from '@/models/type';
+import type { THomeCards } from '@/models/type'
 
 interface Props {
-  index: number;
+  index: number
 }
 
 interface CardConfig {
-  zIndex: number;
-  xMult: number;
-  yMult: number;
-  rotate: number;
+  zIndex: number
+  xMult: number
+  yMult: number
+  rotate: number
 }
-
 
 const props = defineProps<Props>()
 const cardRef = ref<HTMLElement | null>(null)
@@ -45,39 +34,26 @@ const cardConfig = computed((): CardConfig => {
   // Mobile configuration - all cards on the right side with different offsets
   if (isMobile.value) {
     const mobileConfigs: Record<number, CardConfig> = {
-      0: { zIndex: 997, xMult: -0.30, yMult: 0.30, rotate: -30 },     // 4
-      1: { zIndex: 996, xMult: -0.40, yMult: 0.40, rotate: -40 },     // 5
-      2: { zIndex: 1000, xMult: 0, yMult: 0, rotate: 0 },             // Center card
-      3: { zIndex: 999, xMult: -0.10, yMult: 0.10, rotate: -10 },     // 2
-      4: { zIndex: 998, xMult: -0.20, yMult: 0.20, rotate: -20 }      // 3
+      0: { zIndex: 997, xMult: -0.3, yMult: 0.3, rotate: -30 }, // 4
+      1: { zIndex: 996, xMult: -0.4, yMult: 0.4, rotate: -40 }, // 5
+      2: { zIndex: 1000, xMult: 0, yMult: 0, rotate: 0 }, // Center card
+      3: { zIndex: 999, xMult: -0.1, yMult: 0.1, rotate: -10 }, // 2
+      4: { zIndex: 998, xMult: -0.2, yMult: 0.2, rotate: -20 }, // 3
     }
     return mobileConfigs[props.index - 1] || { zIndex: 997, xMult: 0, yMult: 0, rotate: 0 }
   }
-  
+
   // Desktop configuration - cards on both sides
   const desktopConfigs: Record<number, CardConfig> = {
-    0: { zIndex: 999, xMult: 0.12, yMult: 0.04, rotate: 16 },    // Rightmost card
-    1: { zIndex: 998, xMult: 0.24, yMult: 0.12, rotate: 32 },    // Far right card
-    2: { zIndex: 1000, xMult: 0, yMult: 0, rotate: 0 },          // Center card
-    3: { zIndex: 999, xMult: -0.12, yMult: 0.04, rotate: -16 },  // Left card
-    4: { zIndex: 998, xMult: -0.24, yMult: 0.12, rotate: -32 }   // Far left card
+    0: { zIndex: 999, xMult: 0.12, yMult: 0.04, rotate: 16 }, // Rightmost card
+    1: { zIndex: 998, xMult: 0.24, yMult: 0.12, rotate: 32 }, // Far right card
+    2: { zIndex: 1000, xMult: 0, yMult: 0, rotate: 0 }, // Center card
+    3: { zIndex: 999, xMult: -0.12, yMult: 0.04, rotate: -16 }, // Left card
+    4: { zIndex: 998, xMult: -0.24, yMult: 0.12, rotate: -32 }, // Far left card
   }
-  
+
   return desktopConfigs[props.index - 1] || { zIndex: 997, xMult: 0, yMult: 0, rotate: 0 }
 })
-
-// useMotion(cardRef, {
-//   initial: { opacity: 0, y: 300 },
-//   enter: {
-//     opacity: 1,
-//     y: 20,
-//     transition: {
-//       delay: 0, 
-//       duration: 100,
-//       onComplete: () => applyCardPosition()
-//     }
-//   }
-// })
 
 const getTransform = (config: CardConfig): string => {
   const x = (windowWidth.value * config.xMult).toFixed(2)
@@ -87,7 +63,7 @@ const getTransform = (config: CardConfig): string => {
 
 const applyCardPosition = (): void => {
   if (!cardRef.value) return
-  
+
   const config = cardConfig.value
   cardRef.value.style.zIndex = config.zIndex.toString()
   cardRef.value.style.transition = 'transform 600ms ease-in-out'
@@ -95,17 +71,20 @@ const applyCardPosition = (): void => {
 }
 
 // Watch for window size changes to recalculate positions
-watch(windowWidth, (): void => {
-  if (cardRef.value) {
-    applyCardPosition()
-  }
-}, { immediate: true })
+watch(
+  windowWidth,
+  (): void => {
+    if (cardRef.value) {
+      applyCardPosition()
+    }
+  },
+  { immediate: true },
+)
 
-onMounted(()=>{
-  setTimeout(()=>{
-
+onMounted(() => {
+  setTimeout(() => {
     applyCardPosition()
-  },500)
+  }, 500)
 })
 </script>
 
@@ -145,8 +124,8 @@ onMounted(()=>{
   .card-container {
     width: 240px;
     height: 420px;
-    bottom: -2%;
-    right: -2%;
+    bottom: -10%;
+    right: -10%;
   }
 }
 
