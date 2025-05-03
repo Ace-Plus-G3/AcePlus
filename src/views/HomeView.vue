@@ -198,7 +198,7 @@ onMounted(() => {
   .jackpotWheel {
     display: none;
   }
-  .jackpotWheel {
+  .wheel {
     width: 400px;
     height: 400px;
     left: -25%;
