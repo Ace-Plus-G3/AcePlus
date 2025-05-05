@@ -32,128 +32,128 @@
 </template>
 
 <script setup lang="ts">
-import type { TCardType } from '@/models/type'
-import { onMounted, ref, watch, computed, nextTick } from 'vue'
-import { useWindowSize } from '@vueuse/core'
-import GoldIcon from '@/assets/coins/gold.png'
-import playerLogo from '@/assets/icons/players_icon_xs.png'
-import { convertToReadableFormat } from '@/utils/convertMoney'
-import { useGameStore } from '@/stores'
-import gameLogic from '@/composables/useGameLogic'
-import distributeCardSound from '@/assets/audio/new-card-audio.mp3'
+import type { TCardType } from '@/models/type';
+import { onMounted, ref, watch, computed, nextTick } from 'vue';
+import { useWindowSize } from '@vueuse/core';
+import GoldIcon from '@/assets/coins/gold.png';
+import playerLogo from '@/assets/icons/players_icon_xs.png';
+import { convertToReadableFormat } from '@/utils/convertMoney';
+import { useGameStore } from '@/stores';
+import gameLogic from '@/composables/useGameLogic';
+import distributeCardSound from '@/assets/audio/new-card-audio.mp3';
 
 type Props = {
-  index: number
-  card: TCardType
-  containerWidth: number
-  containerHeight: number
-}
+  index: number;
+  card: TCardType;
+  containerWidth: number;
+  containerHeight: number;
+};
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
-const target = ref<HTMLElement>()
-const scaleRef = ref<HTMLElement>()
-const { width } = useWindowSize()
+const target = ref<HTMLElement>();
+const scaleRef = ref<HTMLElement>();
+const { width } = useWindowSize();
 
-const gameStore = useGameStore()
+const gameStore = useGameStore();
 
 // Card sizing based on screen width
-const CARD_WIDTH = computed(() => (width.value > 780 ? 80 : 60))
-const CARD_HEIGHT = computed(() => (width.value > 780 ? 120 : 90))
-const CARD_SPACING = computed(() => (width.value > 780 ? 40 : 20))
+const CARD_WIDTH = computed(() => (width.value > 780 ? 80 : 60));
+const CARD_HEIGHT = computed(() => (width.value > 780 ? 120 : 90));
+const CARD_SPACING = computed(() => (width.value > 780 ? 40 : 20));
 
-const cardDistributeSound = new Audio(distributeCardSound)
+const cardDistributeSound = new Audio(distributeCardSound);
 
 const calculateDistributionPosition = () => {
   if (props.containerWidth <= 10 || props.containerHeight <= 10) {
-    console.error(`Invalid container dimensions: ${props.containerWidth}x${props.containerHeight}`)
-    return { x: 10, y: -60 }
+    console.error(`Invalid container dimensions: ${props.containerWidth}x${props.containerHeight}`);
+    return { x: 10, y: -60 };
   }
 
   const TOTAL_WIDTH =
     gameStore.getFourCards.length * CARD_WIDTH.value +
-    (gameStore.getFourCards.length - 1) * CARD_SPACING.value
-  const startX = Math.max(10, (props.containerWidth - TOTAL_WIDTH) / 2)
-  const distributedX = startX + props.index * (CARD_WIDTH.value + CARD_SPACING.value)
-  const centerY = Math.max(10, (props.containerHeight - CARD_HEIGHT.value) / 2)
+    (gameStore.getFourCards.length - 1) * CARD_SPACING.value;
+  const startX = Math.max(10, (props.containerWidth - TOTAL_WIDTH) / 2);
+  const distributedX = startX + props.index * (CARD_WIDTH.value + CARD_SPACING.value);
+  const centerY = Math.max(10, (props.containerHeight - CARD_HEIGHT.value) / 2);
 
-  return { x: distributedX, y: centerY }
-}
+  return { x: distributedX, y: centerY };
+};
 
 const updateCardPosition = (isDistributed: boolean) => {
-  if (!target.value) return
+  if (!target.value) return;
 
   const soundTimeout = setTimeout(() => {
-    cardDistributeSound.volume = 0.5
-    cardDistributeSound.loop = false
-    cardDistributeSound.play()
-  }, props.index * 150)
-  gameLogic.addTimeout(soundTimeout)
+    cardDistributeSound.volume = 0.5;
+    cardDistributeSound.loop = false;
+    cardDistributeSound.play();
+  }, props.index * 150);
+  gameLogic.addTimeout(soundTimeout);
 
   if (isDistributed) {
-    const position = calculateDistributionPosition()
-    target.value.style.transition = `transform ${200 + props.index * 200}ms ease-out`
-    target.value.style.transform = `translate(${position.x}px, ${position.y}px) rotate(360deg)`
-    target.value.style.zIndex = '10'
+    const position = calculateDistributionPosition();
+    target.value.style.transition = `transform ${200 + props.index * 200}ms ease-out`;
+    target.value.style.transform = `translate(${position.x}px, ${position.y}px) rotate(360deg)`;
+    target.value.style.zIndex = '10';
 
     const cardTimeout = setTimeout(() => {
-      if (!scaleRef.value) return
-      scaleRef.value.classList.add('scaleIn')
-    }, 1500)
-    gameLogic.addTimeout(cardTimeout)
+      if (!scaleRef.value) return;
+      scaleRef.value.classList.add('scaleIn');
+    }, 1500);
+    gameLogic.addTimeout(cardTimeout);
   } else {
-    target.value.style.transition = `transform ${200 + props.index * 200}ms ease-in`
-    target.value.style.transform = `translate(10px, -60px) rotate(0deg)`
-    target.value.style.zIndex = `${10 - props.index}`
+    target.value.style.transition = `transform ${200 + props.index * 200}ms ease-in`;
+    target.value.style.transform = `translate(10px, -60px) rotate(0deg)`;
+    target.value.style.zIndex = `${10 - props.index}`;
   }
-}
+};
 
 watch(
   () => gameStore.getIsRevealCards,
   (newValue) => {
     if (newValue) {
-      cardDistributeSound.volume = 0.3
-      cardDistributeSound.loop = false
-      cardDistributeSound.play()
+      cardDistributeSound.volume = 0.3;
+      cardDistributeSound.loop = false;
+      cardDistributeSound.play();
     }
   },
-)
+);
 
 watch(
   () => gameStore.getStartGame,
   (newValue) => {
     if (newValue === 'START') {
-      updateCardPosition(true)
+      updateCardPosition(true);
     } else if (newValue === 'DONE') {
-      updateCardPosition(false)
-      scaleRef.value?.classList.remove('scaleIn')
+      updateCardPosition(false);
+      scaleRef.value?.classList.remove('scaleIn');
     }
   },
   { immediate: true },
-)
+);
 
 watch([() => props.containerWidth, () => props.containerHeight], ([newWidth, newHeight]) => {
   if (gameStore.getStartGame === 'START' && newWidth > 10 && newHeight > 10) {
-    updateCardPosition(true)
+    updateCardPosition(true);
   }
-})
+});
 
 onMounted(async () => {
   if (target.value) {
-    target.value.style.transform = 'translate(10px, -60px)'
-    target.value.style.zIndex = `${10 - props.index}`
+    target.value.style.transform = 'translate(10px, -60px)';
+    target.value.style.zIndex = `${10 - props.index}`;
   }
 
-  await nextTick()
+  await nextTick();
 
   if (
     gameStore.getStartGame === 'START' &&
     props.containerWidth > 10 &&
     props.containerHeight > 10
   ) {
-    updateCardPosition(true)
+    updateCardPosition(true);
   }
-})
+});
 </script>
 
 <style scoped>
@@ -164,6 +164,12 @@ onMounted(async () => {
   z-index: 10;
   will-change: transform;
   cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
 }
 
 .flip-card {
@@ -171,6 +177,11 @@ onMounted(async () => {
   width: 80px;
   height: 120px;
   perspective: 1000px;
+}
+
+.flip-card:hover {
+  scale: 1.1;
+  transition: all 0.3s ease-in-out;
 }
 
 .flip-card-front {

@@ -2,7 +2,7 @@
   <el-header>
     <div class="el-header-top-bar">
       <div class="el-header-image">
-        <button id="leave-btn" class="leave-btn" @click="router.push('/')">Leave</button>
+        <button id="leave-btn" class="leave-btn gold-bg" @click="router.push('/')">Leave</button>
         <div id="jackpot-container" class="jackpot-container">
           <el-text class="jackpot-amount">
             {{ formatCurrency(outputValue) }}
@@ -11,7 +11,7 @@
             <img :src="JackpotText" class="jackpot-text" alt="" />
           </div>
         </div>
-        <div class="chip-amount">
+        <div class="chip-amount" @click="router.push({ name: 'transaction-history' })">
           <el-text class="chip-amount-text" style="color: white" size="small">{{
             convertToReadableFormat(creditStore.getCurrentBalance)
           }}</el-text>
@@ -22,32 +22,32 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { useCreditStore, useGameStore } from '@/stores'
-import JackpotText from '@/assets/jackpot-text.png'
-import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
-import { useTransition } from '@vueuse/core'
-import { onMounted, ref, watch } from 'vue'
+import { useRouter } from 'vue-router';
+import { useCreditStore, useGameStore } from '@/stores';
+import JackpotText from '@/assets/jackpot-text.png';
+import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney';
+import { useTransition } from '@vueuse/core';
+import { onMounted, ref, watch } from 'vue';
 
-const gameStore = useGameStore()
-const creditStore = useCreditStore()
+const gameStore = useGameStore();
+const creditStore = useCreditStore();
 
-const source = ref(0)
-const router = useRouter()
-const outputValue = useTransition(source, { duration: 1000 })
+const source = ref(0);
+const router = useRouter();
+const outputValue = useTransition(source, { duration: 1000 });
 
 onMounted(() => {
-  const storedJackpot = localStorage.getItem('accumulatedJackpot')
-  gameStore.setAccumulatedJackpot(storedJackpot ? parseFloat(storedJackpot) : 0) // Default to 0 if no value exists
-})
+  const storedJackpot = localStorage.getItem('accumulatedJackpot');
+  gameStore.setAccumulatedJackpot(storedJackpot ? parseFloat(storedJackpot) : 0); // Default to 0 if no value exists
+});
 
 watch(
   () => gameStore.getAccumulatedJackpot,
   (newValue) => {
-    source.value = newValue
+    source.value = newValue;
   },
   { immediate: true },
-)
+);
 </script>
 
 <style scoped>
@@ -103,13 +103,14 @@ watch(
       display: flex;
       align-items: center;
       justify-content: center;
+
+      cursor: pointer;
     }
 
     .leave-btn {
       height: 40px;
       width: 120px;
 
-      background: #ffca28;
       border: none;
       border-radius: 20px;
       /* padding: 4px 12px; */
