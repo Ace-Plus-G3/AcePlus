@@ -12,7 +12,7 @@
         </div>
         <div v-if="playerStore.getToken" class="btn-container">
           <el-button class="gold-bg" @click="gotoGame">Play Now!</el-button>
-          <el-button class="gold-bg">Instructions</el-button>
+          <el-button class="gold-bg" @click="openTutorial">Instructions</el-button>
         </div>
       </div>
       <div ref="wheelRef" class="wheel">
@@ -44,6 +44,7 @@ import { usePlayerStore } from '@/stores';
 import defaultWheel from '@/assets/default_wheel.png';
 import Star from '@/assets/invite_star.png';
 import jackpotWheel from '@/assets/jackpot_wheel.png';
+import type { TUser } from '@/models/type';
 
 const playerStore = usePlayerStore();
 
@@ -62,26 +63,21 @@ const openModal = (tab: string) => {
 };
 
 const gotoGame = () => {
+  console.log('isNewUser', playerStore.isNewUser);
+  
   if (playerStore.isNewUser) {
-    router.push({ name: 'tutorial', query: { tutorial: 'true' } });
+    router.push({ name: 'tutorial', query: {tutorial: 'true'} });
 
     if (playerStore.getUser) {
-      playerStore.setUser({
-        ...playerStore.getUser,
-        isNewUser: false,
-      });
-
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          ...playerStore.getUser,
-          isNewUser: false,
-        }),
-      );
+      playerStore.updateIsNewUser(playerStore.getUser.user_id, false);
     }
   } else {
-    router.push({ name: 'game' });
+    router.push({name: 'game'})
   }
+};
+
+const openTutorial = () => {
+  router.push({ name: 'tutorial', query: { tutorial: 'true' } });
 };
 
 onMounted(() => {
