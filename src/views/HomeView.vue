@@ -44,6 +44,7 @@ import { usePlayerStore } from '@/stores';
 import defaultWheel from '@/assets/default_wheel.png';
 import Star from '@/assets/invite_star.png';
 import jackpotWheel from '@/assets/jackpot_wheel.png';
+import type { TUser } from '@/models/type';
 
 const playerStore = usePlayerStore();
 
@@ -63,13 +64,24 @@ const openModal = (tab: string) => {
 
 const gotoGame = () => {
   if (playerStore.isNewUser) {
-    router.push({ name: 'tutorial', query: { tutorial: 'true' } });
+    router.push({ name: 'tutorial', query: { tutorial: String(playerStore.getUser?.isNewUser) } });
+
+    const players_in_localstorage = localStorage.getItem('players');
+
+    if (!players_in_localstorage) {
+      const updatedPlayers = JSON.stringify([{ ...playerStore.getUser, isNewUser: false }]);
+      localStorage.setItem('players', updatedPlayers);
+      return;
+    }
+
+    const updatedPlayer = JSON.parse(players_in_localstorage).map((item: TUser) =>
+      item.user_id === playerStore.getUser?.user_id ? { ...item, isNewUser: false } : item,
+    );
+
+    localStorage.setItem('players', JSON.stringify(updatedPlayer));
 
     if (playerStore.getUser) {
-      playerStore.setUser({
-        ...playerStore.getUser,
-        isNewUser: false,
-      });
+      playerStore.setPlayers(updatedPlayer);
 
       localStorage.setItem(
         'user',
