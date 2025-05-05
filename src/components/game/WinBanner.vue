@@ -1,5 +1,5 @@
 <template>
-  <div class="win-overlay" v-if="useGameStore().getShowWinBanner">
+  <div class="win-overlay" v-if="gameStore.getShowWinBanner">
     <div class="banner">
       <el-image fit="cover" :src="congratulations" class="congratulations" />
       <el-image fit="cover" :src="vfxLight" class="light-1" />
@@ -14,29 +14,25 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-
-// images
 import { useGameStore } from '@/stores'
 import { useTransition } from '@vueuse/core'
 import vfxLight from '@/assets/game/vfx-light.png'
-import congratulations from '@/assets/game/congratulations.png'
 import { formatCurrency } from '@/utils/convertMoney'
+import congratulations from '@/assets/game/congratulations.png'
 
+const gameStore = useGameStore()
 const source = ref(0)
 const outputValue = useTransition(source, { duration: 1000 })
 
 const handleClose = () => {
-  const updatedBets = [
-    ...useGameStore().getAllBets,
-    `+${formatCurrency(useGameStore().getBetOnCard)}`,
-  ]
-  useGameStore().setAllBets(updatedBets)
-  useGameStore().setBetOnCard(0)
-  useGameStore().setWinBanner(false)
+  const updatedBets = [...gameStore.getAllBets, `+${formatCurrency(gameStore.getBetOnCard)}`]
+  gameStore.setAllBets(updatedBets)
+  gameStore.setBetOnCard(0)
+  gameStore.setWinBanner(false)
 }
 
 watch(
-  () => useGameStore().getBetOnCard,
+  () => gameStore.getBetOnCard,
   (newValue) => {
     source.value = newValue
   },
