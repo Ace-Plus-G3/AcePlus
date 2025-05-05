@@ -24,6 +24,23 @@ export const usePlayerStore = defineStore('playerStore', {
     setToken(newToken: string | null) {
       this.token = newToken;
     },
+    updateIsNewUser(userId: string, isNewUser: boolean) {
+      if (this.user && this.user.user_id === userId) {
+        this.user.isNewUser = isNewUser;
+        localStorage.setItem('user', JSON.stringify(this.user));
+      }
+
+      const players_in_localstorage = localStorage.getItem('players');
+      if (players_in_localstorage) {
+        const updatedPlayers = JSON.parse(players_in_localstorage).map((item: TUser) => 
+          item.user_id === userId ? {...item, isNewUser} : item, 
+      );
+      this.setPlayers(updatedPlayers);
+      localStorage.setItem('players', JSON.stringify(updatedPlayers));
+      }
+    },
+
+
     async handleSignup({ formE1, handleChangeTab }: TSignupParams) {
       if (!formE1) return;
 

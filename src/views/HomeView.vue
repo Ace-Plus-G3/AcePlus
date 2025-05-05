@@ -63,36 +63,16 @@ const openModal = (tab: string) => {
 };
 
 const gotoGame = () => {
+  console.log('isNewUser', playerStore.isNewUser);
+  
   if (playerStore.isNewUser) {
-    router.push({ name: 'tutorial', query: { tutorial: String(playerStore.getUser?.isNewUser) } });
-
-    const players_in_localstorage = localStorage.getItem('players');
-
-    if (!players_in_localstorage) {
-      const updatedPlayers = JSON.stringify([{ ...playerStore.getUser, isNewUser: false }]);
-      localStorage.setItem('players', updatedPlayers);
-      return;
-    }
-
-    const updatedPlayer = JSON.parse(players_in_localstorage).map((item: TUser) =>
-      item.user_id === playerStore.getUser?.user_id ? { ...item, isNewUser: false } : item,
-    );
-
-    localStorage.setItem('players', JSON.stringify(updatedPlayer));
+    router.push({ name: 'tutorial', query: {tutorial: 'true'} });
 
     if (playerStore.getUser) {
-      playerStore.setPlayers(updatedPlayer);
-
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          ...playerStore.getUser,
-          isNewUser: false,
-        }),
-      );
+      playerStore.updateIsNewUser(playerStore.getUser.user_id, false);
     }
   } else {
-    router.push({ name: 'game' });
+    router.push({name: 'game'})
   }
 };
 
