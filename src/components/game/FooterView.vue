@@ -25,6 +25,8 @@ import { formatCurrency } from '@/utils/convertMoney.ts'
 import { useTransition } from '@vueuse/core'
 import { ref, watch } from 'vue'
 
+const gameStore = useGameStore()
+
 const source = ref(0)
 const outputValue = useTransition(source, { duration: 300 })
 
@@ -32,10 +34,7 @@ const totalPlayersCount = ref(0)
 const totalPlayersCountValue = useTransition(totalPlayersCount, { duration: 300 })
 
 watch(
-  [
-    () => useGameStore().getTotalPlayers,
-    () => (useGameStore().getSelectedCards.length > 0 ? 1 : 0),
-  ],
+  [() => gameStore.getTotalPlayers, () => (gameStore.getSelectedCards.length > 0 ? 1 : 0)],
   ([newValue, newPlayerValue]) => {
     totalPlayersCount.value = newValue + newPlayerValue
   },
@@ -43,7 +42,7 @@ watch(
 )
 
 watch(
-  () => useGameStore().getFourCards.reduce((total, card) => total + card.totalBet, 0),
+  () => gameStore.getFourCards.reduce((total, card) => total + card.totalBet, 0),
   (newValue) => {
     source.value = newValue
   },

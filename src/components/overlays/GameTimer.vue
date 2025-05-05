@@ -1,11 +1,13 @@
 <template>
-  <div v-if="useGameStore().getStartinIn === 0" class="timer-container">
-    <div class="timer">{{ useGameStore().getTimer }}</div>
+  <div v-if="gameStore.getStartinIn === 0" class="timer-container">
+    <div class="timer">{{ gameStore.getTimer }}</div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useGameStore } from '@/stores'
+
+const gameStore = useGameStore()
 </script>
 
 <style scoped>

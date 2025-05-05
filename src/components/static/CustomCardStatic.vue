@@ -1,14 +1,6 @@
 <template>
   <div class="card-container" ref="target" @click="gameLogic.handleSelectCard(index)">
-    <div
-      class="flip-card"
-      :class="{
-        flipped: useGameStore().getIsRevealCards,
-        // selected: useGameStore().selectedCards.some(
-        //   (card) => card.value === useGameStore().getFourCards[index].value,
-        // ),
-      }"
-    >
+    <div class="flip-card">
       <div class="flip-card-inner">
         <div class="flip-card-front">
           <div class="player-count" id="player-count">
@@ -51,7 +43,7 @@ type Props = {
 }
 
 const props = defineProps<Props>()
-
+const gameStore = useGameStore()
 const target = ref<HTMLElement>()
 const scaleRef = ref<HTMLElement>()
 const { width } = useWindowSize()
@@ -70,8 +62,8 @@ const calculateDistributionPosition = () => {
   }
 
   const TOTAL_WIDTH =
-    useGameStore().getFourCards.length * CARD_WIDTH.value +
-    (useGameStore().getFourCards.length - 1) * CARD_SPACING.value
+    gameStore.getFourCards.length * CARD_WIDTH.value +
+    (gameStore.getFourCards.length - 1) * CARD_SPACING.value
   const startX = Math.max(10, (props.containerWidth - TOTAL_WIDTH) / 2)
   const distributedX = startX + props.index * (CARD_WIDTH.value + CARD_SPACING.value)
   const centerY = Math.max(10, (props.containerHeight - CARD_HEIGHT.value) / 2)
@@ -93,37 +85,7 @@ const updateCardPosition = (isDistributed: boolean) => {
     const position = calculateDistributionPosition()
     target.value.style.transform = `translate(${position.x}px, ${position.y}px) `
   }
-
-  //   if (isDistributed) {
-  //     const position = calculateDistributionPosition()
-  //     target.value.style.transition = `transform ${200 + props.index * 200}ms ease-out`
-  //     target.value.style.transform = `translate(${position.x}px, ${position.y}px) rotate(360deg)`
-  //     target.value.style.zIndex = '10'
-
-  //     const cardTimeout = setTimeout(() => {
-  //       if (!scaleRef.value) return
-  //       scaleRef.value.classList.add('scaleIn')
-  //     }, 1500)
-  //     gameLogic.addTimeout(cardTimeout)
-  //   } else {
-  //     target.value.style.transition = `transform ${200 + props.index * 200}ms ease-in`
-  //     target.value.style.transform = `translate(10px, -60px) rotate(0deg)`
-  //     target.value.style.zIndex = `${10 - props.index}`
-  //   }
 }
-
-// watch(
-//   () => useGameStore().getStartGame,
-//   (newValue) => {
-//     if (newValue === 'START') {
-//       updateCardPosition()
-//     } else if (newValue === 'DONE') {
-//       updateCardPosition()
-//       scaleRef.value?.classList.remove('scaleIn')
-//     }
-//   },
-//   { immediate: true },
-// )
 
 watch([() => props.containerWidth, () => props.containerHeight], ([newWidth, newHeight]) => {
   if (newWidth > 10 && newHeight > 10) {
