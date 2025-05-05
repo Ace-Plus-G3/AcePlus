@@ -4,7 +4,15 @@
       <el-image :src="Logo" class="logo" />
       <h3 class="logo-text">ACE+</h3>
     </div>
-    <div class="btn-container">
+
+    <div v-if="playerStore.getToken" class="right-container">
+      <el-button link style="width: fit-content; height: fit-content" @click="goToWallet()">
+        <Wallet />
+      </el-button>
+      <el-button class="gold-bg btn-register" @click="playerStore.handleLogout()">Logout</el-button>
+    </div>
+
+    <div v-if="!playerStore.getToken" class="btn-container">
       <el-button link class="btn-login" @click="openModal('Login-Tab')">Login</el-button>
       <el-button class="gold-bg btn-register" @click="openModal('Signup-Tab')">Register</el-button>
     </div>
@@ -19,8 +27,17 @@
 import { ref } from 'vue';
 
 import AuthModal from './AuthModal.vue';
+import Wallet from '../assets/svg/wallet_svg.vue';
+
+import { useRouter } from 'vue-router';
+
+import { usePlayerStore } from '@/stores';
 
 import Logo from '@/assets/logo_new.png';
+
+const playerStore = usePlayerStore();
+
+const router = useRouter();
 
 const isModalVisible = ref(false);
 
@@ -29,6 +46,10 @@ const activeTabValue = ref<string>('Signup-Tab');
 const openModal = (tab: string) => {
   activeTabValue.value = tab;
   isModalVisible.value = true;
+};
+
+const goToWallet = () => {
+  router.push({ name: 'transaction-history' });
 };
 </script>
 
@@ -57,6 +78,16 @@ const openModal = (tab: string) => {
 :deep(.el-button) {
   margin: 0 !important;
   font-family: 'Poppins', sans-serif !important;
+}
+
+.right-container {
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 2em !important;
+  padding: 4px;
+  border-radius: 30px;
+  padding-left: 8px;
 }
 
 .btn-container {
