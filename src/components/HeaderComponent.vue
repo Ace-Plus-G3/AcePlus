@@ -5,16 +5,11 @@
       <h3 class="logo-text">ACE+</h3>
     </div>
 
-    <div class="right-container">
+    <div v-if="playerStore.getToken" class="right-container">
       <el-button link style="width: fit-content; height: fit-content" @click="goToWallet()">
         <Wallet />
       </el-button>
-      <el-button
-        v-if="playerStore.getToken"
-        class="gold-bg btn-register"
-        @click="playerStore.handleLogout()"
-        >Logout</el-button
-      >
+      <el-button class="gold-bg btn-register" @click="playerStore.handleLogout()">Logout</el-button>
     </div>
 
     <div v-if="!playerStore.getToken" class="btn-container">
