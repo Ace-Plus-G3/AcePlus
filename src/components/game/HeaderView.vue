@@ -13,7 +13,7 @@
         </div>
         <div class="chip-amount">
           <el-text class="chip-amount-text" style="color: white" size="small">{{
-            convertToReadableFormat(useCreditStore().getCurrentBalance)
+            convertToReadableFormat(creditStore.getCurrentBalance)
           }}</el-text>
         </div>
       </div>
@@ -29,17 +29,20 @@ import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
 import { useTransition } from '@vueuse/core'
 import { onMounted, ref, watch } from 'vue'
 
+const gameStore = useGameStore()
+const creditStore = useCreditStore()
+
 const source = ref(0)
 const router = useRouter()
 const outputValue = useTransition(source, { duration: 1000 })
 
 onMounted(() => {
   const storedJackpot = localStorage.getItem('accumulatedJackpot')
-  useGameStore().setAccumulatedJackpot(storedJackpot ? parseFloat(storedJackpot) : 0) // Default to 0 if no value exists
+  gameStore.setAccumulatedJackpot(storedJackpot ? parseFloat(storedJackpot) : 0) // Default to 0 if no value exists
 })
 
 watch(
-  () => useGameStore().getAccumulatedJackpot,
+  () => gameStore.getAccumulatedJackpot,
   (newValue) => {
     source.value = newValue
   },

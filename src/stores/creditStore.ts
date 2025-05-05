@@ -24,7 +24,8 @@ export const useCreditStore = defineStore('creditStore', {
       localStorage.setItem('cashout', JSON.stringify(this.cashout))
     },
     setCurrentBalance(newBalance: number) {
-      const loggedInUser = usePlayerStore().getUser
+      const playerStore = usePlayerStore()
+      const loggedInUser = playerStore.getUser
 
       if (!loggedInUser) {
         console.error('No user is logged in!')

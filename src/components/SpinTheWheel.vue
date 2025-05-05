@@ -40,6 +40,9 @@ import WheelArrow from '@/assets/wheel_arrow.png'
 import vfxLight from '@/assets/game/vfx-light.png'
 import congratulations from '@/assets/game/congratulations.png'
 
+const gameStore = useGameStore()
+const creditStore = useCreditStore()
+
 const rotation = ref(0)
 const isSpinning = ref(false)
 const multiplierWin = ref<TSpinWheel | null>(null)
@@ -110,8 +113,8 @@ const spinWheel = () => {
 
     if (multiplierWin.value && multiplierWin.value.multiplier === 6) {
       // 6 is bonus wheel
-      useGameStore().setShowJackpotSpinTheWheel(true)
-      useGameStore().setShowSpinTheWheel(false)
+      gameStore.setShowJackpotSpinTheWheel(true)
+      gameStore.setShowSpinTheWheel(false)
     } else {
       showResult.value = true
 
@@ -121,11 +124,10 @@ const spinWheel = () => {
 
         // Update user's balance
         if (multiplierWin.value) {
-          useCreditStore().setCurrentBalance(
-            useCreditStore().getCurrentBalance +
-              useGameStore().getBetOnAce * multiplierWin.value.multiplier,
+          creditStore.setCurrentBalance(
+            creditStore.getCurrentBalance + gameStore.getBetOnAce * multiplierWin.value.multiplier,
           )
-          source.value = useGameStore().getBetOnAce * multiplierWin.value.multiplier
+          source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier
         }
       }
     }
@@ -146,21 +148,21 @@ const handleClose = () => {
     multiplierWin.value &&
     (multiplierWin.value.multiplier === 6 || multiplierWin.value.multiplier === 1)
   ) {
-    useGameStore().setShowSpinTheWheel(false)
+    gameStore.setShowSpinTheWheel(false)
     multiplierWin.value = null
   }
 
   if (multiplierWin.value) {
     const updatedBets = [
-      ...useGameStore().getAllBets,
-      `+${formatCurrency(useGameStore().getBetOnAce * multiplierWin.value.multiplier)}`,
+      ...gameStore.getAllBets,
+      `+${formatCurrency(gameStore.getBetOnAce * multiplierWin.value.multiplier)}`,
     ]
-    useGameStore().setAllBets(updatedBets)
-    useGameStore().setBetOnAce(0)
+    gameStore.setAllBets(updatedBets)
+    gameStore.setBetOnAce(0)
   }
 
   cleanup()
-  useGameStore().setShowSpinTheWheel(false)
+  gameStore.setShowSpinTheWheel(false)
   multiplierWin.value = null
 }
 

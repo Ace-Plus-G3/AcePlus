@@ -1,34 +1,36 @@
 <template>
-  <div class="main-container">
-    <HeaderComponent />
-    <div class="image-container">
-      <el-image :src="imageSrc" fit="contain" alt="Responsive Image" class="responsive-image" />
+  <el-container>
+    <div class="main-container">
+      <HeaderComponent />
+      <div class="image-container">
+        <el-image :src="imageSrc" fit="contain" alt="Responsive Image" class="responsive-image" />
+      </div>
+      <div class="cash-transaction-container">
+        <TabsComponent>
+          <template v-slot:cashin>
+            <form class="transaction-form">
+              <el-input v-model="account_number" placeholder="Enter Account Number" />
+              <el-input v-model="amount" placeholder="Enter Amount" />
+              <el-button @click="CashIn">Cash In</el-button>
+            </form>
+          </template>
+          <template v-slot:cashout>
+            <form class="transaction-form">
+              <el-input v-model="account_number" placeholder="Enter Account Number" />
+              <el-input v-model="amount" placeholder="Enter Amount" />
+              <el-button @click="CashOut">Cash Out</el-button>
+            </form>
+          </template>
+        </TabsComponent>
+      </div>
     </div>
-    <div class="cash-transaction-container">
-      <TabsComponent>
-        <template v-slot:cashin>
-          <form class="transaction-form">
-            <el-input v-model="account_number" placeholder="Enter Account Number" />
-            <el-input v-model="amount" placeholder="Enter Amount" />
-            <el-button @click="CashIn">Cash In</el-button>
-          </form>
-        </template>
-        <template v-slot:cashout>
-          <form class="transaction-form">
-            <el-input v-model="account_number" placeholder="Enter Account Number" />
-            <el-input v-model="amount" placeholder="Enter Amount" />
-            <el-button @click="CashOut">Cash Out</el-button>
-          </form>
-        </template>
-      </TabsComponent>
-    </div>
-  </div>
-  <TransactionStatusDialog
-    v-if="dialogStore.isVisible"
-    :status="dialogStore.status"
-    :message="dialogStore.message"
-    v-model:visible="dialogStore.isVisible"
-  />
+    <TransactionStatusDialog
+      v-if="dialogStore.isVisible"
+      :status="dialogStore.status"
+      :message="dialogStore.message"
+      v-model:visible="dialogStore.isVisible"
+    />
+  </el-container>
 </template>
 
 <script setup lang="ts">
@@ -36,16 +38,12 @@ import { ref } from 'vue'
 import HeaderComponent from '@/components/HeaderComponent-Latest.vue'
 import TabsComponent from '@/components/TabsComponent.vue'
 import TransactionStatusDialog from '@/components/TransactionStatusDialog.vue'
-
 import { ElLoading } from 'element-plus'
-
-import { useCreditStore } from '@/stores'
-import { useDialogStore } from '@/stores'
-
-const dialogStore = useDialogStore()
+import { useCreditStore, useDialogStore } from '@/stores'
 
 const imageSrc = ref(new URL('/src/assets/gcash-logo.png', import.meta.url).href)
 
+const dialogStore = useDialogStore()
 const creditStore = useCreditStore()
 
 const account_number = ref<number | null>(null)
@@ -118,6 +116,18 @@ const resetTransactionFields = () => {
 </script>
 
 <style scoped>
+.el-container {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('@/assets/homepage_bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .cash-transaction-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -126,6 +136,7 @@ const resetTransactionFields = () => {
 .main-container {
   background-color: var(--primary-black);
   max-width: 800px;
+  width: 800px;
   height: 100dvh;
   margin: 0 auto;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="overlay" v-if="useGameStore().getGameStatus === 'WIN'">
+  <div class="overlay" v-if="gameStore.getGameStatus === 'WIN'">
     <div class="win-overlay">
       <el-image :src="WIN_ICON" />
     </div>
@@ -9,6 +9,8 @@
 <script setup lang="ts">
 import WIN_ICON from '@/assets/game/title_win.png'
 import { useGameStore } from '@/stores'
+
+const gameStore = useGameStore()
 </script>
 
 <style scoped>
