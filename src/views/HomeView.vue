@@ -8,7 +8,12 @@
         <h5>Banker Game Plus</h5>
         <p>But on highest card and win up to billions</p>
         <div class="btn-container">
-          <el-button class="gold-bg">Play Now!</el-button>
+          <el-button v-if="!playerStore.getToken" class="gold-bg" @click="openModal('Signup-Tab')"
+            >Play Now!</el-button
+          >
+        </div>
+        <div v-if="playerStore.getToken" class="btn-container">
+          <el-button class="gold-bg" @click="gotoGame">Play Now!</el-button>
           <el-button class="gold-bg">Instructions</el-button>
         </div>
       </div>
@@ -23,23 +28,64 @@
   </el-container>
 
   <div>
-    <AuthModal v-model="isModalVisible" />
+    <AuthModal v-model="isModalVisible" :active-tab-value="activeTabValue" />
   </div>
 </template>
 
 <script setup lang="ts">
-import defaultWheel from '@/assets/default_wheel.png'
-import Star from '@/assets/invite_star.png'
-import jackpotWheel from '@/assets/jackpot_wheel.png'
-import AuthModal from '@/components/AuthModal.vue'
-import CardHomeView from '@/components/CardHomeView.vue'
-import HeaderComponent from '@/components/HeaderComponent.vue'
-import { useMotion } from '@vueuse/motion'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue';
+import { useMotion } from '@vueuse/motion';
+import { useRouter } from 'vue-router';
 
-const isModalVisible = ref(false)
-const wheelRef = ref<HTMLElement>()
-const jackpotWheelRef = ref<HTMLElement>()
+import AuthModal from '@/components/AuthModal.vue';
+import CardHomeView from '@/components/CardHomeView.vue';
+import HeaderComponent from '@/components/HeaderComponent.vue';
+
+import { usePlayerStore } from '@/stores';
+
+import defaultWheel from '@/assets/default_wheel.png';
+import Star from '@/assets/invite_star.png';
+import jackpotWheel from '@/assets/jackpot_wheel.png';
+
+const playerStore = usePlayerStore();
+
+const router = useRouter();
+
+const wheelRef = ref<HTMLElement>();
+const jackpotWheelRef = ref<HTMLElement>();
+
+const isModalVisible = ref(false);
+
+const activeTabValue = ref<string>('Signup-Tab');
+
+const openModal = (tab: string) => {
+  activeTabValue.value = tab;
+  isModalVisible.value = true;
+};
+
+const gotoGame = () => {
+  if (playerStore.isNewUser) {
+    router.push({ name: 'tutorial', query: { tutorial: 'true' } });
+
+    if (playerStore.getUser) {
+      playerStore.setUser({
+        ...playerStore.getUser,
+        isNewUser: false,
+      });
+
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          ...playerStore.getUser,
+          isNewUser: false,
+        }),
+      );
+    }
+  } else {
+    router.push({ name: 'game' });
+  }
+};
+
 onMounted(() => {
   useMotion(wheelRef, {
     initial: {
@@ -61,7 +107,7 @@ onMounted(() => {
         },
       },
     },
-  })
+  });
   useMotion(jackpotWheelRef, {
     initial: {
       scale: 0,
@@ -82,8 +128,8 @@ onMounted(() => {
         },
       },
     },
-  })
-})
+  });
+});
 </script>
 
 <style scoped>

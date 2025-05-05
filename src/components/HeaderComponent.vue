@@ -5,14 +5,31 @@
       <h3 class="logo-text">ACE+</h3>
     </div>
     <div class="btn-container">
-      <el-button link class="btn-login">Login</el-button>
-      <el-button class="gold-bg btn-register">Register</el-button>
+      <el-button link class="btn-login" @click="openModal('Login-Tab')">Login</el-button>
+      <el-button class="gold-bg btn-register" @click="openModal('Signup-Tab')">Register</el-button>
     </div>
   </el-header>
+
+  <div>
+    <AuthModal v-model="isModalVisible" :active-tab-value="activeTabValue" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import Logo from '@/assets/logo_new.png'
+import { ref } from 'vue';
+
+import AuthModal from './AuthModal.vue';
+
+import Logo from '@/assets/logo_new.png';
+
+const isModalVisible = ref(false);
+
+const activeTabValue = ref<string>('Signup-Tab');
+
+const openModal = (tab: string) => {
+  activeTabValue.value = tab;
+  isModalVisible.value = true;
+};
 </script>
 
 <style scoped>
