@@ -9,7 +9,7 @@
         <p>But on highest card and win up to billions</p>
         <div class="btn-container">
           <el-button class="gold-bg">Play Now!</el-button>
-          <el-button class="gold-bg">Instructions</el-button>
+          <el-button @click="openTutorial" class="gold-bg">Instructions</el-button>
         </div>
       </div>
       <div ref="wheelRef" class="wheel">
@@ -36,10 +36,17 @@ import CardHomeView from '@/components/CardHomeView.vue'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import { useMotion } from '@vueuse/motion'
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const isModalVisible = ref(false)
 const wheelRef = ref<HTMLElement>()
 const jackpotWheelRef = ref<HTMLElement>()
+const router = useRouter()
+
+const openTutorial = () => {
+  router.push({ name: 'tutorial', query: { tutorial: 'true' } })
+}
+
 onMounted(() => {
   useMotion(wheelRef, {
     initial: {
