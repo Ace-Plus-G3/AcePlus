@@ -291,7 +291,7 @@ export class GameLogic {
       const numberOfBets = Math.floor(Math.random() * 4) + 1 // bot can bet on 1 - 4  no. of cards
       const uniqueCardIndexes = new Set<number>()
 
-      while (uniqueCardIndexes.size < numberOfBets) {
+      for (let i = uniqueCardIndexes.size; i < numberOfBets; i++) {
         uniqueCardIndexes.add(Math.floor(Math.random() * 4))
       }
 
