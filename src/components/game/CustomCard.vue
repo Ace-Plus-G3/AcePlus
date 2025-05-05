@@ -86,7 +86,7 @@ const updateCardPosition = (isDistributed: boolean) => {
   if (!target.value) return;
 
   const soundTimeout = setTimeout(() => {
-    cardDistributeSound.volume = 0.5;
+    cardDistributeSound.volume = gameStore.getCardMusic / 100;
     cardDistributeSound.loop = false;
     cardDistributeSound.play();
   }, props.index * 150);

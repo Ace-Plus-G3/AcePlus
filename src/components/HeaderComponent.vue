@@ -4,18 +4,24 @@
       <el-image :src="Logo" class="logo" />
       <h3 class="logo-text">ACE+</h3>
     </div>
+    <el-row style="display: flex; align-items: center; gap: 1em">
+      <MusicButton />
+      <div v-if="playerStore.getToken" class="right-container">
+        <el-button link style="width: fit-content; height: fit-content" @click="goToWallet()">
+          <Wallet />
+        </el-button>
+        <el-button class="gold-bg btn-register" @click="playerStore.handleLogout()"
+          >Logout</el-button
+        >
+      </div>
 
-    <div v-if="playerStore.getToken" class="right-container">
-      <el-button link style="width: fit-content; height: fit-content" @click="goToWallet()">
-        <Wallet />
-      </el-button>
-      <el-button class="gold-bg btn-register" @click="playerStore.handleLogout()">Logout</el-button>
-    </div>
-
-    <div v-if="!playerStore.getToken" class="btn-container">
-      <el-button link class="btn-login" @click="openModal('Login-Tab')">Login</el-button>
-      <el-button class="gold-bg btn-register" @click="openModal('Signup-Tab')">Register</el-button>
-    </div>
+      <div v-if="!playerStore.getToken" class="btn-container">
+        <el-button link class="btn-login" @click="openModal('Login-Tab')">Login</el-button>
+        <el-button class="gold-bg btn-register" @click="openModal('Signup-Tab')"
+          >Register</el-button
+        >
+      </div>
+    </el-row>
   </el-header>
 
   <div>
@@ -24,23 +30,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-
-import AuthModal from './AuthModal.vue';
-import Wallet from '../assets/svg/wallet_svg.vue';
-
-import { useRouter } from 'vue-router';
-
-import { usePlayerStore } from '@/stores';
-
 import Logo from '@/assets/logo_new.png';
+import { usePlayerStore } from '@/stores';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import Wallet from '../assets/svg/wallet_svg.vue';
+import AuthModal from './AuthModal.vue';
+import MusicButton from './MusicButton.vue';
 
 const playerStore = usePlayerStore();
-
 const router = useRouter();
-
 const isModalVisible = ref(false);
-
 const activeTabValue = ref<string>('Signup-Tab');
 
 const openModal = (tab: string) => {
