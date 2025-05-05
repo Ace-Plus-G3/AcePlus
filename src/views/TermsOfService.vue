@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <el-container class="container">
     <el-card>
       <template #header>
@@ -35,9 +35,9 @@
 a {
   color: var(--primary-white);
 }
-</style>
+</style> -->
 
-<!-- <template>
+<template>
   <div class="main-container">
     <el-card style="width: 700px">
       <template #header>
@@ -130,4 +130,4 @@ ul li::marker {
   flex-direction: column;
   gap: 16px;
 }
-</style> -->
+</style>
