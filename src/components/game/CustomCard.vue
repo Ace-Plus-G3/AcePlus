@@ -1,5 +1,5 @@
 <template>
-  <div class="card-container" ref="target" @click="gameLogic.handleSelectCard(index)">
+  <div class="card-container" ref="target" @click="handleSelectCard(index)">
     <div
       class="flip-card"
       :class="{
@@ -38,7 +38,7 @@ import { useWindowSize } from '@vueuse/core';
 import GoldIcon from '@/assets/coins/gold.png';
 import playerLogo from '@/assets/icons/players_icon_xs.png';
 import { convertToReadableFormat } from '@/utils/convertMoney';
-import { useGameStore } from '@/stores';
+import { useCreditStore, useDialogStore, useGameStore } from '@/stores';
 import gameLogic from '@/composables/useGameLogic';
 import distributeCardSound from '@/assets/audio/new-card-audio.mp3';
 
@@ -56,6 +56,8 @@ const scaleRef = ref<HTMLElement>();
 const { width } = useWindowSize();
 
 const gameStore = useGameStore();
+const creditStore = useCreditStore();
+const dialogStore = useDialogStore();
 
 // Card sizing based on screen width
 const CARD_WIDTH = computed(() => (width.value > 780 ? 80 : 60));
@@ -84,7 +86,7 @@ const updateCardPosition = (isDistributed: boolean) => {
   if (!target.value) return;
 
   const soundTimeout = setTimeout(() => {
-    cardDistributeSound.volume = 0.5;
+    cardDistributeSound.volume = gameStore.getCardMusic / 100;
     cardDistributeSound.loop = false;
     cardDistributeSound.play();
   }, props.index * 150);
@@ -106,6 +108,19 @@ const updateCardPosition = (isDistributed: boolean) => {
     target.value.style.transform = `translate(10px, -60px) rotate(0deg)`;
     target.value.style.zIndex = `${10 - props.index}`;
   }
+};
+
+const handleSelectCard = (index: number) => {
+  if (gameStore.getIsRevealCards) return;
+  if (!creditStore.getCurrentBalance) {
+    dialogStore.showDialog('error', 'Please top up first, you have no balance!');
+    console.log('Please top up first, you have no balance!');
+    return;
+  }
+
+  const card = gameStore.getFourCards[index];
+  gameStore.setCurrentSelectedCard({ card, index });
+  gameStore.setDrawer(true);
 };
 
 watch(

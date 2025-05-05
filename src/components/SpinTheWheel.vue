@@ -24,166 +24,166 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
-import { probabilityRate, wheelDeg } from '@/models/constants'
-import type { TSpinWheel } from '@/models/type'
-import { useCreditStore, useGameStore } from '@/stores'
-import { useTransition } from '@vueuse/core'
-import spinSound from '@/assets/audio/sample6_wheel.mp3'
-import winSound from '@/assets/audio/sample1_spin_price.mp3'
-import { formatCurrency } from '@/utils/convertMoney'
-import gameLogic from '@/composables/useGameLogic'
+import { onMounted, onUnmounted, ref } from 'vue';
+import { probabilityRate, wheelDeg } from '@/models/constants';
+import type { TSpinWheel } from '@/models/type';
+import { useCreditStore, useGameStore } from '@/stores';
+import { useTransition } from '@vueuse/core';
+import spinSound from '@/assets/audio/sample6_wheel.mp3';
+import winSound from '@/assets/audio/sample1_spin_price.mp3';
+import { formatCurrency } from '@/utils/convertMoney';
+import gameLogic from '@/composables/useGameLogic';
 
 // images
-import Wheel from '@/assets/default_wheel.png'
-import WheelArrow from '@/assets/wheel_arrow.png'
-import vfxLight from '@/assets/game/vfx-light.png'
-import congratulations from '@/assets/game/congratulations.png'
+import Wheel from '@/assets/default_wheel.png';
+import WheelArrow from '@/assets/wheel_arrow.png';
+import vfxLight from '@/assets/game/vfx-light.png';
+import congratulations from '@/assets/game/congratulations.png';
 
-const gameStore = useGameStore()
-const creditStore = useCreditStore()
+const gameStore = useGameStore();
+const creditStore = useCreditStore();
 
-const rotation = ref(0)
-const isSpinning = ref(false)
-const multiplierWin = ref<TSpinWheel | null>(null)
-const showResult = ref(false)
-const autoSpinTimeout = ref<number | null>(null)
-const selectedSlice = ref<TSpinWheel | null>(null)
-const source = ref(0)
-const outputValue = useTransition(source, { duration: 3000 })
+const rotation = ref(0);
+const isSpinning = ref(false);
+const multiplierWin = ref<TSpinWheel | null>(null);
+const showResult = ref(false);
+const autoSpinTimeout = ref<number | null>(null);
+const selectedSlice = ref<TSpinWheel | null>(null);
+const source = ref(0);
+const outputValue = useTransition(source, { duration: 3000 });
 
-const spinAudio = new Audio(spinSound)
-const winAudio = new Audio(winSound)
+const spinAudio = new Audio(spinSound);
+const winAudio = new Audio(winSound);
 
 // Cleanup function to prevent memory leaks
 const cleanup = () => {
   if (autoSpinTimeout.value) {
-    clearTimeout(autoSpinTimeout.value)
-    autoSpinTimeout.value = null
+    clearTimeout(autoSpinTimeout.value);
+    autoSpinTimeout.value = null;
   }
-  spinAudio.pause()
-  spinAudio.currentTime = 0
-  winAudio.pause()
-  winAudio.currentTime = 0
-}
+  spinAudio.pause();
+  spinAudio.currentTime = 0;
+  winAudio.pause();
+  winAudio.currentTime = 0;
+};
 
 const spinWheel = () => {
-  if (isSpinning.value) return
+  if (isSpinning.value) return;
 
   // Reset in case we're respinning
-  showResult.value = false
-  multiplierWin.value = null
-  isSpinning.value = true
+  showResult.value = false;
+  multiplierWin.value = null;
+  isSpinning.value = true;
 
   // Play the spin sound
-  spinAudio.volume = 0.3
-  spinAudio.loop = false
-  spinAudio.currentTime = 0
-  spinAudio.play()
+  spinAudio.volume = gameStore.getMusicWheel / 100;
+  spinAudio.loop = false;
+  spinAudio.currentTime = 0;
+  spinAudio.play();
 
-  const fullRotations = 360 * 10
+  const fullRotations = 360 * 10;
 
   // Randomly determine if "bokya" or "bonus" should appear
-  const randomValue = Math.random()
+  const randomValue = Math.random();
 
   if (randomValue < probabilityRate.bokyaRate) {
     // 30% chance of "bokya" appearing
-    selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 1) || wheelDeg[7]
+    selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 1) || wheelDeg[7];
   } else if (randomValue >= probabilityRate.bokyaRate && randomValue < probabilityRate.BonusRate) {
     // 30% chance of "bonus" appearing
-    selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 6) || wheelDeg[3]
+    selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 6) || wheelDeg[3];
   } else {
     // For other outcomes
     const nonBokyaOrBonusSlices = wheelDeg.filter(
       (slice) => slice.multiplier > 1 && slice.multiplier !== 6,
-    )
-    const randomIndex = Math.floor(Math.random() * nonBokyaOrBonusSlices.length)
-    selectedSlice.value = nonBokyaOrBonusSlices[randomIndex]
+    );
+    const randomIndex = Math.floor(Math.random() * nonBokyaOrBonusSlices.length);
+    selectedSlice.value = nonBokyaOrBonusSlices[randomIndex];
   }
 
-  const stopAtDegree = fullRotations - selectedSlice.value.deg
-  rotation.value = stopAtDegree
+  const stopAtDegree = fullRotations - selectedSlice.value.deg;
+  rotation.value = stopAtDegree;
 
   const spinWheelTimeout = setTimeout(() => {
-    spinAudio.pause()
-    spinAudio.currentTime = 0
+    spinAudio.pause();
+    spinAudio.currentTime = 0;
 
-    isSpinning.value = false
-    multiplierWin.value = selectedSlice.value
+    isSpinning.value = false;
+    multiplierWin.value = selectedSlice.value;
 
     if (multiplierWin.value && multiplierWin.value.multiplier === 6) {
       // 6 is bonus wheel
-      gameStore.setShowJackpotSpinTheWheel(true)
-      gameStore.setShowSpinTheWheel(false)
+      gameStore.setShowJackpotSpinTheWheel(true);
+      gameStore.setShowSpinTheWheel(false);
     } else {
-      showResult.value = true
+      showResult.value = true;
 
       if (selectedSlice.value && selectedSlice.value.multiplier > 1) {
-        winAudio.currentTime = 0
-        winAudio.play()
+        winAudio.currentTime = 0;
+        winAudio.volume = gameStore.getWinMusic / 100;
+        winAudio.play();
 
         // Update user's balance
         if (multiplierWin.value) {
           creditStore.setCurrentBalance(
             creditStore.getCurrentBalance + gameStore.getBetOnAce * multiplierWin.value.multiplier,
-          )
-          source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier
+          );
+          source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier;
         }
       }
     }
-  }, 8000)
+  }, 8000);
 
-  gameLogic.addTimeout(spinWheelTimeout)
-}
+  gameLogic.addTimeout(spinWheelTimeout);
+};
 
 const handleSpin = () => {
   if (!isSpinning.value && !showResult.value) {
-    spinWheel()
+    spinWheel();
   }
-}
+};
 
 const handleClose = () => {
-  // Include multipliers of 6 or 1
   if (
     multiplierWin.value &&
     (multiplierWin.value.multiplier === 6 || multiplierWin.value.multiplier === 1)
   ) {
-    gameStore.setShowSpinTheWheel(false)
-    multiplierWin.value = null
+    gameStore.setShowSpinTheWheel(false);
+    multiplierWin.value = null;
   }
 
   if (multiplierWin.value) {
     const updatedBets = [
       ...gameStore.getAllBets,
       `+${formatCurrency(gameStore.getBetOnAce * multiplierWin.value.multiplier)}`,
-    ]
-    gameStore.setAllBets(updatedBets)
-    gameStore.setBetOnAce(0)
+    ];
+    gameStore.setAllBets(updatedBets);
+    gameStore.setBetOnAce(0);
   }
 
-  cleanup()
-  gameStore.setShowSpinTheWheel(false)
-  multiplierWin.value = null
-}
+  cleanup();
+  gameStore.setShowSpinTheWheel(false);
+  multiplierWin.value = null;
+};
 
 onMounted(() => {
   // Reset state on mount
-  rotation.value = 0
-  isSpinning.value = false
-  showResult.value = false
-  multiplierWin.value = null
+  rotation.value = 0;
+  isSpinning.value = false;
+  showResult.value = false;
+  multiplierWin.value = null;
 
   // Auto-spin after a delay
   autoSpinTimeout.value = setTimeout(() => {
     if (!isSpinning.value && !showResult.value) {
-      spinWheel()
+      spinWheel();
     }
-  }, 1000) as unknown as number
-})
+  }, 1000) as unknown as number;
+});
 
 onUnmounted(() => {
-  cleanup()
-})
+  cleanup();
+});
 </script>
 
 <style scoped>

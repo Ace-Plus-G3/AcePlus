@@ -9,10 +9,12 @@
         <p>But on highest card and win up to billions</p>
         <div v-if="!playerStore.getToken" class="btn-container">
           <el-button class="gold-bg" @click="openModal('Login-Tab')">Play Now!</el-button>
+          <el-button class="gold-bg" @click="openSettings">Settings</el-button>
         </div>
         <div v-if="playerStore.getToken" class="btn-container">
           <el-button class="gold-bg" @click="gotoGame">Play Now!</el-button>
           <el-button class="gold-bg" @click="openTutorial">Instructions</el-button>
+          <el-button class="gold-bg" @click="openSettings">Settings</el-button>
         </div>
       </div>
       <div ref="wheelRef" class="wheel">
@@ -27,35 +29,38 @@
 
   <div>
     <AuthModal v-model="isModalVisible" :active-tab-value="activeTabValue" />
+    <SettingsModal :show-settings="showSettings" @handle-close="handleCloseSettings" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { useMotion } from '@vueuse/motion';
-import { useRouter } from 'vue-router';
-
-import AuthModal from '@/components/AuthModal.vue';
-import CardHomeView from '@/components/CardHomeView.vue';
-import HeaderComponent from '@/components/HeaderComponent.vue';
-
-import { usePlayerStore } from '@/stores';
-
 import defaultWheel from '@/assets/default_wheel.png';
 import Star from '@/assets/invite_star.png';
 import jackpotWheel from '@/assets/jackpot_wheel.png';
-import type { TUser } from '@/models/type';
+import AuthModal from '@/components/AuthModal.vue';
+import CardHomeView from '@/components/CardHomeView.vue';
+import HeaderComponent from '@/components/HeaderComponent.vue';
+import { usePlayerStore } from '@/stores';
+import { useMotion } from '@vueuse/motion';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import SettingsModal from '@/components/SettingsModal.vue';
 
 const playerStore = usePlayerStore();
-
 const router = useRouter();
-
 const wheelRef = ref<HTMLElement>();
 const jackpotWheelRef = ref<HTMLElement>();
-
 const isModalVisible = ref(false);
-
 const activeTabValue = ref<string>('Login-Tab');
+const showSettings = ref<boolean>(false);
+
+const openSettings = () => {
+  showSettings.value = true;
+};
+
+const handleCloseSettings = () => {
+  showSettings.value = false;
+};
 
 const openModal = (tab: string) => {
   activeTabValue.value = tab;
@@ -64,15 +69,13 @@ const openModal = (tab: string) => {
 
 const gotoGame = () => {
   console.log('isNewUser', playerStore.isNewUser);
-  
   if (playerStore.isNewUser) {
-    router.push({ name: 'tutorial', query: {tutorial: 'true'} });
-
+    router.push({ name: 'tutorial', query: { tutorial: 'true' } });
     if (playerStore.getUser) {
       playerStore.updateIsNewUser(playerStore.getUser.user_id, false);
     }
   } else {
-    router.push({name: 'game'})
+    router.push({ name: 'game' });
   }
 };
 

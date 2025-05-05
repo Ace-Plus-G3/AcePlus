@@ -8,12 +8,12 @@
     <div id="drawer" class="custom-drawer">
       <div class="custom-drawer-header">
         <span class="title">Place your bets !</span>
-        <button class="cancel-btn" @click="gameLogic.handleCancelBet">Cancel</button>
+        <button class="cancel-btn" @click="handleCancelBet">Cancel</button>
       </div>
       <div class="drawer-content">
         <div class="bet-grid">
           <div
-            @click="gameLogic.handleSelectBet(chip.value)"
+            @click="handleSelectBet(chip.value)"
             v-for="chip in chips"
             :key="chip.value"
             class="chip"
@@ -27,11 +27,56 @@
 </template>
 
 <script setup lang="ts">
-import { chips } from '@/models/constants'
-import { useGameStore } from '@/stores'
-import gameLogic from '@/composables/useGameLogic'
+import { chips } from '@/models/constants';
+import { useCreditStore, useDialogStore, useGameStore } from '@/stores';
 
-const gameStore = useGameStore()
+const gameStore = useGameStore();
+const creditStore = useCreditStore();
+const dialogStore = useDialogStore();
+
+const handleSelectBet = (betValue: number) => {
+  const currentCard = gameStore.getCurrentSelectedCard;
+  if (!currentCard) {
+    console.log('No card selected!');
+    return;
+  }
+
+  if (creditStore.getCurrentBalance < betValue) {
+    dialogStore.showDialog('error', 'Insufficient balance!');
+    console.log('Insufficient balance!');
+    gameStore.setShowSpinTheWheel(false);
+    return;
+  }
+
+  const selectedIndex = gameStore.getSelectedCards.findIndex(
+    (item) => item.value === currentCard.card.value,
+  );
+
+  const cards = [...gameStore.getFourCards];
+  const selectedCards = [...gameStore.getSelectedCards];
+
+  if (selectedIndex !== -1) {
+    const oldBet = selectedCards[selectedIndex].betAmount;
+    selectedCards[selectedIndex].betAmount = betValue;
+    cards[currentCard.index].totalBet = cards[currentCard.index].totalBet - oldBet + betValue;
+  } else {
+    selectedCards.push({
+      ...currentCard.card,
+      betAmount: betValue,
+    });
+    cards[currentCard.index].totalBet += betValue;
+    cards[currentCard.index].playerCount += 1;
+  }
+
+  gameStore.setSelectedCards(selectedCards);
+  gameStore.setFourCards(cards);
+  gameStore.setDrawer(false);
+};
+
+const handleCancelBet = () => {
+  gameStore.setDrawer(false);
+  gameStore.setCurrentSelectedCard(null);
+};
 </script>
 
 <style scoped>
