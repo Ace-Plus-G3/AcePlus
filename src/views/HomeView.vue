@@ -14,7 +14,7 @@
         </div>
         <div v-if="playerStore.getToken" class="btn-container">
           <el-button class="gold-bg" @click="gotoGame">Play Now!</el-button>
-          <el-button class="gold-bg">Instructions</el-button>
+          <el-button class="gold-bg" @click="openTutorial">Instructions</el-button>
         </div>
       </div>
       <div ref="wheelRef" class="wheel">
@@ -84,6 +84,10 @@ const gotoGame = () => {
   } else {
     router.push({ name: 'game' });
   }
+};
+
+const openTutorial = () => {
+  router.push({ name: 'tutorial', query: { tutorial: 'true' } });
 };
 
 onMounted(() => {
