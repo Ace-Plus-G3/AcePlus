@@ -7,10 +7,8 @@
         <h1>ACE+</h1>
         <h5>Banker Game Plus</h5>
         <p>But on highest card and win up to billions</p>
-        <div class="btn-container">
-          <el-button v-if="!playerStore.getToken" class="gold-bg" @click="openModal('Signup-Tab')"
-            >Play Now!</el-button
-          >
+        <div v-if="!playerStore.getToken" class="btn-container">
+          <el-button class="gold-bg" @click="openModal('Signup-Tab')">Play Now!</el-button>
         </div>
         <div v-if="playerStore.getToken" class="btn-container">
           <el-button class="gold-bg" @click="gotoGame">Play Now!</el-button>
