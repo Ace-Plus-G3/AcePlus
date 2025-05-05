@@ -3,14 +3,14 @@
     <div class="el-footer-bottom-bar">
       <div class="el-footer-image">
         <div class="text-container">
-          <span class="title">Total Bets:</span>
-          <el-text class="total-bet-text">
+          <span class="title gold-text">Total Bets:</span>
+          <el-text class="total-bet-text gold-text">
             {{ formatCurrency(outputValue) }}
           </el-text>
         </div>
         <div class="text-container">
-          <span class="title">Total Players:</span>
-          <el-text class="total-bet-text">
+          <span class="title gold-text">Total Players:</span>
+          <el-text class="total-bet-text gold-text">
             {{ formatCurrency(totalPlayersCountValue) }}
           </el-text>
         </div>
@@ -20,34 +20,34 @@
 </template>
 
 <script setup lang="ts">
-import { useGameStore } from '@/stores'
-import { formatCurrency } from '@/utils/convertMoney.ts'
-import { useTransition } from '@vueuse/core'
-import { ref, watch } from 'vue'
+import { useGameStore } from '@/stores';
+import { formatCurrency } from '@/utils/convertMoney.ts';
+import { useTransition } from '@vueuse/core';
+import { ref, watch } from 'vue';
 
-const gameStore = useGameStore()
+const gameStore = useGameStore();
 
-const source = ref(0)
-const outputValue = useTransition(source, { duration: 300 })
+const source = ref(0);
+const outputValue = useTransition(source, { duration: 300 });
 
-const totalPlayersCount = ref(0)
-const totalPlayersCountValue = useTransition(totalPlayersCount, { duration: 300 })
+const totalPlayersCount = ref(0);
+const totalPlayersCountValue = useTransition(totalPlayersCount, { duration: 300 });
 
 watch(
   [() => gameStore.getTotalPlayers, () => (gameStore.getSelectedCards.length > 0 ? 1 : 0)],
   ([newValue, newPlayerValue]) => {
-    totalPlayersCount.value = newValue + newPlayerValue
+    totalPlayersCount.value = newValue + newPlayerValue;
   },
   { immediate: true },
-)
+);
 
 watch(
   () => gameStore.getFourCards.reduce((total, card) => total + card.totalBet, 0),
   (newValue) => {
-    source.value = newValue
+    source.value = newValue;
   },
   { immediate: true },
-)
+);
 </script>
 
 <style scoped>

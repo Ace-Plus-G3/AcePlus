@@ -1,12 +1,12 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import TransactionHistory from '@/views/TransactionHistoryView.vue'
-import CashTransaction from '@/views/CashTransaction.vue'
-import GameView from '@/views/GameView.vue'
-import { usePlayerStore } from '@/stores'
-import ReceiptView from '@/views/ReceiptView.vue'
-import TermsOfService from '@/views/TermsOfService.vue'
-import TutorialGameView from '@/views/TutorialGameView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '../views/HomeView.vue';
+import TransactionHistory from '@/views/TransactionHistoryView.vue';
+import CashTransaction from '@/views/CashTransaction.vue';
+import GameView from '@/views/GameView.vue';
+import { usePlayerStore } from '@/stores';
+import ReceiptView from '@/views/ReceiptView.vue';
+import TermsOfService from '@/views/TermsOfService.vue';
+import TutorialGameView from '@/views/TutorialGameView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,7 +34,7 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
-      path: '/receipt/:id/:type',
+      path: '/receipt',
       name: 'receipt',
       component: ReceiptView,
       meta: { requiresAuth: true },
@@ -50,15 +50,15 @@ const router = createRouter({
       component: TutorialGameView,
     },
   ],
-})
+});
 
 router.beforeEach((to, from, next) => {
-  const playerStore = usePlayerStore()
+  const playerStore = usePlayerStore();
   if (to.meta.requiresAuth && !playerStore.getToken) {
-    next('/')
+    next('/');
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

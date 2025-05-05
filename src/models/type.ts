@@ -19,24 +19,24 @@ export type TUser = {
   transaction_history: Transaction[];
   created_at: string;
   updated_at: string;
-  isNewUser: boolean;
+  isNewUser?: boolean;
 };
 
 export type Transaction = {
   transaction_id: string;
   account_number: number;
   user_id: string;
-  type: 'Cash- In' | 'Cash- Out';
+  type: 'cash-in' | 'cash-out';
   amount: number;
   date: string;
 };
 
 export type Cashin = Omit<Transaction, 'type'> & {
-  type: 'Cash- In';
+  type: 'cash-in';
 };
 
 export type Cashout = Omit<Transaction, 'type'> & {
-  type: 'Cash- Out';
+  type: 'cash-out';
 };
 
 export type TCardType = {
