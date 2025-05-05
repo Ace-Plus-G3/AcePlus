@@ -1,4 +1,43 @@
 <template>
+  <el-container class="container">
+    <el-card>
+      <template #header>
+        <div class="card-header">
+          <span><router-link to="/">Back</router-link></span>
+        </div>
+      </template>
+      <el-text class="mx-1" size="large">Ace+ Terms of Service</el-text>
+      <br />
+      <el-text class="mx-1">By playing Ace+, you agree to the following:</el-text>
+      <template #footer>Footer content</template>
+    </el-card>
+  </el-container>
+</template>
+
+<script setup lang="ts"></script>
+
+<style scoped>
+.container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:deep(.el-card) {
+  width: 600px;
+  border: 2px solid red;
+  background-color: var(--primary-black);
+  color: var(--primary-white);
+}
+
+a {
+  color: var(--primary-white);
+}
+</style>
+
+<!-- <template>
   <div class="main-container">
     <el-card style="width: 700px">
       <template #header>
@@ -91,4 +130,4 @@ ul li::marker {
   flex-direction: column;
   gap: 16px;
 }
-</style>
+</style> -->
