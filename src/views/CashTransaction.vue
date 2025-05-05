@@ -24,95 +24,88 @@
         </TabsComponent>
       </div>
     </div>
-    <TransactionStatusDialog
-      v-if="dialogStore.isVisible"
-      :status="dialogStore.status"
-      :message="dialogStore.message"
-      v-model:visible="dialogStore.isVisible"
-    />
   </el-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import HeaderComponent from '@/components/HeaderComponent-Latest.vue'
-import TabsComponent from '@/components/TabsComponent.vue'
-import TransactionStatusDialog from '@/components/TransactionStatusDialog.vue'
-import { ElLoading } from 'element-plus'
-import { useCreditStore, useDialogStore } from '@/stores'
+import { ref } from 'vue';
+import HeaderComponent from '@/components/HeaderComponent-Latest.vue';
+import TabsComponent from '@/components/TabsComponent.vue';
+import { ElLoading } from 'element-plus';
+import { useCreditStore, useDialogStore } from '@/stores';
 
-const imageSrc = ref(new URL('/src/assets/gcash-logo.png', import.meta.url).href)
+const imageSrc = ref(new URL('/src/assets/gcash-logo.png', import.meta.url).href);
 
-const dialogStore = useDialogStore()
-const creditStore = useCreditStore()
+const dialogStore = useDialogStore();
+const creditStore = useCreditStore();
 
-const account_number = ref<number | null>(null)
-const amount = ref<number | null>(null)
+const account_number = ref<number | null>(null);
+const amount = ref<number | null>(null);
 
 const CashIn = async () => {
   const loading = ElLoading.service({
     lock: true,
     text: 'Loading',
     background: 'rgba(0, 0, 0, 0.7)',
-  })
+  });
 
   if (!amount.value || !account_number.value) {
-    dialogStore.showDialog('error', 'Please fill in all fields')
-    loading.close()
-    return
+    dialogStore.showDialog('error', 'Please fill in all fields');
+    loading.close();
+    return;
   }
 
   if (amount.value < 100) {
-    dialogStore.showDialog('error', 'Minimum cash-in is 100')
-    loading.close()
-    return
+    dialogStore.showDialog('error', 'Minimum cash-in is 100');
+    loading.close();
+    return;
   }
 
   setTimeout(() => {
-    creditStore.handleCashin(Number(amount.value), Number(account_number.value))
-    dialogStore.showDialog('success', 'Transaction completed successfully!')
-    resetTransactionFields()
-    loading.close()
-  }, 2000)
-}
+    creditStore.handleCashin(Number(amount.value), Number(account_number.value));
+    dialogStore.showDialog('success', 'Transaction completed successfully!');
+    resetTransactionFields();
+    loading.close();
+  }, 2000);
+};
 
 const CashOut = () => {
   const loading = ElLoading.service({
     lock: true,
     text: 'Loading',
     background: 'rgba(0, 0, 0, 0.7)',
-  })
+  });
 
   if (!amount.value || !account_number.value) {
-    dialogStore.showDialog('error', 'Please fill in all fields')
-    loading.close()
-    return
+    dialogStore.showDialog('error', 'Please fill in all fields');
+    loading.close();
+    return;
   }
 
   if (amount.value < 100) {
-    dialogStore.showDialog('error', 'Minimum cash-out is 100')
-    loading.close()
-    return
+    dialogStore.showDialog('error', 'Minimum cash-out is 100');
+    loading.close();
+    return;
   }
 
   if (amount.value > creditStore.getCurrentBalance) {
-    dialogStore.showDialog('error', 'Insufficient Balance')
-    loading.close()
-    return
+    dialogStore.showDialog('error', 'Insufficient Balance');
+    loading.close();
+    return;
   }
 
   setTimeout(() => {
-    creditStore.handleCashout(Number(amount.value), Number(account_number.value))
-    dialogStore.showDialog('success', 'Transaction completed successfully!')
-    resetTransactionFields()
-    loading.close()
-  }, 2000)
-}
+    creditStore.handleCashout(Number(amount.value), Number(account_number.value));
+    dialogStore.showDialog('success', 'Transaction completed successfully!');
+    resetTransactionFields();
+    loading.close();
+  }, 2000);
+};
 
 const resetTransactionFields = () => {
-  account_number.value = null
-  amount.value = null
-}
+  account_number.value = null;
+  amount.value = null;
+};
 </script>
 
 <style scoped>

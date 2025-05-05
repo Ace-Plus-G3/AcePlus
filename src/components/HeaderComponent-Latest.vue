@@ -14,18 +14,19 @@
 </template>
 
 <script setup lang="ts">
-import { Back } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
+import { Back } from '@element-plus/icons-vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 
 const goToBack = () => {
-  router.push({ name: 'home' })
-}
+  // router.push({ name: 'home' })
+  router.back();
+};
 
 const goToTransact = () => {
-  router.push({ name: 'transaction-history' })
-}
+  router.push({ name: 'transaction-history' });
+};
 </script>
 
 <style scoped>
@@ -55,5 +56,11 @@ const goToTransact = () => {
   width: 25px;
   height: 3px;
   background-color: var(--primary-yellow);
+}
+
+.back-container:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+  transition: all 0.3s ease-in-out;
 }
 </style>
