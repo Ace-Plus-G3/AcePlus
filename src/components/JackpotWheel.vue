@@ -40,6 +40,9 @@ import WheelArrow from '@/assets/wheel_arrow.png'
 import vfxLight from '@/assets/game/vfx-light.png'
 import congratulations from '@/assets/game/congratulations.png'
 
+const gameStore = useGameStore()
+const creditStore = useCreditStore()
+
 const rotation = ref(0)
 const isSpinning = ref(false)
 const multiplierWin = ref<TSpinWheel | null>(null)
@@ -113,20 +116,17 @@ const spinWheel = () => {
     }
 
     if (shouldJackpotAppear.value) {
-      useCreditStore().setCurrentBalance(
-        useCreditStore().getCurrentBalance + useGameStore().getAccumulatedJackpot,
-      )
-      source.value = useGameStore().getAccumulatedJackpot
-      useGameStore().setAccumulatedJackpot(0)
+      creditStore.setCurrentBalance(creditStore.getCurrentBalance + gameStore.getAccumulatedJackpot)
+      source.value = gameStore.getAccumulatedJackpot
+      gameStore.setAccumulatedJackpot(0)
     } else {
       // Update user's balance
       multiplierWin.value = selectedSlice
-      useCreditStore().setCurrentBalance(
-        useCreditStore().getCurrentBalance +
-          useGameStore().getBetOnAce * multiplierWin.value.multiplier,
+      creditStore.setCurrentBalance(
+        creditStore.getCurrentBalance + gameStore.getBetOnAce * multiplierWin.value.multiplier,
       )
 
-      source.value = useGameStore().getBetOnAce * multiplierWin.value.multiplier
+      source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier
     }
   }, 8000)
 }
@@ -140,21 +140,21 @@ const handleSpin = () => {
 const handleClose = () => {
   // if (shouldJackpotAppear.value) {
   //   const updatedBets = [
-  //     ...useGameStore().getAllBets,
-  //     `+${formatCurrency(useGameStore().getAccumulatedJackpot)}`,
+  //     ...gameStore.getAllBets,
+  //     `+${formatCurrency(gameStore.getAccumulatedJackpot)}`,
   //   ]
-  //   useGameStore().setAllBets(updatedBets)
+  //   gameStore.setAllBets(updatedBets)
   // }
   if (multiplierWin.value && !shouldJackpotAppear.value) {
     const updatedBets = [
-      ...useGameStore().getAllBets,
-      `+${formatCurrency(useGameStore().getBetOnAce * multiplierWin.value.multiplier)}`,
+      ...gameStore.getAllBets,
+      `+${formatCurrency(gameStore.getBetOnAce * multiplierWin.value.multiplier)}`,
     ]
-    useGameStore().setAllBets(updatedBets)
+    gameStore.setAllBets(updatedBets)
   }
   cleanup()
-  useGameStore().setShowJackpotSpinTheWheel(false)
-  useGameStore().setBetOnAce(0)
+  gameStore.setShowJackpotSpinTheWheel(false)
+  gameStore.setBetOnAce(0)
 }
 
 onMounted(() => {

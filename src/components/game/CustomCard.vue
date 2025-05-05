@@ -3,9 +3,9 @@
     <div
       class="flip-card"
       :class="{
-        flipped: useGameStore().getIsRevealCards,
-        selected: useGameStore().selectedCards.some(
-          (card) => card.value === useGameStore().getFourCards[index].value,
+        flipped: gameStore.getIsRevealCards,
+        selected: gameStore.selectedCards.some(
+          (card) => card.value === gameStore.getFourCards[index].value,
         ),
       }"
     >
@@ -40,7 +40,6 @@ import playerLogo from '@/assets/icons/players_icon_xs.png'
 import { convertToReadableFormat } from '@/utils/convertMoney'
 import { useGameStore } from '@/stores'
 import gameLogic from '@/composables/useGameLogic'
-
 import distributeCardSound from '@/assets/audio/new-card-audio.mp3'
 
 type Props = {
@@ -56,6 +55,8 @@ const target = ref<HTMLElement>()
 const scaleRef = ref<HTMLElement>()
 const { width } = useWindowSize()
 
+const gameStore = useGameStore()
+
 // Card sizing based on screen width
 const CARD_WIDTH = computed(() => (width.value > 780 ? 80 : 60))
 const CARD_HEIGHT = computed(() => (width.value > 780 ? 120 : 90))
@@ -70,8 +71,8 @@ const calculateDistributionPosition = () => {
   }
 
   const TOTAL_WIDTH =
-    useGameStore().getFourCards.length * CARD_WIDTH.value +
-    (useGameStore().getFourCards.length - 1) * CARD_SPACING.value
+    gameStore.getFourCards.length * CARD_WIDTH.value +
+    (gameStore.getFourCards.length - 1) * CARD_SPACING.value
   const startX = Math.max(10, (props.containerWidth - TOTAL_WIDTH) / 2)
   const distributedX = startX + props.index * (CARD_WIDTH.value + CARD_SPACING.value)
   const centerY = Math.max(10, (props.containerHeight - CARD_HEIGHT.value) / 2)
@@ -108,7 +109,7 @@ const updateCardPosition = (isDistributed: boolean) => {
 }
 
 watch(
-  () => useGameStore().getIsRevealCards,
+  () => gameStore.getIsRevealCards,
   (newValue) => {
     if (newValue) {
       cardDistributeSound.volume = 0.3
@@ -119,7 +120,7 @@ watch(
 )
 
 watch(
-  () => useGameStore().getStartGame,
+  () => gameStore.getStartGame,
   (newValue) => {
     if (newValue === 'START') {
       updateCardPosition(true)
@@ -132,7 +133,7 @@ watch(
 )
 
 watch([() => props.containerWidth, () => props.containerHeight], ([newWidth, newHeight]) => {
-  if (useGameStore().getStartGame === 'START' && newWidth > 10 && newHeight > 10) {
+  if (gameStore.getStartGame === 'START' && newWidth > 10 && newHeight > 10) {
     updateCardPosition(true)
   }
 })
@@ -146,7 +147,7 @@ onMounted(async () => {
   await nextTick()
 
   if (
-    useGameStore().getStartGame === 'START' &&
+    gameStore.getStartGame === 'START' &&
     props.containerWidth > 10 &&
     props.containerHeight > 10
   ) {

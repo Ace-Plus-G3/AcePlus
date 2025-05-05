@@ -53,7 +53,8 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !usePlayerStore().getToken) {
+  const playerStore = usePlayerStore()
+  if (to.meta.requiresAuth && !playerStore.getToken) {
     next('/')
   } else {
     next()

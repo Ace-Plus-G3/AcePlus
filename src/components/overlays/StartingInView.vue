@@ -1,14 +1,16 @@
 <template>
-  <div v-if="useGameStore().getStartinIn > 0" class="starting-countdown">
+  <div v-if="gameStore.getStartinIn > 0" class="starting-countdown">
     <div class="countdown-text">Starting in:</div>
     <div class="countdown-number-container">
-      <div class="countdown-number">{{ useGameStore().getStartinIn }}</div>
+      <div class="countdown-number">{{ gameStore.getStartinIn }}</div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useGameStore } from '@/stores'
+
+const gameStore = useGameStore()
 </script>
 
 <style scoped>
