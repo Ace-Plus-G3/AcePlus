@@ -1,4 +1,4 @@
-import type { TCardType, TChips, THomeCards, TSpinWheel } from './type'
+import type { TCardType, TChips, THomeCards, TSpinWheel } from './type';
 
 export const Cards: Array<TCardType> = [
   {
@@ -61,7 +61,13 @@ export const Cards: Array<TCardType> = [
     playerCount: 0,
     totalBet: 0,
   },
-]
+  {
+    value: 0,
+    url: new URL('@/assets/cards/front/card_0.png', import.meta.url).href,
+    playerCount: 0,
+    totalBet: 0,
+  },
+];
 
 export const chips: Array<TChips> = [
   { value: 1, image: new URL('@/assets/coins/1PESO.png', import.meta.url).href },
@@ -73,7 +79,7 @@ export const chips: Array<TChips> = [
   { value: 1000, image: new URL('@/assets/coins/1KPESO.png', import.meta.url).href },
   { value: 5000, image: new URL('@/assets/coins/5KPESO.png', import.meta.url).href },
   { value: 10000, image: new URL('@/assets/coins/10KPESO.png', import.meta.url).href },
-]
+];
 
 export const wheelDeg: Array<TSpinWheel> = [
   { deg: 0, multiplier: 3, url: new URL('@/assets/game/spin-value/3x.png', import.meta.url).href },
@@ -104,7 +110,7 @@ export const wheelDeg: Array<TSpinWheel> = [
     multiplier: 1,
     url: new URL('@/assets/game/spin-value/bokya.png', import.meta.url).href,
   },
-]
+];
 
 export const jackpotWheelDeg: Array<TSpinWheel> = [
   {
@@ -147,7 +153,7 @@ export const jackpotWheelDeg: Array<TSpinWheel> = [
     multiplier: 1,
     url: new URL('@/assets/game/jackpot-spin-value/JACKPOT.png', import.meta.url).href,
   },
-]
+];
 
 export const botNames: Array<string> = [
   'Sophia',
@@ -170,15 +176,15 @@ export const botNames: Array<string> = [
   'Henry',
   'Evelyn',
   'Sebastian',
-]
+];
 
 export const probabilityRate = {
   aceCardRate: 0.1, // 10% chance of ace card appearing
   multipliersRate: 0.3, // 30% chance of multipliers appear on cards
-  bokyaRate: 0.3, // 30% chance of bokya
-  BonusRate: 0.6, // 30% chance of bonus
-  JackpotRate: 0.01, // 0.1% chance of jackpot
-}
+  bokyaRate: 0.2, // 20% chance of bokya
+  BonusRate: 0.4, // 20% chance of bonus
+  JackpotRate: 0.01, // 0.01% chance of jackpot
+};
 
 export const HomeCards: Array<THomeCards> = [
   { value: 2, url: new URL('@/assets/cards/front/card_2.png', import.meta.url).href },
@@ -186,4 +192,4 @@ export const HomeCards: Array<THomeCards> = [
   { value: 1, url: new URL('@/assets/cards/front/card_a.png', import.meta.url).href },
   { value: 4, url: new URL('@/assets/cards/front/card_4.png', import.meta.url).href },
   { value: 5, url: new URL('@/assets/cards/front/card_5.png', import.meta.url).href },
-]
+];

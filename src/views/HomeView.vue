@@ -8,7 +8,7 @@
         <h5>Banker Game Plus</h5>
         <p>But on highest card and win up to billions</p>
         <div v-if="!playerStore.getToken" class="btn-container">
-          <el-button class="gold-bg" @click="openModal('Signup-Tab')">Play Now!</el-button>
+          <el-button class="gold-bg" @click="openModal('Login-Tab')">Play Now!</el-button>
         </div>
         <div v-if="playerStore.getToken" class="btn-container">
           <el-button class="gold-bg" @click="gotoGame">Play Now!</el-button>
@@ -54,7 +54,7 @@ const jackpotWheelRef = ref<HTMLElement>();
 
 const isModalVisible = ref(false);
 
-const activeTabValue = ref<string>('Signup-Tab');
+const activeTabValue = ref<string>('Login-Tab');
 
 const openModal = (tab: string) => {
   activeTabValue.value = tab;
