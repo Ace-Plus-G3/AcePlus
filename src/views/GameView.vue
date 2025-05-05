@@ -3,14 +3,13 @@
     <HeaderView />
 
     <!-- Start of Overlays -->
-    <!-- <PlayerWins /> -->
     <GameTimer />
     <StartingInView />
     <WinBanner />
-    <div class="spin-overlay" v-if="useGameStore().getSpinTheWheel">
+    <div class="spin-overlay" v-if="gameStore.getSpinTheWheel">
       <SpinTheWheel />
     </div>
-    <div class="spin-overlay" v-if="useGameStore().getJackpotSpinTheWheel">
+    <div class="spin-overlay" v-if="gameStore.getJackpotSpinTheWheel">
       <JackpotWheel />
     </div>
     <!-- End of Overlays -->
@@ -19,18 +18,18 @@
       <div
         class="game-container"
         ref="gameContainerRef"
-        :disabled="useGameStore().getStartGame === 'START'"
+        :disabled="gameStore.getStartGame === 'START'"
       >
         <el-image id="card-back" fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
         <BetWin
-          v-for="(item, index) in useGameStore().getAllBets"
+          v-for="(item, index) in gameStore.getAllBets"
           :key="item"
           :bet="item"
           :index="index"
         />
         <CustomCard
           id="custom-card"
-          v-for="(card, index) in useGameStore().getFourCards"
+          v-for="(card, index) in gameStore.getFourCards"
           :key="index"
           :index="index"
           :card="card"
@@ -59,7 +58,8 @@ import SpinTheWheel from '@/components/SpinTheWheel.vue'
 import BetDrawer from '@/components/game/BetDrawer.vue'
 import WinBanner from '@/components/game/WinBanner.vue'
 import JackpotWheel from '@/components/JackpotWheel.vue'
-// import PlayerWins from '@/components/overlays/PlayerWins.vue'
+
+const gameStore = useGameStore()
 
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
@@ -98,7 +98,7 @@ onMounted(async () => {
 })
 
 watch(
-  () => useGameStore().getStartGame,
+  () => gameStore.getStartGame,
   (newValue) => {
     if (newValue === 'START') {
       gameLogic.cleanupAllIntervals()
@@ -108,8 +108,8 @@ watch(
         gameLogic.handleGenerateBots()
 
         const newIntervalId = setInterval(() => {
-          if (useGameStore().getTimer > 0) {
-            useGameStore().decreaseTimer()
+          if (gameStore.getTimer > 0) {
+            gameStore.decreaseTimer()
           } else {
             gameLogic.setIntervalId(undefined)
           }
@@ -148,11 +148,11 @@ watch(
 .el-container {
   position: relative;
   height: 100dvh;
-  /* background-image: url('@/assets/homepage_bg.png'); */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  background-image: url('@/assets/homepage_bg.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

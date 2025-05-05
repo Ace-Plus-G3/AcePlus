@@ -10,10 +10,9 @@ export function getRandomCards(cards: Array<TCardType>): Array<TCardType> {
 
   if (shouldIncludeAce && aceIndex !== -1) {
     selectedCards.push(cardsDeck[aceIndex])
-
     cardsDeck.splice(aceIndex, 1)
 
-    while (selectedCards.length < 4) {
+    for (let i = selectedCards.length; i < 4; i++) {
       const randomIndex: number = Math.floor(Math.random() * cardsDeck.length)
       selectedCards.push(cardsDeck[randomIndex])
       cardsDeck.splice(randomIndex, 1)
@@ -23,7 +22,7 @@ export function getRandomCards(cards: Array<TCardType>): Array<TCardType> {
       cardsDeck.splice(aceIndex, 1)
     }
 
-    while (selectedCards.length < 4) {
+    for (let i = selectedCards.length; i < 4; i++) {
       const randomIndex: number = Math.floor(Math.random() * cardsDeck.length)
       selectedCards.push(cardsDeck[randomIndex])
       cardsDeck.splice(randomIndex, 1)
@@ -39,7 +38,7 @@ export function getRandomCards(cards: Array<TCardType>): Array<TCardType> {
 
     const numberOfCardWithMultiplier = Math.floor(Math.random() * 4) + 1
 
-    while (selectedMulti.length < numberOfCardWithMultiplier) {
+    for (let i = 0; i < numberOfCardWithMultiplier; i++) {
       const randomMulti = Math.floor(Math.random() * multi.length)
       selectedMulti.push(multi[randomMulti])
       multi.splice(randomMulti, 1)

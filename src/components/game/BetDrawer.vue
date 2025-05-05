@@ -1,8 +1,8 @@
 <template>
   <el-drawer
     direction="btt"
-    @close="useGameStore().setDrawer(false)"
-    v-model="useGameStore().showBetDrawer"
+    @close="gameStore.setDrawer(false)"
+    v-model="gameStore.showBetDrawer"
     :with-header="false"
   >
     <div id="drawer" class="custom-drawer">
@@ -29,8 +29,9 @@
 <script setup lang="ts">
 import { chips } from '@/models/constants'
 import { useGameStore } from '@/stores'
-
 import gameLogic from '@/composables/useGameLogic'
+
+const gameStore = useGameStore()
 </script>
 
 <style scoped>

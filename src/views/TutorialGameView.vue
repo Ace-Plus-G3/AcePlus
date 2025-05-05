@@ -6,12 +6,12 @@
       <div
         class="game-container"
         ref="gameContainerRef"
-        :disabled="useGameStore().getStartGame === 'START'"
+        :disabled="gameStore.getStartGame === 'START'"
       >
         <el-image id="card-back" fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
         <CustomCardStatic
           id="custom-card"
-          v-for="(card, index) in useGameStore().getFourCards"
+          v-for="(card, index) in gameStore.getFourCards"
           :key="index"
           :index="index"
           :card="card"
@@ -44,6 +44,8 @@ import { useRoute } from 'vue-router'
 const gameContainerRef = ref<HTMLElement | null>(null)
 const containerWidth = ref(0)
 const containerHeight = ref(0)
+
+const gameStore = useGameStore()
 
 const updateContainerDimensions = async () => {
   await nextTick()
@@ -78,12 +80,12 @@ onMounted(async () => {
 <style scoped>
 .el-container {
   position: relative;
-  height: 100dvh;
-  /* background-image: url('@/assets/homepage_bg.png'); */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  height: 100dvh;
+  background-image: url('@/assets/homepage_bg.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

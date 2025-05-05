@@ -12,6 +12,7 @@ export const usePlayerStore = defineStore('playerStore', {
     getUser: (state) => state.user,
     getPlayers: (state) => state.players,
     getToken: (state) => state.token,
+    isNewUser: (state) => state.user?.isNewUser || false,
   },
   actions: {
     setUser(newUser: TUser | null) {
@@ -37,6 +38,7 @@ export const usePlayerStore = defineStore('playerStore', {
               transaction_history: formE1.$props.model?.transaction_history,
               created_at: new Date(),
               updated_at: new Date(),
+              isNewUser: true,
             }
 
             if (!formData) return
@@ -79,6 +81,7 @@ export const usePlayerStore = defineStore('playerStore', {
       }
     },
     async handleLogin({ formE1, handleCloseModal }: TLoginParams) {
+      const creditStore = useCreditStore()
       if (!formE1) return
 
       try {
@@ -111,6 +114,7 @@ export const usePlayerStore = defineStore('playerStore', {
               transaction_history: foundPlayer.transaction_history,
               created_at: foundPlayer.created_at,
               updated_at: foundPlayer.updated_at,
+              isNewUser: foundPlayer.isNewUser || false,
             })
 
             // Saves the user info and token to local storage
@@ -125,9 +129,10 @@ export const usePlayerStore = defineStore('playerStore', {
                 transaction_history: foundPlayer.transaction_history,
                 created_at: foundPlayer.created_at,
                 updated_at: foundPlayer.updated_at,
+                isNewUser: foundPlayer.isNewUser || false,
               }),
             )
-            useCreditStore().handlePersistCredits()
+            creditStore.handlePersistCredits()
             console.log('Logged in successfully!')
             handleCloseModal()
           } else {
@@ -161,7 +166,7 @@ export const usePlayerStore = defineStore('playerStore', {
         return false
       }
 
-      usePlayerStore().setUser(JSON.parse(foundUser))
+      this.setUser(JSON.parse(foundUser))
       this.setUser(JSON.parse(foundUser))
       this.setToken(JSON.parse(foundUser).user_id)
       console.log('Persists!')

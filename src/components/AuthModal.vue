@@ -9,47 +9,6 @@
     style="background-color: var(--primary-black); padding: 30px"
   >
     <el-tabs v-model="activeTab" stretch>
-      <el-tab-pane label="Sign up" name="Signup-Tab">
-        <el-form
-          :model="signupForm"
-          :rules="rules"
-          ref="signupFormRef"
-          label-position="top"
-          style="color: yellow"
-        >
-          <el-form-item prop="phoneNumber">
-            <el-input
-              :prefix-icon="Flag"
-              v-model="signupForm.phoneNumber"
-              autocomplete="off"
-              placeholder="09xxxxxxxxx"
-            />
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input
-              type="password"
-              v-model="signupForm.password"
-              autocomplete="off"
-              placeholder="Password"
-              show-password
-            />
-          </el-form-item>
-          <div class="dialog-footer">
-            <el-button @click="signup()" :disabled="!isSignupFormValid" style="width: 100%">
-              Create Account
-            </el-button>
-            <div class="terms-of-service-container">
-              <el-checkbox v-model="isAgreeToTerms"> </el-checkbox>
-              <p>
-                Agree to Terms of Service
-                <span>
-                  <router-link to="/terms-of-service"> View Terms of Service</router-link>
-                </span>
-              </p>
-            </div>
-          </div>
-        </el-form>
-      </el-tab-pane>
       <el-tab-pane label="Login" name="Login-Tab">
         <el-form
           :model="loginForm"
@@ -82,49 +41,107 @@
           </div>
         </el-form>
       </el-tab-pane>
+      <el-tab-pane label="Sign up" name="Signup-Tab">
+        <el-form
+          :model="signupForm"
+          :rules="rules"
+          ref="signupFormRef"
+          label-position="top"
+          style="color: yellow"
+        >
+          <el-form-item prop="phoneNumber">
+            <el-input
+              :prefix-icon="Flag"
+              v-model="signupForm.phoneNumber"
+              autocomplete="off"
+              placeholder="09xxxxxxxxx"
+            />
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input
+              type="password"
+              v-model="signupForm.password"
+              autocomplete="off"
+              placeholder="Password"
+              show-password
+            />
+          </el-form-item>
+          <div class="dialog-footer">
+            <div class="terms-of-service-container">
+              <el-checkbox v-model="isAgreeToTerms"> </el-checkbox>
+              <p>
+                Agree to Terms of Service
+                <span>
+                  <router-link to="/terms-of-service"> View Terms of Service</router-link>
+                </span>
+              </p>
+            </div>
+            <el-button @click="signup()" :disabled="!isSignupFormValid" style="width: 100%">
+              Create Account
+            </el-button>
+          </div>
+        </el-form>
+      </el-tab-pane>
     </el-tabs>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
-import { Flag } from '@element-plus/icons-vue'
-import { usePlayerStore } from '@/stores'
-import { showNotify } from '@/utils/notify'
-import type { TLogin, TSignup } from '@/models/type'
+import { ref, watch, computed } from 'vue';
+import type { FormInstance, FormRules } from 'element-plus';
+import { Flag } from '@element-plus/icons-vue';
+import { usePlayerStore } from '@/stores';
+import { showNotify } from '@/utils/notify';
+import type { TLogin, TSignup } from '@/models/type';
 
-const store = usePlayerStore()
-const activeTab = ref<'Signup-Tab' | 'Login-Tab'>('Signup-Tab')
+const store = usePlayerStore();
 
 // Props to control visibility via v-model
-const props = defineProps<{ modelValue?: boolean }>()
+const props = defineProps<{ modelValue: boolean; activeTabValue: string }>();
 
-// Emits for v-model and form submission
-const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>()
+// Emits for v-model
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void;
+  (e: 'updateActiveTab:activeTabValue', value: string): void;
+}>();
 
-// Local state for form visibility
-const dialogFormVisible = ref(props.modelValue)
+// Local state for form visibility and active tab
+const dialogFormVisible = ref<boolean>(props.modelValue);
+const activeTab = ref<string>(props.activeTabValue);
 
 // Sync dialogVisible changes to parent
 watch(dialogFormVisible, (newValue) => {
-  emit('update:modelValue', newValue)
-})
+  emit('update:modelValue', newValue);
+});
+
+watch(activeTab, (newValue) => {
+  emit('updateActiveTab:activeTabValue', newValue);
+});
 
 // Sync parent prop changes to dialogVisible
 watch(
   () => props.modelValue,
   (newValue) => {
-    dialogFormVisible.value = newValue ?? false
+    dialogFormVisible.value = newValue ?? false;
   },
   { immediate: true },
-)
+);
+
+watch(
+  () => props.activeTabValue,
+  (newValue) => {
+    activeTab.value = newValue ?? 'Signup-Tab';
+  },
+  { immediate: true },
+);
 
 const handleClose = (done: () => void) => {
-  //   formRef.value?.resetFields()
-  dialogFormVisible.value = false
-  done()
-}
+  signupFormRef.value?.resetFields();
+  loginFormRef.value?.resetFields();
+  dialogFormVisible.value = false;
+  activeTab.value = props.activeTabValue;
+  done();
+};
 
 const rules = ref<FormRules>({
   phoneNumber: [
@@ -135,26 +152,26 @@ const rules = ref<FormRules>({
     { required: true, message: 'Please enter your password', trigger: 'blur' },
     { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' },
   ],
-})
+});
 
 // handle Changing tabs
-const handleChangeTab = (tab: 'Signup-Tab' | 'Login-Tab') => {
-  activeTab.value = tab
-}
+const handleChangeTab = (tab: string) => {
+  activeTab.value = tab;
+};
 
-const isAgreeToTerms = ref(false)
+const isAgreeToTerms = ref(false);
 
 // Signup Form state
-const signupFormRef = ref<FormInstance>()
+const signupFormRef = ref<FormInstance>();
 
 const signupForm = ref<TSignup>({
   phoneNumber: '',
   password: '',
-})
+});
 
 const isSignupFormValid = computed(() => {
-  return signupForm.value.phoneNumber.trim() !== '' && signupForm.value.password.trim() !== ''
-})
+  return signupForm.value.phoneNumber.trim() !== '' && signupForm.value.password.trim() !== '';
+});
 
 const signup = async () => {
   if (isAgreeToTerms.value === false) {
@@ -162,62 +179,62 @@ const signup = async () => {
       title: 'Error!',
       message: 'Please agree to our Terms of Service.',
       type: 'error',
-    })
-    return
+    });
+    return;
   }
   try {
     await store.handleSignup({
       formE1: signupFormRef.value,
       handleChangeTab,
-    })
+    });
     showNotify({
       title: 'Success!',
       message: 'You have sign up successfully.',
       type: 'success',
-    })
+    });
   } catch (error) {
     showNotify({
       title: 'Error!',
       message: `${error}`,
       type: 'error',
-    })
+    });
   }
-}
+};
 
 // Login Form state
-const loginFormRef = ref<FormInstance>()
+const loginFormRef = ref<FormInstance>();
 
 const loginForm = ref<TLogin>({
   phoneNumber: '',
   password: '',
-})
+});
 
 const isLoginFormValid = computed(() => {
-  return loginForm.value.phoneNumber.trim() !== '' && loginForm.value.password.trim() !== ''
-})
+  return loginForm.value.phoneNumber.trim() !== '' && loginForm.value.password.trim() !== '';
+});
 
 const login = async () => {
   try {
     await store.handleLogin({
       formE1: loginFormRef.value,
       handleCloseModal: () => {
-        dialogFormVisible.value = false
+        dialogFormVisible.value = false;
       },
-    })
+    });
     showNotify({
       title: 'Success!',
       message: 'You have logged in successfully.',
       type: 'success',
-    })
+    });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     showNotify({
       title: 'Error!',
       message: `${error}`,
       type: 'error',
-    })
+    });
   }
-}
+};
 </script>
 
 <style scoped>
@@ -290,7 +307,6 @@ const login = async () => {
   align-items: center;
   justify-content: start;
   gap: 5px;
-  padding-block: 10px;
 }
 
 .terms-of-service-container a {

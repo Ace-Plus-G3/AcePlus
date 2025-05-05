@@ -41,7 +41,7 @@
 import { watch, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCreditStore } from '@/stores'
-import HeaderComponent from '@/components/HeaderComponent.vue'
+import HeaderComponent from '@/components/HeaderComponent-Latest.vue'
 import ReceiptSVG from '@/assets/svg/receipt_svg.vue'
 import CopySVG from '@/assets/svg/copy_svg.vue'
 import moment from 'moment'
@@ -50,6 +50,7 @@ import { formatCurrency } from '@/utils/convertMoney'
 import type { Transaction } from '@/models/type'
 
 const route = useRoute()
+const creditStore = useCreditStore()
 const transactionId = computed(() => String(route.params.id))
 const transactionType = computed(() => String(route.params.type))
 const transaction = ref<Transaction | undefined>(undefined)
@@ -58,10 +59,10 @@ watch(
   transactionId,
   (newId) => {
     if (transactionType.value === 'Cash- In') {
-      const fetchTransaction = useCreditStore().getCashinTransacById(newId)
+      const fetchTransaction = creditStore.getCashinTransacById(newId)
       transaction.value = fetchTransaction
     } else if (transactionType.value === 'Cash- Out') {
-      const fetchTransaction = useCreditStore().getCashoutTransacById(newId)
+      const fetchTransaction = creditStore.getCashoutTransacById(newId)
       transaction.value = fetchTransaction
     }
   },

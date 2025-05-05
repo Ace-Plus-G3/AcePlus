@@ -1,18 +1,16 @@
 <template>
-  <MusicBtn />
+  <!-- <MusicBtn /> -->
 
   <RouterView />
 </template>
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import MusicBtn from './components/MusicButton.vue'
 import { useCreditStore, usePlayerStore } from './stores'
-
+const creditStore = useCreditStore()
+const playerStore = usePlayerStore()
 onMounted(() => {
-  usePlayerStore().handlePersistLogin()
-  useCreditStore().handlePersistCredits()
+  playerStore.handlePersistLogin()
+  creditStore.handlePersistCredits()
 })
 </script>
-
-<style scoped></style>

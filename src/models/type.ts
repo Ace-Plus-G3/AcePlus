@@ -19,6 +19,7 @@ export type TUser = {
   transaction_history: Transaction[]
   created_at: string
   updated_at: string
+  isNewUser?: boolean
 }
 
 export type Transaction = {
@@ -84,4 +85,9 @@ export type TBots = {
 export type TBotsCards = {
   card_index: number
   bot_bet_amount: number
+}
+
+export type THomeCards = {
+  value: number
+  url: string
 }

@@ -1,4 +1,4 @@
-import type { TCardType, TChips, TSpinWheel } from './type'
+import type { TCardType, TChips, THomeCards, TSpinWheel } from './type'
 
 export const Cards: Array<TCardType> = [
   {
@@ -179,3 +179,11 @@ export const probabilityRate = {
   BonusRate: 0.6, // 30% chance of bonus
   JackpotRate: 0.01, // 0.1% chance of jackpot
 }
+
+export const HomeCards: Array<THomeCards> = [
+  { value: 2, url: new URL('@/assets/cards/front/card_2.png', import.meta.url).href },
+  { value: 3, url: new URL('@/assets/cards/front/card_3.png', import.meta.url).href },
+  { value: 1, url: new URL('@/assets/cards/front/card_a.png', import.meta.url).href },
+  { value: 4, url: new URL('@/assets/cards/front/card_4.png', import.meta.url).href },
+  { value: 5, url: new URL('@/assets/cards/front/card_5.png', import.meta.url).href },
+]

@@ -1,59 +1,148 @@
 <template>
   <el-header>
-    <div class="back-container">
-      <el-icon @click="goToBack" :size="30" :color="'var(--primary-yellow)'">
-        <Back />
-      </el-icon>
+    <div class="logo-container">
+      <el-image :src="Logo" class="logo" />
+      <h3 class="logo-text">ACE+</h3>
     </div>
-    <div>
-      <div class="text">
-        <h3 @click="goToTransact">E - Wallet</h3>
-      </div>
+
+    <div v-if="playerStore.getToken" class="right-container">
+      <el-button link style="width: fit-content; height: fit-content" @click="goToWallet()">
+        <Wallet />
+      </el-button>
+      <el-button class="gold-bg btn-register" @click="playerStore.handleLogout()">Logout</el-button>
+    </div>
+
+    <div v-if="!playerStore.getToken" class="btn-container">
+      <el-button link class="btn-login" @click="openModal('Login-Tab')">Login</el-button>
+      <el-button class="gold-bg btn-register" @click="openModal('Signup-Tab')">Register</el-button>
     </div>
   </el-header>
+
+  <div>
+    <AuthModal v-model="isModalVisible" :active-tab-value="activeTabValue" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import { Back } from '@element-plus/icons-vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
 
-const router = useRouter()
+import AuthModal from './AuthModal.vue';
+import Wallet from '../assets/svg/wallet_svg.vue';
 
-const goToBack = () => {
-  router.push({ name: 'home' })
-}
+import { useRouter } from 'vue-router';
 
-const goToTransact = () => {
-  router.push({ name: 'transaction-history' })
-}
+import { usePlayerStore } from '@/stores';
+
+import Logo from '@/assets/logo_new.png';
+
+const playerStore = usePlayerStore();
+
+const router = useRouter();
+
+const isModalVisible = ref(false);
+
+const activeTabValue = ref<string>('Signup-Tab');
+
+const openModal = (tab: string) => {
+  activeTabValue.value = tab;
+  isModalVisible.value = true;
+};
+
+const goToWallet = () => {
+  router.push({ name: 'transaction-history' });
+};
 </script>
 
 <style scoped>
 .el-header {
+  width: 100%;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  background-color: var(--primary-black);
   align-items: center;
-  padding-top: 4px;
-  padding-bottom: 3px;
+  padding: 45px 96px 45px 96px;
 }
 
-.text {
-  display: flex;
-}
-
-.text h3 {
+.logo-container h3 {
   color: #f9c80e;
+  font-size: 36px;
 }
 
-.text h3:hover {
-  cursor: pointer;
+.logo {
+  width: 80px;
+  height: 80px;
+  flex: 1;
+  /* flex-shrink: 0; */
+  /* flex-grow: 0; */
 }
 
-.line {
-  width: 25px;
-  height: 3px;
-  background-color: var(--primary-yellow);
+:deep(.el-button) {
+  margin: 0 !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+
+.right-container {
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 2em !important;
+  padding: 4px;
+  border-radius: 30px;
+  padding-left: 8px;
+}
+
+.btn-container {
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  background-color: #2c2929;
+  padding: 4px;
+  border-radius: 30px;
+  padding-left: 8px;
+}
+
+.btn-register {
+  border-radius: 30px;
+  color: #2c2121;
+  border: none;
+}
+
+.btn-login {
+  color: #ffffff !important;
+}
+
+.right-container {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+@media screen and (max-width: 425px) {
+  .btn-container {
+    width: 220px !important;
+    gap: 4px;
+  }
+  :deep(.btn-login) {
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 12px !important;
+  }
+  :deep(.btn-register) {
+    font-size: 12px !important;
+    padding: 0 !important;
+  }
+}
+@media screen and (max-width: 1360px) {
+  .el-header {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .logo-text {
+    display: none;
+  }
 }
 </style>
