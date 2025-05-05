@@ -64,26 +64,34 @@
 </template>
 
 <script setup lang="ts">
-import HeaderComponent from '@/components/HeaderComponent-Latest.vue'
-import moment from 'moment'
+import HeaderComponent from '@/components/HeaderComponent-Latest.vue';
+import moment from 'moment';
 
-import { Plus, Minus } from '@element-plus/icons-vue'
-import TabsComponent from '@/components/TabsComponent.vue'
-import { useRouter } from 'vue-router'
-import { useCreditStore } from '@/stores'
-import { formatCurrency } from '@/utils/convertMoney'
+import { Plus, Minus } from '@element-plus/icons-vue';
+import TabsComponent from '@/components/TabsComponent.vue';
+import { useRouter } from 'vue-router';
+import { useCreditStore } from '@/stores';
+import { formatCurrency } from '@/utils/convertMoney';
 
-const creditStore = useCreditStore()
+const creditStore = useCreditStore();
 
-const goToReciept = (transaction_id: string, transaction_type: 'Cash- In' | 'Cash- Out') => {
-  router.push({ name: 'receipt', params: { id: transaction_id, type: transaction_type } })
-}
+const goToReciept = (transaction_id: string, transaction_type: 'cash-in' | 'cash-out') => {
+  creditStore.setCurrentTransactionId(transaction_id);
+  creditStore.setCurrentTransactionType(transaction_type);
 
-const router = useRouter()
+  localStorage.setItem('CurrentTransactionId', JSON.stringify(creditStore.getCurrentTransactionId));
+  localStorage.setItem(
+    'CurrentTransactionType',
+    JSON.stringify(creditStore.getCurrentTransactionType),
+  );
+  router.push({ name: 'receipt' });
+};
+
+const router = useRouter();
 
 const goToCashTransact = () => {
-  router.push({ name: 'cash-transaction' })
-}
+  router.push({ name: 'cash-transaction' });
+};
 </script>
 
 <style scoped>
@@ -162,6 +170,10 @@ const goToCashTransact = () => {
     padding-bottom: 15px;
   }
 
+  .row-container:hover {
+    background: red;
+  }
+
   /* :deep(.el-tabs__nav) {
     display: flex;
     flex-direction: row;
@@ -220,6 +232,7 @@ const goToCashTransact = () => {
 }
 
 .row-container {
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
