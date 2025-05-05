@@ -86,3 +86,8 @@ export type TBotsCards = {
   card_index: number
   bot_bet_amount: number
 }
+
+export type THomeCards = {
+  value: number
+  url: string
+}

@@ -1,31 +1,26 @@
 <template>
   <el-header>
     <div class="logo-container">
-      <el-image :src="Logo" />
-      <h3>ACE+</h3>
+      <el-image :src="Logo" class="logo" />
+      <h3 class="logo-text">ACE+</h3>
     </div>
-    <div class="right-container">
-      <Wallet />
-      <div class="btn-container">
-        <el-button link class="btn-login">Login</el-button>
-        <el-button class="gold-bg btn-register">Register</el-button>
-      </div>
+    <div class="btn-container">
+      <el-button link class="btn-login">Login</el-button>
+      <el-button class="gold-bg btn-register">Register</el-button>
     </div>
   </el-header>
 </template>
 
 <script setup lang="ts">
-import Wallet from '@/assets/svg/wallet_svg.vue'
 import Logo from '@/assets/logo_new.png'
 </script>
 
 <style scoped>
 .el-header {
+  width: 100%;
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  /* padding-inline: 96px; */
   padding: 45px 96px 45px 96px;
 }
 
@@ -34,12 +29,21 @@ import Logo from '@/assets/logo_new.png'
   font-size: 36px;
 }
 
+.logo {
+  width: 80px;
+  height: 80px;
+  flex: 1;
+  /* flex-shrink: 0; */
+  /* flex-grow: 0; */
+}
+
 :deep(.el-button) {
   margin: 0 !important;
   font-family: 'Poppins', sans-serif !important;
 }
 
 .btn-container {
+  width: max-content;
   display: flex;
   align-items: center;
   gap: 1em;
@@ -68,5 +72,29 @@ import Logo from '@/assets/logo_new.png'
 .logo-container {
   display: flex;
   align-items: center;
+}
+@media screen and (max-width: 425px) {
+  .btn-container {
+    width: 220px !important;
+    gap: 4px;
+  }
+  :deep(.btn-login) {
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 12px !important;
+  }
+  :deep(.btn-register) {
+    font-size: 12px !important;
+    padding: 0 !important;
+  }
+}
+@media screen and (max-width: 1360px) {
+  .el-header {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .logo-text {
+    display: none;
+  }
 }
 </style>
