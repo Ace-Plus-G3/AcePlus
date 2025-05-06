@@ -1,6 +1,4 @@
 <template>
-  <!-- <MusicBtn /> -->
-
   <RouterView />
   <TransactionStatusDialog
     v-if="dialogStore.isVisible"

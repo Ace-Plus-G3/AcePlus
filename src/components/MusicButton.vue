@@ -11,16 +11,18 @@
 <script setup lang="ts">
 import UnMute from '@/assets/svg/unmute_svg.vue';
 import Mute from '@/assets/svg/mute_svg.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { useGameStore } from '@/stores';
 
 const audioRef = ref<HTMLAudioElement | null>(null);
-const isMuted = ref(true); 
+const isMuted = ref(true);
+const gameStore = useGameStore();
 
 const toggleMute = () => {
   if (audioRef.value) {
     isMuted.value = !isMuted.value;
     audioRef.value.muted = isMuted.value;
-
+    console.log(gameStore.getBackgroundMusic / 100);
     if (!isMuted.value) {
       audioRef.value.play().catch((error) => {
         console.warn('Playback failed. Waiting for user interaction.', error);
@@ -29,9 +31,19 @@ const toggleMute = () => {
   }
 };
 
+watch(
+  () => gameStore.getBackgroundMusic,
+  (newValue) => {
+    if (audioRef.value) {
+      audioRef.value.volume = newValue / 100;
+    }
+  },
+);
+
 onMounted(() => {
   if (audioRef.value) {
     audioRef.value.muted = true;
+    audioRef.value.volume = gameStore.getBackgroundMusic / 100;
   }
 });
 </script>
@@ -40,13 +52,6 @@ onMounted(() => {
 .audio {
   display: none;
 }
-
-.music-btn {
-  position: absolute;
-  right: 10%;
-  top: 3%;
-}
-
 .music-btn:hover {
   scale: 1.1;
   cursor: pointer;
