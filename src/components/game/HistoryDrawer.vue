@@ -7,7 +7,7 @@
   >
     <div id="drawer" class="custom-drawer">
       <div class="custom-drawer-header">
-        <span class="title">Game History</span>
+        <span class="title gold-text">Game History</span>
         <button class="cancel-btn" @click="handleCloseDrawer">Cancel</button>
       </div>
       <div class="drawer-content">
@@ -28,6 +28,7 @@
               moment(item.date).format('h:mm a')
             }}</el-text>
             <el-text
+              class="status-text"
               size="large"
               style="font-size: 24px; letter-spacing: 6px"
               :class="{
@@ -41,6 +42,7 @@
             }}</el-text>
           </span>
           <el-text
+            class="amount-text"
             style="font-size: 24px; letter-spacing: 4px"
             :class="{
               green: item.type === 'WIN',
@@ -217,7 +219,7 @@ const handleCloseDrawer = () => {
   border-radius: 20px;
   padding: 4px 12px;
   font-weight: bold;
-  color: #00397f;
+  color: white;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: background 0.3s;
@@ -234,6 +236,11 @@ const handleCloseDrawer = () => {
 @media screen and (max-width: 425px) {
   .custom-drawer-header {
     padding: 0 15px !important;
+  }
+
+  .status-text,
+  .amount-text {
+    font-size: 20px !important;
   }
 }
 
