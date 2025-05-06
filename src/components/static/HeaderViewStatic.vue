@@ -2,10 +2,10 @@
   <el-header>
     <div class="el-header-top-bar">
       <div class="el-header-image">
-        <button id="leave-btn" class="leave-btn" @click="router.push('/')">Leave</button>
+        <button id="leave-btn" class="leave-btn">Leave</button>
         <div id="jackpot-container" class="jackpot-container">
           <el-text class="jackpot-amount">
-            {{ formatCurrency(outputValue) }}
+            {{ formatCurrency(0) }}
           </el-text>
           <div class="jackpot-text-container">
             <img :src="JackpotText" class="jackpot-text" alt="" />
@@ -13,7 +13,7 @@
         </div>
         <div class="chip-amount" id="chip-amount">
           <el-text class="chip-amount-text" style="color: white" size="small">{{
-            convertToReadableFormat(useCreditStore().getCurrentBalance)
+            convertToReadableFormat(0)
           }}</el-text>
         </div>
       </div>
@@ -22,29 +22,8 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { useCreditStore, useGameStore } from '@/stores'
 import JackpotText from '@/assets/jackpot-text.png'
 import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney'
-import { useTransition } from '@vueuse/core'
-import { onMounted, ref, watch } from 'vue'
-
-const source = ref(0)
-const router = useRouter()
-const outputValue = useTransition(source, { duration: 1000 })
-
-onMounted(() => {
-  const storedJackpot = localStorage.getItem('accumulatedJackpot')
-  useGameStore().setAccumulatedJackpot(storedJackpot ? parseFloat(storedJackpot) : 0) // Default to 0 if no value exists
-})
-
-watch(
-  () => useGameStore().accumulatedJackpot,
-  (newValue) => {
-    source.value = newValue
-  },
-  { immediate: true },
-)
 </script>
 
 <style scoped>

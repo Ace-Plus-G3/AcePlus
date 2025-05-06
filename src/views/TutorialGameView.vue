@@ -6,12 +6,12 @@
       <div
         class="game-container"
         ref="gameContainerRef"
-        :disabled="useGameStore().getStartGame === 'START'"
+        :disabled="gameStore.getStartGame === 'START'"
       >
         <el-image id="card-back" fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
         <CustomCardStatic
           id="custom-card"
-          v-for="(card, index) in useGameStore().getFourCards"
+          v-for="(card, index) in gameStore.getFourCards"
           :key="index"
           :index="index"
           :card="card"
@@ -28,62 +28,71 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import HeaderViewStatic from '@/components/static/HeaderViewStatic.vue'
-import CustomCardStatic from '@/components/static/CustomCardStatic.vue'
-import { useGameStore } from '@/stores'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import HeaderViewStatic from '@/components/static/HeaderViewStatic.vue';
+import CustomCardStatic from '@/components/static/CustomCardStatic.vue';
+import { useGameStore } from '@/stores';
 
 // images
-import cardBack from '@/assets/cards/back/card_back_bg.png'
-import FooterViewStatic from '@/components/static/FooterViewStatic.vue'
-import gameLogic from '@/composables/useGameLogic'
-import BetDrawerStatic from '@/components/static/BetDrawerStatic.vue'
-import TutorialComponent from '@/components/TutorialComponent.vue'
-import { useRoute } from 'vue-router'
+import cardBack from '@/assets/cards/back/card_back_bg.png';
+import FooterViewStatic from '@/components/static/FooterViewStatic.vue';
+import gameLogic from '@/composables/useGameLogic';
+import BetDrawerStatic from '@/components/static/BetDrawerStatic.vue';
+import TutorialComponent from '@/components/TutorialComponent.vue';
+import { useRoute } from 'vue-router';
+import { getRandomCards } from '@/utils/getRandomCards';
+import { Cards } from '@/models/constants';
 
-const gameContainerRef = ref<HTMLElement | null>(null)
-const containerWidth = ref(0)
-const containerHeight = ref(0)
+const gameContainerRef = ref<HTMLElement | null>(null);
+const containerWidth = ref(0);
+const containerHeight = ref(0);
+
+const gameStore = useGameStore();
 
 const updateContainerDimensions = async () => {
-  await nextTick()
+  await nextTick();
   if (gameContainerRef.value) {
-    const rect = gameContainerRef.value.getBoundingClientRect()
-    containerWidth.value = rect.width
-    containerHeight.value = rect.height
+    const rect = gameContainerRef.value.getBoundingClientRect();
+    containerWidth.value = rect.width;
+    containerHeight.value = rect.height;
   }
-}
+};
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateContainerDimensions)
-  gameLogic.cleanupAll()
-})
+  window.removeEventListener('resize', updateContainerDimensions);
+  gameLogic.cleanupAll();
+});
 
-const route = useRoute()
-const isTutorialOpen = ref(false)
+const route = useRoute();
+const isTutorialOpen = ref(false);
 
 onMounted(() => {
-  isTutorialOpen.value = route.query.tutorial === 'true'
-})
+  isTutorialOpen.value = route.query.tutorial === 'true';
+});
+
+const initializeGame = () => {
+  const cards = getRandomCards(Cards);
+  gameStore.setFourCards(cards);
+};
 
 onMounted(async () => {
-  window.addEventListener('resize', updateContainerDimensions)
-  await nextTick()
-  await updateContainerDimensions()
+  window.addEventListener('resize', updateContainerDimensions);
+  await nextTick();
+  await updateContainerDimensions();
 
-  gameLogic.initializeGame()
-})
+  initializeGame();
+});
 </script>
 
 <style scoped>
 .el-container {
   position: relative;
-  height: 100dvh;
-  /* background-image: url('@/assets/homepage_bg.png'); */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  height: 100dvh;
+  background-image: url('@/assets/homepage_bg.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

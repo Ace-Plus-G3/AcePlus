@@ -25,156 +25,152 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
-import { jackpotWheelDeg, probabilityRate } from '@/models/constants'
-import type { TSpinWheel } from '@/models/type'
-import { useCreditStore, useGameStore } from '@/stores'
-import { useTransition } from '@vueuse/core'
-import spinSound from '@/assets/audio/sample6_wheel.mp3'
-import winSound from '@/assets/audio/sample1_spin_price.mp3'
-import { formatCurrency } from '@/utils/convertMoney'
+import { onMounted, onUnmounted, ref } from 'vue';
+import { jackpotWheelDeg, probabilityRate } from '@/models/constants';
+import type { TSpinWheel } from '@/models/type';
+import { useCreditStore, useGameStore } from '@/stores';
+import { useTransition } from '@vueuse/core';
+import spinSound from '@/assets/audio/sample6_wheel.mp3';
+import winSound from '@/assets/audio/sample1_spin_price.mp3';
+import { formatCurrency } from '@/utils/convertMoney';
 
 // images
-import Wheel from '@/assets/jackpot_wheel.png'
-import WheelArrow from '@/assets/wheel_arrow.png'
-import vfxLight from '@/assets/game/vfx-light.png'
-import congratulations from '@/assets/game/congratulations.png'
+import Wheel from '@/assets/jackpot_wheel.png';
+import WheelArrow from '@/assets/wheel_arrow.png';
+import vfxLight from '@/assets/game/vfx-light.png';
+import congratulations from '@/assets/game/congratulations.png';
 
-const rotation = ref(0)
-const isSpinning = ref(false)
-const multiplierWin = ref<TSpinWheel | null>(null)
-const showResult = ref(false)
-const autoSpinTimeout = ref<number | null>(null)
-const shouldJackpotAppear = ref(false)
+const gameStore = useGameStore();
+const creditStore = useCreditStore();
 
-const source = ref(0)
-const outputValue = useTransition(source, { duration: 3000 })
+const rotation = ref(0);
+const isSpinning = ref(false);
+const multiplierWin = ref<TSpinWheel | null>(null);
+const showResult = ref(false);
+const autoSpinTimeout = ref<number | null>(null);
+const shouldJackpotAppear = ref(false);
 
-const spinAudio = new Audio(spinSound)
-const winAudio = new Audio(winSound)
+const source = ref(0);
+const outputValue = useTransition(source, { duration: 3000 });
+
+const spinAudio = new Audio(spinSound);
+const winAudio = new Audio(winSound);
 
 // Cleanup function to prevent memory leaks
 const cleanup = () => {
   if (autoSpinTimeout.value) {
-    clearTimeout(autoSpinTimeout.value)
-    autoSpinTimeout.value = null
+    clearTimeout(autoSpinTimeout.value);
+    autoSpinTimeout.value = null;
   }
-  spinAudio.pause()
-  spinAudio.currentTime = 0
-  winAudio.pause()
-  winAudio.currentTime = 0
-}
+  spinAudio.pause();
+  spinAudio.currentTime = 0;
+  winAudio.pause();
+  winAudio.currentTime = 0;
+};
 
 const spinWheel = () => {
-  if (isSpinning.value) return
+  if (isSpinning.value) return;
 
   // Reset in case we're respinning
-  showResult.value = false
-  multiplierWin.value = null
+  showResult.value = false;
+  multiplierWin.value = null;
 
-  isSpinning.value = true
+  isSpinning.value = true;
 
   // Play the spin sound
-  spinAudio.volume = 0.3
-  spinAudio.loop = false
-  spinAudio.currentTime = 0
-  spinAudio.play()
+  spinAudio.volume = gameStore.getMusicWheel / 100;
+  spinAudio.loop = false;
+  spinAudio.currentTime = 0;
+  spinAudio.play();
 
-  const fullRotations = 360 * 10
+  const fullRotations = 360 * 10;
 
   // 30% chance of jackpot appearing
-  const randomValue = Math.random()
-  shouldJackpotAppear.value = randomValue < probabilityRate.JackpotRate
+  const randomValue = Math.random();
+  shouldJackpotAppear.value = randomValue < probabilityRate.JackpotRate;
 
-  let selectedSlice: TSpinWheel
-  console.log(shouldJackpotAppear.value)
+  let selectedSlice: TSpinWheel;
+  console.log(shouldJackpotAppear.value);
   if (shouldJackpotAppear.value) {
-    selectedSlice = jackpotWheelDeg.find((slice) => slice.multiplier === 1) || jackpotWheelDeg[7]
+    selectedSlice = jackpotWheelDeg.find((slice) => slice.multiplier === 1) || jackpotWheelDeg[7];
   } else {
-    const nonBokyaSlices = jackpotWheelDeg.filter((slice) => slice.multiplier > 1)
-    const randomIndex = Math.floor(Math.random() * nonBokyaSlices.length)
-    selectedSlice = nonBokyaSlices[randomIndex]
+    const nonBokyaSlices = jackpotWheelDeg.filter((slice) => slice.multiplier > 1);
+    const randomIndex = Math.floor(Math.random() * nonBokyaSlices.length);
+    selectedSlice = nonBokyaSlices[randomIndex];
   }
 
-  const stopAtDegree = fullRotations - selectedSlice.deg
-  rotation.value = stopAtDegree
+  const stopAtDegree = fullRotations - selectedSlice.deg;
+  rotation.value = stopAtDegree;
 
   setTimeout(() => {
-    spinAudio.pause()
-    spinAudio.currentTime = 0
+    spinAudio.pause();
+    spinAudio.currentTime = 0;
 
-    isSpinning.value = false
-    showResult.value = true
-    multiplierWin.value = selectedSlice
+    isSpinning.value = false;
+    showResult.value = true;
+    multiplierWin.value = selectedSlice;
 
     if (selectedSlice.multiplier > 1) {
-      winAudio.currentTime = 0
-      winAudio.play()
+      winAudio.currentTime = 0;
+      winAudio.volume = gameStore.getWinMusic / 100;
+      winAudio.play();
     }
 
     if (shouldJackpotAppear.value) {
-      useCreditStore().setCurrentBalance(
-        useCreditStore().getCurrentBalance + useGameStore().getAccumulatedJackpot,
-      )
-      source.value = useGameStore().getAccumulatedJackpot
-      useGameStore().setAccumulatedJackpot(0)
+      creditStore.setCurrentBalance(
+        creditStore.getCurrentBalance + gameStore.getAccumulatedJackpot,
+      );
+      source.value = gameStore.getAccumulatedJackpot;
+      gameStore.setAccumulatedJackpot(0);
     } else {
       // Update user's balance
-      multiplierWin.value = selectedSlice
-      useCreditStore().setCurrentBalance(
-        useCreditStore().getCurrentBalance +
-          useGameStore().getBetOnAce * multiplierWin.value.multiplier,
-      )
+      multiplierWin.value = selectedSlice;
+      creditStore.setCurrentBalance(
+        creditStore.getCurrentBalance + gameStore.getBetOnAce * multiplierWin.value.multiplier,
+      );
 
-      source.value = useGameStore().getBetOnAce * multiplierWin.value.multiplier
+      source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier;
     }
-  }, 8000)
-}
+  }, 8000);
+};
 
 const handleSpin = () => {
   if (!isSpinning.value && !showResult.value) {
-    spinWheel()
+    spinWheel();
   }
-}
+};
 
 const handleClose = () => {
-  // if (shouldJackpotAppear.value) {
-  //   const updatedBets = [
-  //     ...useGameStore().getAllBets,
-  //     `+${formatCurrency(useGameStore().getAccumulatedJackpot)}`,
-  //   ]
-  //   useGameStore().setAllBets(updatedBets)
-  // }
   if (multiplierWin.value && !shouldJackpotAppear.value) {
     const updatedBets = [
-      ...useGameStore().getAllBets,
-      `+${formatCurrency(useGameStore().getBetOnAce * multiplierWin.value.multiplier)}`,
-    ]
-    useGameStore().setAllBets(updatedBets)
+      ...gameStore.getAllBets,
+      `+${formatCurrency(gameStore.getBetOnAce * multiplierWin.value.multiplier)}`,
+    ];
+    gameStore.setAllBets(updatedBets);
   }
-  cleanup()
-  useGameStore().setShowJackpotSpinTheWheel(false)
-  useGameStore().setBetOnAce(0)
-}
+  cleanup();
+  gameStore.setShowJackpotSpinTheWheel(false);
+  gameStore.setBetOnAce(0);
+};
 
 onMounted(() => {
   // Reset state on mount
-  rotation.value = 0
-  isSpinning.value = false
-  showResult.value = false
-  multiplierWin.value = null
+  rotation.value = 0;
+  isSpinning.value = false;
+  showResult.value = false;
+  multiplierWin.value = null;
 
   // Auto-spin after a delay
   autoSpinTimeout.value = setTimeout(() => {
     if (!isSpinning.value && !showResult.value) {
-      spinWheel()
+      spinWheel();
     }
-  }, 1000) as unknown as number
-})
+  }, 1000) as unknown as number;
+});
 
 onUnmounted(() => {
-  cleanup()
-})
+  cleanup();
+});
 </script>
 
 <style scoped>

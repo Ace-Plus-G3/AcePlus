@@ -1,22 +1,36 @@
-export const convertToReadableFormat = (value: number) => {
-  if (value >= 1000000000) {
-    return (value / 1000000000).toFixed(1) + 'B' // 1.1B
-  } else if (value >= 1000000) {
-    return (value / 1000000).toFixed(value % 1000000 === 0 ? 0 : 1) + 'M' // 100M
-  } else if (value >= 1000) {
-    return (value / 1000).toFixed(value % 1000 === 0 ? 0 : 1) + 'k' // 100k
+export const convertToReadableFormat = (value: number): string => {
+  const format = (num: number, suffix: string, forceDecimal = false) => {
+    const hasDecimal = forceDecimal || num % 1 !== 0;
+    return (
+      num.toLocaleString('en-US', {
+        minimumFractionDigits: hasDecimal ? 1 : 0,
+        maximumFractionDigits: hasDecimal ? 1 : 0,
+      }) + suffix
+    );
+  };
+  if (value >= 1_000_000_000) {
+    return format(value / 1_000_000_000, 'B');
+  } else if (value >= 1_000_000) {
+    return format(value / 1_000_000, 'M');
+  } else if (value >= 100_000) {
+    return format(value / 1_000, 'K');
+  } else if (value >= 1_000) {
+    return format(value / 1_000, 'k', true);
   } else {
-    return Number(value.toFixed(1)).toLocaleString('en-US', { minimumFractionDigits: 1 })
+    return value.toLocaleString('en-US', {
+      minimumFractionDigits: value % 1 !== 0 ? 2 : 0,
+      maximumFractionDigits: value % 1 !== 0 ? 2 : 0,
+    });
   }
-}
+};
 
 export const formatCurrency = (value: number) => {
   // Check if the value has decimal places
-  const hasDecimal = value % 1 !== 0
+  const hasDecimal = value % 1 !== 0;
 
   // Use appropriate minimumFractionDigits based on whether there are decimals
   return value.toLocaleString('en-US', {
     minimumFractionDigits: hasDecimal ? 1 : 0,
     maximumFractionDigits: hasDecimal ? 1 : 0,
-  })
-}
+  });
+};

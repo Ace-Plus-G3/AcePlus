@@ -1,92 +1,107 @@
 <template>
-  <div id="transact-history">
-    <HeaderComponent />
-    <div class="card-amount-main-container">
-      <div class="card-amount-container">
-        <div class="left-amount">
-          <h5>AVAILABLE BALANCE</h5>
-          <h3><span>₱</span> {{ formatCurrency(useCreditStore().getCurrentBalance) }}</h3>
-        </div>
-        <div class="right-amount">
-          <el-button @click="goToCashTransact" :icon="Plus">Cash In</el-button>
-          <el-button @click="goToCashTransact" :icon="Minus">Cash Out</el-button>
+  <el-container>
+    <div id="transact-history">
+      <HeaderComponent />
+      <div class="card-amount-main-container">
+        <div class="card-amount-container">
+          <div class="left-amount">
+            <h5>AVAILABLE BALANCE</h5>
+            <h3><span>₱</span> {{ formatCurrency(creditStore.getCurrentBalance) }}</h3>
+          </div>
+          <div class="right-amount">
+            <el-button @click="goToCashTransact" :icon="Plus">Cash In</el-button>
+            <el-button @click="goToCashTransact" :icon="Minus">Cash Out</el-button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="transact-history-container">
-      <h3 class="title-text">Transaction History</h3>
-    </div>
-    <!-- <div class="tab-container"> -->
-    <TabsComponent>
-      <template v-slot:cashin>
-        <div class="history-item-container">
-          <div
-            @click="goToReciept(transaction.transaction_id, transaction.type)"
-            v-for="transaction in creditStore.cashin"
-            :key="transaction.user_id"
-            class="row-container"
-          >
-            <div class="left-cashin">
-              <h4>{{ moment(transaction.date).format('h:mm:ss a') }}</h4>
-              <h3>{{ transaction.type }}</h3>
-              <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
-            </div>
-            <div class="right-cashin">
-              <h3><span>₱</span> {{ formatCurrency(transaction.amount) }}</h3>
-            </div>
-          </div>
-        </div>
-      </template>
-      <template v-slot:cashout>
-        <div class="history-item-container">
-          <div
-            @click="goToReciept(transaction.transaction_id, transaction.type)"
-            class="row-container"
-            v-for="transaction in creditStore.cashout"
-            :key="transaction.user_id"
-          >
-            <div class="left-cashout">
-              <h4>{{ moment(transaction.date).format('h:mm:ss a') }}</h4>
-              <h3>{{ transaction.type }}</h3>
-              <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
-            </div>
-            <div class="right-cashout">
-              <h3><span>₱</span><span> -</span>{{ formatCurrency(transaction.amount) }}</h3>
+      <div class="transact-history-container">
+        <h3 class="title-text">Transaction History</h3>
+      </div>
+      <!-- <div class="tab-container"> -->
+      <TabsComponent>
+        <template v-slot:cashin>
+          <div class="history-item-container">
+            <div
+              @click="goToReciept(transaction.transaction_id, transaction.type)"
+              v-for="transaction in creditStore.cashin"
+              :key="transaction.user_id"
+              class="row-container"
+            >
+              <div class="left-cashin">
+                <h4>{{ moment(transaction.date).format('h:mm:ss a') }}</h4>
+                <h3>{{ transaction.type }}</h3>
+                <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
+              </div>
+              <div class="right-cashin">
+                <h3><span>₱</span> {{ formatCurrency(transaction.amount) }}</h3>
+              </div>
             </div>
           </div>
-        </div>
-      </template>
-    </TabsComponent>
-    <!-- </div> -->
-  </div>
+        </template>
+        <template v-slot:cashout>
+          <div class="history-item-container">
+            <div
+              @click="goToReciept(transaction.transaction_id, transaction.type)"
+              class="row-container"
+              v-for="transaction in creditStore.cashout"
+              :key="transaction.user_id"
+            >
+              <div class="left-cashout">
+                <h4>{{ moment(transaction.date).format('h:mm:ss a') }}</h4>
+                <h3>{{ transaction.type }}</h3>
+                <h4>{{ moment().format('MMMM Do YYYY') }}</h4>
+              </div>
+              <div class="right-cashout">
+                <h3><span>₱</span><span> -</span>{{ formatCurrency(transaction.amount) }}</h3>
+              </div>
+            </div>
+          </div>
+        </template>
+      </TabsComponent>
+      <!-- </div> -->
+    </div>
+  </el-container>
 </template>
 
 <script setup lang="ts">
-import HeaderComponent from '@/components/HeaderComponent.vue'
-import moment from 'moment'
+import HeaderComponent from '@/components/HeaderComponent-Latest.vue';
+import moment from 'moment';
 
-import { Plus, Minus } from '@element-plus/icons-vue'
-import TabsComponent from '@/components/TabsComponent.vue'
-import { useRouter } from 'vue-router'
-import { useCreditStore } from '@/stores/creditStore'
-import { formatCurrency } from '@/utils/convertMoney'
+import { Plus, Minus } from '@element-plus/icons-vue';
+import TabsComponent from '@/components/TabsComponent.vue';
+import { useRouter } from 'vue-router';
+import { useCreditStore } from '@/stores';
+import { formatCurrency } from '@/utils/convertMoney';
 
-const creditStore = useCreditStore()
+const creditStore = useCreditStore();
 
-const goToReciept = (transaction_id: string, transaction_type: 'Cash- In' | 'Cash- Out') => {
-  router.push({ name: 'receipt', params: { id: transaction_id, type: transaction_type } })
-}
+const goToReciept = (transaction_id: string, transaction_type: 'cash-in' | 'cash-out') => {
+  creditStore.setCurrentTransactionId(transaction_id);
+  creditStore.setCurrentTransactionType(transaction_type);
 
-const router = useRouter()
+  localStorage.setItem('CurrentTransactionId', JSON.stringify(creditStore.getCurrentTransactionId));
+  localStorage.setItem(
+    'CurrentTransactionType',
+    JSON.stringify(creditStore.getCurrentTransactionType),
+  );
+  router.push({ name: 'receipt' });
+};
+
+const router = useRouter();
 
 const goToCashTransact = () => {
-  router.push({ name: 'cash-transaction' })
-}
-
-// const dateTimeString = creditStore
+  router.push({ name: 'cash-transaction' });
+};
 </script>
 
 <style scoped>
+.el-container {
+  background-image: url('@/assets/homepage_bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 @media screen and (max-width: 768px) {
   .card-amount-main-container {
     padding-left: 13px;
@@ -155,6 +170,10 @@ const goToCashTransact = () => {
     padding-bottom: 15px;
   }
 
+  .row-container:hover {
+    background: red;
+  }
+
   /* :deep(.el-tabs__nav) {
     display: flex;
     flex-direction: row;
@@ -213,6 +232,7 @@ const goToCashTransact = () => {
 }
 
 .row-container {
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -272,6 +292,7 @@ const goToCashTransact = () => {
   background-color: var(--primary-black);
   font-family: 'Roboto', sans-serif !important;
   max-width: 800px;
+  width: 800px;
   display: flex;
   flex-direction: column;
   background-size: cover;
