@@ -1,4 +1,4 @@
-import type { TBots, TCardType, TSelectedCard } from '@/models/type';
+import type { TBots, TCardType, TGameHistory, TSelectedCard } from '@/models/type';
 import { defineStore } from 'pinia';
 
 type TState = {
@@ -32,6 +32,8 @@ type TState = {
   showSpinTheWheel: boolean;
   showJackpotSpinTheWheel: boolean;
   showWinBanner: boolean;
+  showHistoryDrawer: boolean;
+  gameHistory: TGameHistory[];
 };
 
 export const useGameStore = defineStore('gameStore', {
@@ -63,6 +65,9 @@ export const useGameStore = defineStore('gameStore', {
     showSpinTheWheel: false,
     showJackpotSpinTheWheel: false,
     showWinBanner: false,
+    showHistoryDrawer: false,
+
+    gameHistory: [],
   }),
   getters: {
     getBackgroundMusic: (state) => state.background_music,
@@ -93,6 +98,9 @@ export const useGameStore = defineStore('gameStore', {
 
     getTotalPlayers: (state) => state.totalPlayers,
     getShowWinBanner: (state) => state.showWinBanner,
+
+    getGameHistory: (state) => state.gameHistory,
+    getShowHistoryDrawer: (state) => state.showHistoryDrawer,
   },
   actions: {
     setBackgroundMusic(newValue: number) {
@@ -189,6 +197,14 @@ export const useGameStore = defineStore('gameStore', {
 
     setWinBanner(newValue: boolean) {
       this.showWinBanner = newValue;
+    },
+
+    setGameHistory(newValue: TGameHistory) {
+      this.gameHistory = [newValue, ...this.gameHistory];
+    },
+
+    setShowGameHistoryDrawer(newValue: boolean) {
+      this.showHistoryDrawer = newValue;
     },
   },
 });

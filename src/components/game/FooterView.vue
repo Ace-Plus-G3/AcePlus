@@ -8,6 +8,9 @@
             {{ formatCurrency(outputValue) }}
           </el-text>
         </div>
+        <el-button @click="gameStore.setShowGameHistoryDrawer(true)" class="gold-bg history-btn"
+          >Show History</el-button
+        >
         <div class="text-container">
           <span class="title gold-text">Total Players:</span>
           <el-text class="total-bet-text gold-text">
@@ -51,6 +54,12 @@ watch(
 </script>
 
 <style scoped>
+.history-btn {
+  border: none;
+  color: white;
+  font-weight: bold;
+}
+
 .el-footer {
   width: 100%;
   padding: 0 !important;
