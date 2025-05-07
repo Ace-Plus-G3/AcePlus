@@ -38,7 +38,7 @@
               >{{ item.type }}</el-text
             >
             <el-text size="small" style="width: 100%; text-align: start; font-size: 12px">{{
-              `₱ ${convertToReadableFormat(item.betValue)}.00`
+              `₱ ${convertToReadableFormat(item.betValue)}`
             }}</el-text>
           </span>
           <el-text
@@ -48,7 +48,9 @@
               green: item.type === 'WIN',
               red: item.type === 'LOSE',
             }"
-            >{{ `${item.type === 'WIN' ? '+' : '-'} ₱${formatCurrency(item.amount)}.00` }}</el-text
+            >{{
+              `${item.type === 'WIN' ? '+' : '-'} ₱${convertToReadableFormat(item.amount)}`
+            }}</el-text
           >
         </el-row>
       </div>
@@ -58,7 +60,7 @@
 
 <script setup lang="ts">
 import { useGameStore } from '@/stores';
-import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney';
+import { convertToReadableFormat } from '@/utils/convertMoney';
 import moment from 'moment';
 
 const gameStore = useGameStore();
@@ -74,6 +76,7 @@ const handleCloseDrawer = () => {
   align-items: center;
   justify-content: space-between;
   padding: 1em 2em 1em 2em;
+  scrollbar-width: none;
 }
 .green {
   color: green;
@@ -185,6 +188,7 @@ const handleCloseDrawer = () => {
 }
 
 .drawer-content {
+  scrollbar-width: none;
   width: 85%;
   height: 100%;
   z-index: 1;
