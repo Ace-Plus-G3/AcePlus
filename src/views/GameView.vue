@@ -224,7 +224,7 @@ const handleRevealCard = () => {
     // item is highest card (and not the lucky ace card)
     if (item.value === highestCard.value && luckyCardIndex < 0) {
       console.log('highest!');
-      const win = item.betAmount * (item.randomMultiplier ?? 1);
+      const win = item.betAmount * (item.randomMultiplier ?? 2);
 
       const winBannerDelay = setTimeout(() => {
         gameStore.setBetOnCard(win);
@@ -249,8 +249,8 @@ const handleRevealCard = () => {
     ) {
       const updatedBets = [...gameStore.getAllBets, `-${formatCurrency(item.betAmount)}`];
       gameStore.setAllBets(updatedBets);
-      creditStore.setCurrentBalance(creditStore.getCurrentBalance - item.betAmount);
-      useElMessage().error(`-${String(formatCurrency(item.betAmount))}`, true);
+      // creditStore.setCurrentBalance(creditStore.getCurrentBalance - item.betAmount);
+      useElMessage().error(`You lose ₱${String(formatCurrency(item.betAmount))}!`, true);
       gameStore.setGameHistory({
         betValue: item.betAmount,
         amount: item.betAmount,

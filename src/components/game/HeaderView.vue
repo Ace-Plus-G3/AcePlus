@@ -132,7 +132,7 @@ watch(
   z-index: 55;
   position: absolute;
   top: 103%;
-  right: 38%;
+  right: 42%;
 }
 
 .jackpot-text-container {
