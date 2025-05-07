@@ -14,16 +14,17 @@ export const useElMessage = () => {
       type: 'success',
     });
   };
-  const error = (message: string) => {
+  const error = (message: string, noIcon: false) => {
     ElMessage({
       message: h(
         'p',
         {
-          style: 'color: oklch(0.637 0.237 25.331)',
+          style: 'color: oklch(0.637 0.237 25.331);',
         },
         message,
       ),
       type: 'error',
+      customClass: noIcon ? 'no-icon-message' : '',
     });
   };
   return {

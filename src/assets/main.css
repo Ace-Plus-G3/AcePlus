@@ -88,3 +88,7 @@ body {
     opacity: 1;
   }
 }
+
+.no-icon-message .el-message__icon {
+  display: none;
+}
