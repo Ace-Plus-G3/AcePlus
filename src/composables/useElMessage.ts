@@ -14,7 +14,7 @@ export const useElMessage = () => {
       type: 'success',
     });
   };
-  const error = (message: string, noIcon: false) => {
+  const error = (message: string, noIcon: boolean) => {
     ElMessage({
       message: h(
         'p',
