@@ -121,6 +121,12 @@ const spinWheel = () => {
         creditStore.getCurrentBalance + gameStore.getAccumulatedJackpot,
       );
       source.value = gameStore.getAccumulatedJackpot;
+      gameStore.setGameHistory({
+        amount: gameStore.getAccumulatedJackpot,
+        betValue: gameStore.getBetOnAce,
+        date: new Date(),
+        type: 'WIN',
+      });
       gameStore.setAccumulatedJackpot(0);
     } else {
       // Update user's balance
@@ -128,6 +134,12 @@ const spinWheel = () => {
       creditStore.setCurrentBalance(
         creditStore.getCurrentBalance + gameStore.getBetOnAce * multiplierWin.value.multiplier,
       );
+      gameStore.setGameHistory({
+        amount: gameStore.getBetOnAce * multiplierWin.value.multiplier,
+        betValue: gameStore.getBetOnAce,
+        date: new Date(),
+        type: 'WIN',
+      });
 
       source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier;
     }

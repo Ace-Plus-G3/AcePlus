@@ -128,6 +128,12 @@ const spinWheel = () => {
           creditStore.setCurrentBalance(
             creditStore.getCurrentBalance + gameStore.getBetOnAce * multiplierWin.value.multiplier,
           );
+          gameStore.setGameHistory({
+            amount: gameStore.getBetOnAce * multiplierWin.value.multiplier,
+            betValue: gameStore.getBetOnAce,
+            date: new Date(),
+            type: 'WIN',
+          });
           source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier;
         }
       }

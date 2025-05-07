@@ -98,7 +98,7 @@ watch(
       background-repeat: no-repeat;
 
       width: 120px;
-      height: 50px;
+      height: 40px;
 
       display: flex;
       align-items: center;
