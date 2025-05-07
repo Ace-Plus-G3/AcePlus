@@ -9,15 +9,35 @@
         <TabsComponent>
           <template v-slot:cashin>
             <form class="transaction-form">
-              <el-input v-model="account_number" placeholder="Enter Account Number" />
-              <el-input v-model="amount" placeholder="Enter Amount" />
+              <el-input
+                v-model="account_number"
+                placeholder="Enter Account Number"
+                type="number"
+                class="phone-number-input"
+              />
+              <el-input
+                v-model="amount"
+                placeholder="Enter Amount"
+                type="number"
+                class="amount-input"
+              />
               <el-button @click="CashIn">Cash In</el-button>
             </form>
           </template>
           <template v-slot:cashout>
             <form class="transaction-form">
-              <el-input v-model="account_number" placeholder="Enter Account Number" />
-              <el-input v-model="amount" placeholder="Enter Amount" />
+              <el-input
+                v-model="account_number"
+                placeholder="Enter Account Number"
+                type="number"
+                class="phone-number-input"
+              />
+              <el-input
+                v-model="amount"
+                placeholder="Enter Amount"
+                type="number"
+                class="phone-number-input"
+              />
               <el-button @click="CashOut">Cash Out</el-button>
             </form>
           </template>
@@ -154,6 +174,14 @@ const resetTransactionFields = () => {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+:deep(.amount-input input::-webkit-outer-spin-button),
+:deep(.amount-input input::-webkit-inner-spin-button),
+:deep(.phone-number-input input::-webkit-outer-spin-button),
+:deep(.phone-number-input input::-webkit-inner-spin-button) {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 :deep(.el-tabs__active-bar) {
