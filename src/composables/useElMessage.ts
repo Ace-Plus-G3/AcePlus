@@ -14,7 +14,7 @@ export const useElMessage = () => {
       type: 'success',
     });
   };
-  const error = (message: string) => {
+  const error = (message: string, noIcon: false) => {
     ElMessage({
       message: h(
         'p',
@@ -24,6 +24,7 @@ export const useElMessage = () => {
         message,
       ),
       type: 'error',
+      customClass: noIcon ? 'no-icon-message' : '',
     });
   };
   return {

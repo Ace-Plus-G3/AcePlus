@@ -250,7 +250,7 @@ const handleRevealCard = () => {
       const updatedBets = [...gameStore.getAllBets, `-${formatCurrency(item.betAmount)}`];
       gameStore.setAllBets(updatedBets);
       creditStore.setCurrentBalance(creditStore.getCurrentBalance - item.betAmount);
-      useElMessage().error(String(formatCurrency(item.betAmount)));
+      useElMessage().error(`-${String(formatCurrency(item.betAmount))}`, true);
       gameStore.setGameHistory({
         betValue: item.betAmount,
         amount: item.betAmount,
