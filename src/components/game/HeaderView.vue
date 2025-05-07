@@ -11,6 +11,7 @@
             <img :src="JackpotText" class="jackpot-text" alt="" />
           </div>
         </div>
+        <MusicButton />
         <div class="chip-amount" @click="router.push({ name: 'transaction-history' })">
           <el-text class="chip-amount-text" style="color: white" size="small">{{
             convertToReadableFormat(creditStore.getCurrentBalance)
@@ -28,6 +29,7 @@ import JackpotText from '@/assets/jackpot-text.png';
 import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney';
 import { useTransition } from '@vueuse/core';
 import { onMounted, ref, watch } from 'vue';
+import MusicButton from '../MusicButton.vue';
 
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
