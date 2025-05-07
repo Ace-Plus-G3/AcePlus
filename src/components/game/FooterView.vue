@@ -2,18 +2,23 @@
   <el-footer>
     <div class="el-footer-bottom-bar">
       <div class="el-footer-image">
-        <div class="text-container">
-          <span class="title gold-text">Total Bets:</span>
-          <el-text class="total-bet-text gold-text">
-            {{ formatCurrency(outputValue) }}
-          </el-text>
+        <div>
+          <div class="text-container">
+            <span class="title gold-text">Bets:</span>
+            <el-text class="total-bet-text gold-text">
+              {{ formatCurrency(outputValue) }}
+            </el-text>
+          </div>
+          <div class="text-container">
+            <span class="title gold-text"> Players:</span>
+            <el-text class="total-bet-text gold-text">
+              {{ formatCurrency(totalPlayersCountValue) }}
+            </el-text>
+          </div>
         </div>
-        <div class="text-container">
-          <span class="title gold-text">Total Players:</span>
-          <el-text class="total-bet-text gold-text">
-            {{ formatCurrency(totalPlayersCountValue) }}
-          </el-text>
-        </div>
+        <el-button @click="gameStore.setShowGameHistoryDrawer(true)" class="gold-bg history-btn"
+          >Show History</el-button
+        >
       </div>
     </div>
   </el-footer>
@@ -51,11 +56,19 @@ watch(
 </script>
 
 <style scoped>
+.history-btn {
+  border: none;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.5);
+}
+
 .el-footer {
   width: 100%;
   padding: 0 !important;
   margin: 0 !important;
   height: auto !important;
+  position: relative;
 
   display: flex;
   align-items: center;

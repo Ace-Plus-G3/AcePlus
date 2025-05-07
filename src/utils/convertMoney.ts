@@ -3,8 +3,8 @@ export const convertToReadableFormat = (value: number): string => {
     const hasDecimal = forceDecimal || num % 1 !== 0;
     return (
       num.toLocaleString('en-US', {
-        minimumFractionDigits: hasDecimal ? 1 : 0,
-        maximumFractionDigits: hasDecimal ? 1 : 0,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: hasDecimal ? 2 : 0,
       }) + suffix
     );
   };
@@ -25,10 +25,8 @@ export const convertToReadableFormat = (value: number): string => {
 };
 
 export const formatCurrency = (value: number) => {
-  // Check if the value has decimal places
   const hasDecimal = value % 1 !== 0;
 
-  // Use appropriate minimumFractionDigits based on whether there are decimals
   return value.toLocaleString('en-US', {
     minimumFractionDigits: hasDecimal ? 1 : 0,
     maximumFractionDigits: hasDecimal ? 1 : 0,
