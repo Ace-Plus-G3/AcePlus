@@ -41,13 +41,6 @@ const handleSelectBet = (betValue: number) => {
     return;
   }
 
-  if (creditStore.getCurrentBalance < betValue) {
-    dialogStore.showDialog('error', 'Insufficient balance!');
-    console.log('Insufficient balance!');
-    gameStore.setShowSpinTheWheel(false);
-    return;
-  }
-
   const selectedIndex = gameStore.getSelectedCards.findIndex(
     (item) => item.value === currentCard.card.value,
   );
@@ -57,15 +50,30 @@ const handleSelectBet = (betValue: number) => {
 
   if (selectedIndex !== -1) {
     const oldBet = selectedCards[selectedIndex].betAmount;
+    if (creditStore.getCurrentBalance + oldBet < betValue) {
+      dialogStore.showDialog('error', 'Insufficient balance!');
+      console.log('Insufficient balance!');
+      gameStore.setShowSpinTheWheel(false);
+      return;
+    }
+
     selectedCards[selectedIndex].betAmount = betValue;
     cards[currentCard.index].totalBet = cards[currentCard.index].totalBet - oldBet + betValue;
+    creditStore.setCurrentBalance(creditStore.getCurrentBalance - oldBet + betValue);
   } else {
+    if (creditStore.getCurrentBalance < betValue) {
+      dialogStore.showDialog('error', 'Insufficient balance!');
+      console.log('Insufficient balance!');
+      gameStore.setShowSpinTheWheel(false);
+      return;
+    }
     selectedCards.push({
       ...currentCard.card,
       betAmount: betValue,
     });
     cards[currentCard.index].totalBet += betValue;
     cards[currentCard.index].playerCount += 1;
+    creditStore.setCurrentBalance(creditStore.getCurrentBalance - betValue);
   }
 
   gameStore.setSelectedCards(selectedCards);
