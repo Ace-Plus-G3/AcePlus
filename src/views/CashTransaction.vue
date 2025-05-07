@@ -21,7 +21,9 @@
                 type="number"
                 class="amount-input"
               />
-              <el-button @click="CashIn">Cash In</el-button>
+              <el-button class="gold-bg" @click="openTransactionDialog('Cash-in')"
+                >Cash In</el-button
+              >
             </form>
           </template>
           <template v-slot:cashout>
@@ -38,11 +40,31 @@
                 type="number"
                 class="phone-number-input"
               />
-              <el-button @click="CashOut">Cash Out</el-button>
+              <el-button class="gold-bg" @click="openTransactionDialog('Cash-out')"
+                >Cash Out</el-button
+              >
             </form>
           </template>
         </TabsComponent>
       </div>
+    </div>
+    <div>
+      <el-dialog
+        v-model="transactionDialogVisible"
+        :title="`Confirm ${transactionType}`"
+        width="auto"
+        style="max-width: 350px"
+      >
+        <span>Are you sure you want to {{ transactionType.toLowerCase() }} this amount?</span>
+        <template #footer>
+          <el-button class="cancel-btn" @click="transactionDialogVisible = false">
+            Cancel
+          </el-button>
+          <el-button type="primary" @click="confirmTransaction(transactionType)">
+            Confirm
+          </el-button>
+        </template>
+      </el-dialog>
     </div>
   </el-container>
 </template>
@@ -61,6 +83,23 @@ const creditStore = useCreditStore();
 
 const account_number = ref<number | null>(null);
 const amount = ref<number | null>(null);
+
+const transactionType = ref<string>('');
+const transactionDialogVisible = ref(false);
+
+const openTransactionDialog = (type: string) => {
+  transactionDialogVisible.value = true;
+  transactionType.value = type;
+};
+
+const confirmTransaction = (transactionType: string) => {
+  transactionDialogVisible.value = false;
+  if (transactionType === 'Cash-in') {
+    CashIn();
+  } else if (transactionType === 'Cash-out') {
+    CashOut();
+  }
+};
 
 const CashIn = async () => {
   const loading = ElLoading.service({
@@ -83,7 +122,7 @@ const CashIn = async () => {
 
   setTimeout(() => {
     creditStore.handleCashin(Number(amount.value), Number(account_number.value));
-    dialogStore.showDialog('success', 'Transaction completed successfully!');
+    dialogStore.showDialog('success', 'Cash-in transaction completed successfully!');
     resetTransactionFields();
     loading.close();
   }, 2000);
@@ -116,7 +155,7 @@ const CashOut = () => {
 
   setTimeout(() => {
     creditStore.handleCashout(Number(amount.value), Number(account_number.value));
-    dialogStore.showDialog('success', 'Transaction completed successfully!');
+    dialogStore.showDialog('success', 'Cash-out t ransaction completed successfully!');
     resetTransactionFields();
     loading.close();
   }, 2000);
@@ -176,6 +215,10 @@ const resetTransactionFields = () => {
   gap: 16px;
 }
 
+.cancel-btn {
+  background-color: transparent !important;
+}
+
 :deep(.amount-input input::-webkit-outer-spin-button),
 :deep(.amount-input input::-webkit-inner-spin-button),
 :deep(.phone-number-input input::-webkit-outer-spin-button),
@@ -210,15 +253,6 @@ const resetTransactionFields = () => {
   border: none;
   border-radius: 40px;
   padding: 24px;
-  background-color: #e8b839;
-  background: linear-gradient(
-    90deg,
-    rgba(232, 184, 57, 1) 0%,
-    rgba(232, 184, 57, 1) 35%,
-    rgba(186, 129, 21, 1) 63%,
-    rgba(251, 246, 127, 1) 82%,
-    rgba(220, 188, 78, 1) 100%
-  );
   border: none !important;
 }
 

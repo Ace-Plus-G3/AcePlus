@@ -10,7 +10,7 @@
         <el-button link style="width: fit-content; height: fit-content" @click="goToWallet()">
           <Wallet />
         </el-button>
-        <el-button class="gold-bg btn-register" @click="playerStore.handleLogout()"
+        <el-button class="gold-bg btn-register" @click="logoutDialogVisible = true"
           >Logout</el-button
         >
       </div>
@@ -26,6 +26,18 @@
 
   <div>
     <AuthModal v-model="isModalVisible" :active-tab-value="activeTabValue" />
+    <el-dialog
+      v-model="logoutDialogVisible"
+      title="Confirm Logout"
+      width="auto"
+      style="max-width: 300px"
+    >
+      <span>Are you sure you want to logout?</span>
+      <template #footer>
+        <el-button @click="logoutDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="confirmLogout">Confirm</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -37,11 +49,14 @@ import { useRouter } from 'vue-router';
 import Wallet from '../assets/svg/wallet_svg.vue';
 import AuthModal from './AuthModal.vue';
 import MusicButton from './MusicButton.vue';
+import { showNotify } from '@/utils/notify';
 
 const playerStore = usePlayerStore();
 const router = useRouter();
 const isModalVisible = ref(false);
 const activeTabValue = ref<string>('Signup-Tab');
+
+const logoutDialogVisible = ref(false);
 
 const openModal = (tab: string) => {
   activeTabValue.value = tab;
@@ -50,6 +65,17 @@ const openModal = (tab: string) => {
 
 const goToWallet = () => {
   router.push({ name: 'transaction-history' });
+};
+
+const confirmLogout = () => {
+  logoutDialogVisible.value = false;
+  playerStore.handleLogout();
+  showNotify({
+    title: 'Success!',
+    message: 'You have logout successfully.',
+    type: 'success',
+  });
+  console.log('Logged out');
 };
 </script>
 
