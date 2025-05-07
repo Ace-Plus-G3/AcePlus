@@ -19,7 +19,7 @@ export const useElMessage = () => {
       message: h(
         'p',
         {
-          style: 'color: oklch(0.637 0.237 25.331)',
+          style: 'color: oklch(0.637 0.237 25.331);',
         },
         message,
       ),

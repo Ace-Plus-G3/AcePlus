@@ -61,6 +61,7 @@ import { useCreditStore, useGameStore } from '@/stores';
 import { formatCurrency } from '@/utils/convertMoney';
 import { getRandomCards } from '@/utils/getRandomCards';
 import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useElMessage } from '@/composables/useElMessage';
 
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
@@ -249,6 +250,7 @@ const handleRevealCard = () => {
       const updatedBets = [...gameStore.getAllBets, `-${formatCurrency(item.betAmount)}`];
       gameStore.setAllBets(updatedBets);
       creditStore.setCurrentBalance(creditStore.getCurrentBalance - item.betAmount);
+      useElMessage().error(String(formatCurrency(item.betAmount)));
       gameStore.setGameHistory({
         betValue: item.betAmount,
         amount: item.betAmount,
