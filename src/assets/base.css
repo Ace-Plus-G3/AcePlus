@@ -1,0 +1,36 @@
+:root {
+  --primary-black: #0a0a0a;
+  --primary-yellow: #ffae00;
+  --primary-red: #7d1f22;
+  --primary-white: #d9d9d9;
+}
+
+.gold-text {
+  background: linear-gradient(
+    90deg,
+    rgba(232, 184, 57, 1) 0%,
+    rgba(232, 184, 57, 1) 35%,
+    rgba(186, 129, 21, 1) 63%,
+    rgba(251, 246, 127, 1) 82%,
+    rgba(220, 188, 78, 1) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-bg {
+  background-color: #e8b839;
+  background: linear-gradient(
+    90deg,
+    rgba(232, 184, 57, 1) 0%,
+    rgba(232, 184, 57, 1) 35%,
+    rgba(186, 129, 21, 1) 63%,
+    rgba(251, 246, 127, 1) 82%,
+    rgba(220, 188, 78, 1) 100%
+  );
+}
+
+.radial-white {
+  background: #ffffff;
+  background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(217, 217, 217, 1) 50%);
+}
