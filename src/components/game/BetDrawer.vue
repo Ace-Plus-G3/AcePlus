@@ -58,8 +58,11 @@ const handleSelectBet = (betValue: number) => {
     }
 
     selectedCards[selectedIndex].betAmount = betValue;
-    cards[currentCard.index].totalBet = cards[currentCard.index].totalBet - oldBet + betValue;
-    creditStore.setCurrentBalance(creditStore.getCurrentBalance - oldBet + betValue);
+    const newBalance = creditStore.getCurrentBalance + oldBet - betValue;
+    creditStore.setCurrentBalance(newBalance);
+
+    const newTotalBet = cards[currentCard.index].totalBet - oldBet + betValue;
+    cards[currentCard.index].totalBet = newTotalBet;
   } else {
     if (creditStore.getCurrentBalance < betValue) {
       dialogStore.showDialog('error', 'Insufficient balance!');

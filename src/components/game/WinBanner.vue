@@ -13,30 +13,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useGameStore } from '@/stores'
-import { useTransition } from '@vueuse/core'
-import vfxLight from '@/assets/game/vfx-light.png'
-import { formatCurrency } from '@/utils/convertMoney'
-import congratulations from '@/assets/game/congratulations.png'
+import { ref, watch } from 'vue';
+import { useGameStore } from '@/stores';
+import { useTransition } from '@vueuse/core';
+import vfxLight from '@/assets/game/vfx-light.png';
+import congratulations from '@/assets/game/congratulations.png';
 
-const gameStore = useGameStore()
-const source = ref(0)
-const outputValue = useTransition(source, { duration: 1000 })
+const gameStore = useGameStore();
+const source = ref(0);
+const outputValue = useTransition(source, { duration: 1000 });
 
 const handleClose = () => {
-  const updatedBets = [...gameStore.getAllBets, `+${formatCurrency(gameStore.getBetOnCard)}`]
-  gameStore.setAllBets(updatedBets)
-  gameStore.setBetOnCard(0)
-  gameStore.setWinBanner(false)
-}
+  gameStore.setBetOnCard(0);
+  gameStore.setWinBanner(false);
+};
 
 watch(
   () => gameStore.getBetOnCard,
   (newValue) => {
-    source.value = newValue
+    source.value = newValue;
   },
-)
+);
 </script>
 
 <style scoped>
