@@ -26,6 +26,10 @@
               </h4>
             </div>
             <div class="right-row-item">
+              <h4>Account Number</h4>
+              <h4>{{ `+63${transaction?.account_number}` }}</h4>
+            </div>
+            <div class="right-row-item">
               <h4>Date</h4>
               <h4>{{ moment(transaction?.date).format('MMMM Do YYYY') }}</h4>
             </div>
