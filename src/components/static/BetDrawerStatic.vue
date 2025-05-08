@@ -7,13 +7,7 @@
       </div>
       <div class="drawer-content">
         <div class="bet-grid">
-          <div
-            id="bet-grid"
-            @click="gameLogic.handleSelectBet(chip.value)"
-            v-for="chip in chips"
-            :key="chip.value"
-            class="chip"
-          >
+          <div id="bet-grid" v-for="chip in chips" :key="chip.value" class="chip">
             <img :src="chip.image" :alt="String(chip.value)" />
           </div>
         </div>
@@ -23,8 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { chips } from '@/models/constants'
-import gameLogic from '@/composables/useGameLogic'
+import { chips } from '@/models/constants';
 </script>
 
 <style scoped>
