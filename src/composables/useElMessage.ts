@@ -2,7 +2,7 @@ import { ElMessage } from 'element-plus';
 import { h } from 'vue';
 
 export const useElMessage = () => {
-  const success = (message: string) => {
+  const success = (message: string, noIcon?: boolean) => {
     ElMessage({
       message: h(
         'p',
@@ -12,6 +12,7 @@ export const useElMessage = () => {
         message,
       ),
       type: 'success',
+      customClass: noIcon ? 'no-icon-message' : '',
     });
   };
   const error = (message: string, noIcon: boolean) => {

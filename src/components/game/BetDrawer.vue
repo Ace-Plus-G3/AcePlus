@@ -8,7 +8,14 @@
     <div id="drawer" class="custom-drawer">
       <div class="custom-drawer-header">
         <span class="title">Place your bets !</span>
-        <button class="cancel-btn" @click="handleCancelBet">Cancel</button>
+        <el-row :gutter="2">
+          <el-col :span="12">
+            <button class="cancel-btn" @click="handleUndoBet">Undo</button>
+          </el-col>
+          <el-col :span="12">
+            <button class="cancel-btn" @click="handleCancelBet">Cancel</button>
+          </el-col>
+        </el-row>
       </div>
       <div class="drawer-content">
         <div class="bet-grid">
@@ -27,17 +34,56 @@
 </template>
 
 <script setup lang="ts">
+import { useElMessage } from '@/composables/useElMessage';
 import { chips } from '@/models/constants';
 import { useCreditStore, useDialogStore, useGameStore } from '@/stores';
 
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
 const dialogStore = useDialogStore();
+const notif = useElMessage();
+
+const handleUndoBet = () => {
+  const currentCard = gameStore.getCurrentSelectedCard;
+  if (!currentCard) {
+    console.log('No card selected!');
+    notif.error('No card selected!', true);
+    return;
+  }
+
+  const selectedIndex = gameStore.getSelectedCards.findIndex(
+    (item) => item.value === currentCard.card.value,
+  );
+
+  if (selectedIndex === -1) {
+    console.log('Please bet first!');
+    notif.error('Please bet first!', true);
+    return;
+  }
+
+  const cards = [...gameStore.getFourCards];
+  const selectedCards = [...gameStore.getSelectedCards];
+  const oldBet = selectedCards[selectedIndex].betAmount;
+
+  const newSelectedCards = selectedCards.filter((item) => item.value !== currentCard.card.value);
+
+  cards[currentCard.index].totalBet -= oldBet;
+  cards[currentCard.index].playerCount -= 1;
+
+  creditStore.setCurrentBalance(creditStore.getCurrentBalance + oldBet);
+  console.log('Bet removed!');
+  notif.success('Bet removed!');
+
+  gameStore.setSelectedCards(newSelectedCards);
+  gameStore.setFourCards(cards);
+  gameStore.setDrawer(false);
+};
 
 const handleSelectBet = (betValue: number) => {
   const currentCard = gameStore.getCurrentSelectedCard;
   if (!currentCard) {
     console.log('No card selected!');
+    notif.error('No card selected', true);
     return;
   }
 
