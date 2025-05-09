@@ -41,6 +41,7 @@
 
     <FooterView />
     <BetDrawer />
+    <HistoryDrawer />
   </el-container>
 </template>
 
@@ -50,6 +51,7 @@ import BetDrawer from '@/components/game/BetDrawer.vue';
 import CustomCard from '@/components/game/CustomCard.vue';
 import FooterView from '@/components/game/FooterView.vue';
 import HeaderView from '@/components/game/HeaderView.vue';
+import HistoryDrawer from '@/components/game/HistoryDrawer.vue';
 import WinBanner from '@/components/game/WinBanner.vue';
 import JackpotWheel from '@/components/JackpotWheel.vue';
 import SpinTheWheel from '@/components/SpinTheWheel.vue';
@@ -59,6 +61,7 @@ import { useCreditStore, useGameStore } from '@/stores';
 import { formatCurrency } from '@/utils/convertMoney';
 import { getRandomCards } from '@/utils/getRandomCards';
 import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from 'vue';
+import { useElMessage } from '@/composables/useElMessage';
 
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
@@ -221,7 +224,7 @@ const handleRevealCard = () => {
     // item is highest card (and not the lucky ace card)
     if (item.value === highestCard.value && luckyCardIndex < 0) {
       console.log('highest!');
-      const win = item.betAmount * (item.randomMultiplier ?? 1);
+      const win = item.betAmount * (item.randomMultiplier ?? 2);
 
       const winBannerDelay = setTimeout(() => {
         gameStore.setBetOnCard(win);
@@ -232,15 +235,29 @@ const handleRevealCard = () => {
       const updatedBets = [...gameStore.getAllBets, `+${formatCurrency(win)}`];
       gameStore.setAllBets(updatedBets);
       creditStore.setCurrentBalance(creditStore.getCurrentBalance + win);
+      gameStore.setGameHistory({
+        betValue: item.betAmount,
+        amount: win,
+        type: 'WIN',
+        date: new Date(),
+      });
     }
 
+    // player loses
     if (
       item.value !== highestCard.value &&
       (luckyCardIndex < 0 || item.value !== luckyCard?.value)
     ) {
       const updatedBets = [...gameStore.getAllBets, `-${formatCurrency(item.betAmount)}`];
       gameStore.setAllBets(updatedBets);
-      creditStore.setCurrentBalance(creditStore.getCurrentBalance - item.betAmount);
+      // creditStore.setCurrentBalance(creditStore.getCurrentBalance - item.betAmount);
+      useElMessage().error(`You lose ₱${String(formatCurrency(item.betAmount))}!`, true);
+      gameStore.setGameHistory({
+        betValue: item.betAmount,
+        amount: item.betAmount,
+        type: 'LOSE',
+        date: new Date(),
+      });
     }
   });
 

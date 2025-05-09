@@ -56,4 +56,17 @@ onMounted(() => {
   scale: 1.1;
   cursor: pointer;
 }
+
+.music-btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 500px) {
+  .music-btn {
+    width: 15px;
+    height: 15px;
+  }
+}
 </style>

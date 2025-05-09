@@ -91,3 +91,10 @@ export type THomeCards = {
   value: number;
   url: string;
 };
+
+export type TGameHistory = {
+  betValue: number;
+  amount: number;
+  type: 'WIN' | 'LOSE';
+  date: Date;
+};

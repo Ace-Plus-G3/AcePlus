@@ -20,6 +20,7 @@ const router = createRouter({
       path: '/transaction-history',
       name: 'transaction-history',
       component: TransactionHistory,
+      meta: { requiresAuth: true },
     },
     {
       path: '/cash-transaction',

@@ -12,9 +12,9 @@
           <el-button class="gold-bg" @click="openSettings">Settings</el-button>
         </div>
         <div v-if="playerStore.getToken" class="btn-container">
-          <el-button class="gold-bg" @click="gotoGame">Play Now!</el-button>
-          <el-button class="gold-bg" @click="openTutorial">Instructions</el-button>
-          <el-button class="gold-bg" @click="openSettings">Settings</el-button>
+          <el-button class="gold-bg btn" @click="gotoGame">Play Now!</el-button>
+          <el-button class="gold-bg btn" @click="openTutorial">Instructions</el-button>
+          <el-button class="gold-bg btn" @click="openSettings">Settings</el-button>
         </div>
       </div>
       <div ref="wheelRef" class="wheel">
@@ -219,6 +219,11 @@ onMounted(() => {
   height: 500px;
   /* animation: rotateWheel 30s linear infinite; */
 }
+
+:deep(.btn) {
+  padding: 0 !important;
+}
+
 @keyframes rotateWheel {
   0% {
     transform: rotate(0deg);
@@ -234,6 +239,21 @@ onMounted(() => {
   }
   h5 {
     font-size: 1em !important;
+  }
+  .btn-container {
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    gap: 0.5em;
+  }
+  .btn {
+    margin: 0;
+    padding: 0;
+    width: 120px;
+    height: 40px;
+    font-size: 16px;
   }
 }
 

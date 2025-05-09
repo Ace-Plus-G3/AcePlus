@@ -21,6 +21,9 @@
       <TabsComponent>
         <template v-slot:cashin>
           <div class="history-item-container">
+            <div v-if="!creditStore.cashin.length" style="text-align: center">
+              No Transaction found.
+            </div>
             <div
               @click="goToReciept(transaction.transaction_id, transaction.type)"
               v-for="transaction in creditStore.cashin"
@@ -40,6 +43,9 @@
         </template>
         <template v-slot:cashout>
           <div class="history-item-container">
+            <div v-if="!creditStore.cashout.length" style="text-align: center">
+              No Transaction found.
+            </div>
             <div
               @click="goToReciept(transaction.transaction_id, transaction.type)"
               class="row-container"
