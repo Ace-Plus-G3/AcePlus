@@ -243,6 +243,7 @@ const handleRevealCard = () => {
       });
     }
 
+    // player loses
     if (
       item.value !== highestCard.value &&
       (luckyCardIndex < 0 || item.value !== luckyCard?.value)
