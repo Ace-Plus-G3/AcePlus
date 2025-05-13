@@ -3,6 +3,8 @@ import { usePlayerStore } from './playerStore';
 import { loadFromLocalStorage } from '@/utils/loadFromLocalStorage';
 import type { Cashin, Cashout } from '@/models/type';
 
+import { v4 as uuidv4 } from 'uuid';
+
 export const useCreditStore = defineStore('creditStore', {
   state: () => ({
     cashin: [] as Cashin[],
@@ -52,7 +54,7 @@ export const useCreditStore = defineStore('creditStore', {
       const userId = loggedInUser.user_id;
 
       const newCashin: Cashin = {
-        transaction_id: crypto.randomUUID(),
+        transaction_id: uuidv4(),
         user_id: userId, // Use the logged-in user's ID
         type: 'cash-in',
         amount,
@@ -89,7 +91,7 @@ export const useCreditStore = defineStore('creditStore', {
       const userId = loggedInUser.user_id;
 
       const newCashout: Cashout = {
-        transaction_id: crypto.randomUUID(),
+        transaction_id: uuidv4(),
         user_id: userId, // Use the logged-in user's ID
         type: 'cash-out',
         amount,

@@ -2,6 +2,8 @@ import type { TLoginParams, TSignupParams, TUser } from '@/models/type';
 import { defineStore } from 'pinia';
 import { useCreditStore } from './creditStore';
 
+import { v4 as uuidv4 } from 'uuid';
+
 export const usePlayerStore = defineStore('playerStore', {
   state: () => ({
     user: null as TUser | null,
@@ -32,14 +34,13 @@ export const usePlayerStore = defineStore('playerStore', {
 
       const players_in_localstorage = localStorage.getItem('players');
       if (players_in_localstorage) {
-        const updatedPlayers = JSON.parse(players_in_localstorage).map((item: TUser) => 
-          item.user_id === userId ? {...item, isNewUser} : item, 
-      );
-      this.setPlayers(updatedPlayers);
-      localStorage.setItem('players', JSON.stringify(updatedPlayers));
+        const updatedPlayers = JSON.parse(players_in_localstorage).map((item: TUser) =>
+          item.user_id === userId ? { ...item, isNewUser } : item,
+        );
+        this.setPlayers(updatedPlayers);
+        localStorage.setItem('players', JSON.stringify(updatedPlayers));
       }
     },
-
 
     async handleSignup({ formE1, handleChangeTab }: TSignupParams) {
       if (!formE1) return;
@@ -48,7 +49,7 @@ export const usePlayerStore = defineStore('playerStore', {
         await formE1.validate((valid, fields) => {
           if (valid) {
             const formData = {
-              user_id: crypto.randomUUID(),
+              user_id: uuidv4(),
               phoneNumber: formE1.$props.model?.phoneNumber,
               password: formE1.$props.model?.password,
               total_money: formE1.$props.model?.total_money,
