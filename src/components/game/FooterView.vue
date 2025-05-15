@@ -12,7 +12,7 @@
           <div class="text-container">
             <span class="title gold-text"> Players:</span>
             <el-text class="total-bet-text gold-text">
-              {{ formatCurrency(totalPlayersCountValue) }}
+              {{ Number(totalPlayersCountValue).toFixed(0) }}
             </el-text>
           </div>
         </div>
