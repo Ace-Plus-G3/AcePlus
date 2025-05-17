@@ -8,23 +8,27 @@
       <div class="cash-transaction-container">
         <TabsComponent>
           <template v-slot:cashin>
-            <form class="transaction-form">
-              <el-input
-                v-model="account_number"
-                placeholder="Enter Account Number"
-                type="number"
-                class="phone-number-input"
-              />
-              <el-input
-                v-model="amount"
-                placeholder="Enter Amount"
-                type="number"
-                class="amount-input"
-              />
+            <el-form class="transaction-form" :rules="rules" :model="Form" ref="FormRef">
+              <el-form-item prop="account_number">
+                <el-input
+                  v-model="Form.account_number"
+                  placeholder="Enter Account Number"
+                  type="number"
+                  class="phone-number-input"
+                />
+              </el-form-item>
+              <el-form-item prop="amount">
+                <el-input
+                  v-model="Form.amount"
+                  placeholder="Enter Amount"
+                  type="number"
+                  class="amount-input"
+                />
+              </el-form-item>
               <el-button class="gold-bg" @click="openTransactionDialog('Cash-in')"
                 >Cash In</el-button
               >
-            </form>
+            </el-form>
           </template>
           <template v-slot:cashout>
             <form class="transaction-form">
@@ -73,7 +77,7 @@
 import { ref } from 'vue';
 import HeaderComponent from '@/components/HeaderComponent-Latest.vue';
 import TabsComponent from '@/components/TabsComponent.vue';
-import { ElLoading } from 'element-plus';
+import { ElLoading, type FormInstance, type FormRules } from 'element-plus';
 import { useCreditStore, useDialogStore } from '@/stores';
 
 const imageSrc = ref(new URL('/src/assets/gcash-logo.png', import.meta.url).href);
@@ -161,6 +165,25 @@ const CashOut = () => {
   }, 2000);
 };
 
+const rules = <FormRules>{
+  account_number: [
+    { required: true, message: 'Please enter your account number', trigger: 'blur' },
+    { min: 11, max: 11, message: 'Account Number must be 11 digits', trigger: 'blur' },
+    {
+      pattern: /^09\d{9}$/,
+      message: 'Account Number must start with 09 and be 11 digits',
+      trigger: 'blur',
+    },
+  ],
+  amount: [{ required: true, message: 'Please enter an amount', trigger: 'blur' }],
+};
+
+const FormRef = ref<FormInstance>();
+const Form = ref({
+  account_number: '',
+  amount: '',
+});
+
 const resetTransactionFields = () => {
   account_number.value = null;
   amount.value = null;
@@ -212,7 +235,7 @@ const resetTransactionFields = () => {
   padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 2px;
 }
 
 .cancel-btn {
