@@ -31,23 +31,27 @@
             </el-form>
           </template>
           <template v-slot:cashout>
-            <form class="transaction-form">
-              <el-input
-                v-model="account_number"
-                placeholder="Enter Account Number"
-                type="number"
-                class="phone-number-input"
-              />
-              <el-input
-                v-model="amount"
-                placeholder="Enter Amount"
-                type="number"
-                class="phone-number-input"
-              />
+            <el-form class="transaction-form" :rules="rules" :model="Form" ref="FormRef">
+              <el-form-item prop="account_number">
+                <el-input
+                  v-model="Form.account_number"
+                  placeholder="Enter Account Number"
+                  type="number"
+                  class="phone-number-input"
+                />
+              </el-form-item>
+              <el-form-item prop="amount">
+                <el-input
+                  v-model="Form.amount"
+                  placeholder="Enter Amount"
+                  type="number"
+                  class="phone-number-input"
+                />
+              </el-form-item>
               <el-button class="gold-bg" @click="openTransactionDialog('Cash-out')"
                 >Cash Out</el-button
               >
-            </form>
+            </el-form>
           </template>
         </TabsComponent>
       </div>
