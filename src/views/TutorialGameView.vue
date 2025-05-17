@@ -85,6 +85,24 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.el-button {
+  position: fixed;
+  top: 30px;
+  right: 40px;
+  z-index: 3000;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: 800;
+  height: 40px;
+}
+
+.el-button:hover {
+  scale: 1.1;
+}
+
+.el-icon {
+  margin-left: 8px;
+}
 .el-container {
   position: relative;
   display: flex;
@@ -179,12 +197,12 @@ onMounted(async () => {
 
 /* Custom header */
 /* Drawer Styles*/
-:deep(.el-overlay) {
+/* :deep(.el-overlay) {
   background-color: inherit;
   overflow: hidden !important;
   display: flex;
   justify-content: center;
-}
+} */
 
 :deep(.el-drawer) {
   overflow: hidden;
