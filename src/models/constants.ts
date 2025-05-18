@@ -193,3 +193,46 @@ export const HomeCards: Array<THomeCards> = [
   { value: 4, url: new URL('@/assets/cards/front/card_4.png', import.meta.url).href },
   { value: 5, url: new URL('@/assets/cards/front/card_5.png', import.meta.url).href },
 ];
+
+export const steps = [
+  {
+    target: '#jackpot-container',
+    title: 'Community Jackpot',
+    description: 'This is the shared jackpot pool that grows with every round. A percentage of each rounds total bets contributes to this jackpot, increasing the potential rewards for players.',
+  },
+  {
+    target: '#chip-amount',
+    title: 'Credit Amount',
+    description: 'Your available credits for placing bets in the game. Make sure to manage them wisely to stay in the game!',
+  },
+  {
+    target: '#leave-btn',
+    title: 'Leave Button',
+    description: 'Click this button to exit the current game room. Ensure you’ve finalized any bets before leaving.',
+  },
+  {
+    target: '#card-back',
+    title: 'Card Deck',
+    description: 'This deck contains the shuffled cards used in the game. Each round, cards are drawn from this deck and distributed to players.',
+  },
+  {
+    target: '#custom-card',
+    title: 'Cards',
+    description: 'These are the four distributed cards that players can place bets on. Choose wisely and strategize based on the game flow!',
+  },
+  {
+    target: '#player-count',
+    title: 'Player Count',
+    description: 'Displays the number of players participating in this round. A higher count may mean greater competition and betting dynamics.',
+  },
+  {
+    target: '#bet-count-container',
+    title: 'Total Bet',
+    description: 'Shows the cumulative amount wagered on all cards during the current round. Keep an eye on this to understand betting trends!',
+  },
+  {
+    target: '#bet-grid',
+    title: 'Bet Amounts',
+    description: 'Various betting options are available here. Select the amount you wish to wager and place strategic bets on your chosen card.',
+  },
+];
