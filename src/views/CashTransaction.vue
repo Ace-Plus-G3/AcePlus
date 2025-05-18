@@ -40,9 +40,9 @@
                   class="phone-number-input"
                 />
               </el-form-item>
-              <el-form-item prop="amount">
+              <el-form-item prop="Cashoutamount">
                 <el-input
-                  v-model="Form.amount"
+                  v-model.number="Form.Cashoutamount"
                   placeholder="Enter Amount"
                   type="number"
                   class="phone-number-input"
@@ -137,30 +137,28 @@ const CashOut = () => {
     background: 'rgba(0, 0, 0, 0.7)',
   });
 
-  if (!amount.value || !account_number.value) {
-    dialogStore.showDialog('error', 'Please fill in all fields');
+  if (Number(Form.value.Cashoutamount) > creditStore.getCurrentBalance) {
+    dialogStore.showDialog('error', 'Cash-out amount exceeds current balance!');
     loading.close();
-    return;
-  }
-
-  if (amount.value < 100) {
-    dialogStore.showDialog('error', 'Minimum cash-out is 100');
-    loading.close();
-    return;
-  }
-
-  if (amount.value > creditStore.getCurrentBalance) {
-    dialogStore.showDialog('error', 'Insufficient Balance');
-    loading.close();
-    return;
-  }
-
-  setTimeout(() => {
-    creditStore.handleCashout(Number(amount.value), Number(account_number.value));
-    dialogStore.showDialog('success', 'Cash-out t ransaction completed successfully!');
     resetTransactionFields();
-    loading.close();
-  }, 2000);
+    return;
+  }
+
+  FormRef.value?.validate((valid) => {
+    if (!valid) {
+      loading.close();
+      return;
+    }
+    setTimeout(() => {
+      creditStore.handleCashout(
+        Number(Form.value.Cashoutamount),
+        Number(Form.value.account_number),
+      );
+      dialogStore.showDialog('success', 'Cash-out t ransaction completed successfully!');
+      resetTransactionFields();
+      loading.close();
+    }, 2000);
+  });
 };
 
 const rules = <FormRules>{
@@ -200,7 +198,9 @@ const resetTransactionFields = () => {
   // account_number.value = null;
   // amount.value = null;
   FormRef.value?.resetFields();
-  FormRef.value?.resetFields();
+  Form.value.account_number = '';
+  Form.value.Cashinamount = '';
+  Form.value.Cashoutamount = '';
 };
 </script>
 
