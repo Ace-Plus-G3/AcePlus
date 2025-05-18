@@ -17,9 +17,9 @@
                   class="phone-number-input"
                 />
               </el-form-item>
-              <el-form-item prop="amount">
+              <el-form-item prop="Cashinamount">
                 <el-input
-                  v-model="Form.amount"
+                  v-model.number="Form.Cashinamount"
                   placeholder="Enter Amount"
                   type="number"
                   class="amount-input"
@@ -116,24 +116,18 @@ const CashIn = async () => {
     background: 'rgba(0, 0, 0, 0.7)',
   });
 
-  if (!amount.value || !account_number.value) {
-    dialogStore.showDialog('error', 'Please fill in all fields');
-    loading.close();
-    return;
-  }
-
-  if (amount.value < 100) {
-    dialogStore.showDialog('error', 'Minimum cash-in is 100');
-    loading.close();
-    return;
-  }
-
-  setTimeout(() => {
-    creditStore.handleCashin(Number(amount.value), Number(account_number.value));
-    dialogStore.showDialog('success', 'Cash-in transaction completed successfully!');
-    resetTransactionFields();
-    loading.close();
-  }, 2000);
+  FormRef.value?.validate((valid) => {
+    if (!valid) {
+      loading.close();
+      return;
+    }
+    setTimeout(() => {
+      creditStore.handleCashin(Number(Form.value.Cashinamount), Number(Form.value.account_number));
+      dialogStore.showDialog('success', 'Cash-in transaction completed successfully!');
+      resetTransactionFields();
+      loading.close();
+    }, 2000);
+  });
 };
 
 const CashOut = () => {
@@ -179,18 +173,34 @@ const rules = <FormRules>{
       trigger: 'blur',
     },
   ],
-  amount: [{ required: true, message: 'Please enter an amount', trigger: 'blur' }],
+  Cashinamount: [
+    { required: true, message: 'Please enter an amount', trigger: 'blur' },
+    { type: 'number', min: 50, message: 'Minimum amount is 50', trigger: 'blur' },
+  ],
+  Cashoutamount: [
+    { required: true, message: 'Please enter an amount', trigger: 'blur' },
+    {
+      type: 'number',
+      max: creditStore.getCurrentBalance,
+      message: 'Amount exceeds current balance',
+      trigger: 'blur',
+    },
+    { type: 'number', min: 50, message: 'Minimum amount is 100', trigger: 'blur' },
+  ],
 };
 
 const FormRef = ref<FormInstance>();
 const Form = ref({
   account_number: '',
-  amount: '',
+  Cashinamount: '',
+  Cashoutamount: '',
 });
 
 const resetTransactionFields = () => {
-  account_number.value = null;
-  amount.value = null;
+  // account_number.value = null;
+  // amount.value = null;
+  FormRef.value?.resetFields();
+  FormRef.value?.resetFields();
 };
 </script>
 
