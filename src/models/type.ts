@@ -8,6 +8,7 @@ export type TLogin = {
 export type TSignup = {
   phoneNumber: string;
   password: string;
+  confirmpassword: string;
 };
 
 export type TUser = {
