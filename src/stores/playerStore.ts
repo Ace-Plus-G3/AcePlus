@@ -107,6 +107,8 @@ export const usePlayerStore = defineStore('playerStore', {
 
         console.log('Account created successfully!', this.players);
 
+        formE1.resetFields();
+
         handleChangeTab('Login-Tab');
       } catch (err) {
         // Validation or signup error

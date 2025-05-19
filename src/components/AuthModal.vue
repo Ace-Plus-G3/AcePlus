@@ -180,9 +180,11 @@ const rules = ref<FormRules>({
   confirmpassword: [
     { required: true, message: 'Please confirm your password', trigger: 'blur' },
     {
-      validator: (value, callback) => {
+      validator: (rule, value, callback) => {
         if (value !== signupForm.value.password) {
           callback(new Error('Passwords do not match'));
+        } else {
+          callback();
         }
       },
       message: 'Passwords do not match',
@@ -218,12 +220,16 @@ const signup = () => {
       message: 'Please agree to our Terms of Service.',
       type: 'error',
     });
-  } else {
-    store.handleSignup({
-      formE1: signupFormRef.value,
-      handleChangeTab,
-    });
+    return;
   }
+  signupFormRef.value?.validate((valid) => {
+    if (valid) {
+      store.handleSignup({
+        formE1: signupFormRef.value,
+        handleChangeTab,
+      });
+    }
+  });
 };
 
 // Login Form state
