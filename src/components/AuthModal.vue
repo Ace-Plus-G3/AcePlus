@@ -66,6 +66,15 @@
               show-password
             />
           </el-form-item>
+          <el-form-item prop="confirmpassword">
+            <el-input
+              type="confirmpassword"
+              v-model="signupForm.confirmpassword"
+              autocomplete="off"
+              placeholder="Confirm Password"
+              show-password
+            />
+          </el-form-item>
           <div class="dialog-footer">
             <div class="terms-of-service-container">
               <el-checkbox v-model="isAgreeToTerms"> </el-checkbox>
@@ -152,6 +161,18 @@ const rules = ref<FormRules>({
     { required: true, message: 'Please enter your password', trigger: 'blur' },
     { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' },
   ],
+  confirmpassword: [
+    { required: true, message: 'Please confirm your password', trigger: 'blur' },
+    {
+      validator: (value, callback) => {
+        if (value !== signupForm.value.password) {
+          callback(new Error('Passwords do not match'));
+        }
+      },
+      message: 'Passwords do not match',
+      trigger: 'blur',
+    },
+  ],
 });
 
 // handle Changing tabs
@@ -167,6 +188,7 @@ const signupFormRef = ref<FormInstance>();
 const signupForm = ref<TSignup>({
   phoneNumber: '',
   password: '',
+  confirmpassword: '',
 });
 
 const isSignupFormValid = computed(() => {
@@ -174,6 +196,11 @@ const isSignupFormValid = computed(() => {
 });
 
 const signup = async () => {
+  signupFormRef.value?.validate((valid) => {
+    if (!valid) {
+      return;
+    }
+  });
   if (isAgreeToTerms.value === false) {
     showNotify({
       title: 'Error!',
