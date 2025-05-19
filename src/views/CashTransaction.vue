@@ -193,8 +193,6 @@ const Form = ref({
 });
 
 const resetTransactionFields = () => {
-  // account_number.value = null;
-  // amount.value = null;
   FormRef.value?.resetFields();
   FormRef.value?.resetFields();
 };
