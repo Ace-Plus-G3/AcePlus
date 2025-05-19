@@ -2,7 +2,15 @@
   <el-header>
     <div class="el-header-top-bar">
       <div class="el-header-image">
-        <button id="leave-btn" class="leave-btn gold-bg" @click="router.push('/')">Leave</button>
+        <el-dropdown>
+          <button id="leave-btn" class="leave-btn gold-bg">Menu</button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="openSettings">Settings</el-dropdown-item>
+              <el-dropdown-item @click="router.push('/')">Leave</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
         <div id="jackpot-container" class="jackpot-container">
           <el-text class="jackpot-amount">
             {{ formatCurrency(outputValue) }}
@@ -19,6 +27,7 @@
         </div>
       </div>
     </div>
+    <SettingsModal :show-settings="showSettings" @handle-close="handleCloseSettings" />
   </el-header>
 </template>
 
@@ -30,6 +39,7 @@ import { convertToReadableFormat, formatCurrency } from '@/utils/convertMoney';
 import { useTransition } from '@vueuse/core';
 import { onMounted, ref, watch } from 'vue';
 import MusicButton from '../MusicButton.vue';
+import SettingsModal from '../SettingsModal.vue';
 
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
@@ -37,6 +47,15 @@ const creditStore = useCreditStore();
 const source = ref(0);
 const router = useRouter();
 const outputValue = useTransition(source, { duration: 1000 });
+const showSettings = ref<boolean>(false);
+
+const handleCloseSettings = () => {
+  showSettings.value = false;
+};
+
+const openSettings = () => {
+  showSettings.value = true;
+};
 
 onMounted(() => {
   const storedJackpot = localStorage.getItem('accumulatedJackpot');
@@ -142,7 +161,8 @@ watch(
 .jackpot-amount {
   font-family: 'Roboto', sans-serif !important;
   font-weight: 900 !important;
-  font-size: clamp(16px, 32px, 48rem); /* Responsive font size */
+  font-size: clamp(16px, 32px, 48rem);
+  /* Responsive font size */
   background: linear-gradient(180deg, rgba(145, 90, 16, 1) 15%, rgba(68, 40, 2, 1) 75%);
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -215,6 +235,7 @@ watch(
     margin-top: 30px !important;
     margin-left: 10px;
   }
+
   .jackpot-amount {
     font-size: 14px !important;
   }

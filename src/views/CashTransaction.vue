@@ -8,42 +8,60 @@
       <div class="cash-transaction-container">
         <TabsComponent>
           <template v-slot:cashin>
-            <form class="transaction-form">
-              <el-input
-                v-model="account_number"
-                placeholder="Enter Account Number"
-                type="number"
-                class="phone-number-input"
-              />
-              <el-input
-                v-model="amount"
-                placeholder="Enter Amount"
-                type="number"
-                class="amount-input"
-              />
+            <el-form
+              class="transaction-form"
+              :rules="rules"
+              :model="CashinForm"
+              ref="CashinFormRef"
+            >
+              <el-form-item prop="account_number">
+                <el-input
+                  v-model="CashinForm.account_number"
+                  placeholder="Enter Account Number"
+                  type="number"
+                  class="phone-number-input"
+                />
+              </el-form-item>
+              <el-form-item prop="Cashinamount">
+                <el-input
+                  v-model.number="CashinForm.Cashinamount"
+                  placeholder="Enter Amount"
+                  type="number"
+                  class="amount-input"
+                />
+              </el-form-item>
               <el-button class="gold-bg" @click="openTransactionDialog('Cash-in')"
                 >Cash In</el-button
               >
-            </form>
+            </el-form>
           </template>
           <template v-slot:cashout>
-            <form class="transaction-form">
-              <el-input
-                v-model="account_number"
-                placeholder="Enter Account Number"
-                type="number"
-                class="phone-number-input"
-              />
-              <el-input
-                v-model="amount"
-                placeholder="Enter Amount"
-                type="number"
-                class="phone-number-input"
-              />
+            <el-form
+              class="transaction-form"
+              :rules="rules"
+              :model="CashoutForm"
+              ref="CashoutFormRef"
+            >
+              <el-form-item prop="account_number">
+                <el-input
+                  v-model="CashoutForm.account_number"
+                  placeholder="Enter Account Number"
+                  type="number"
+                  class="phone-number-input"
+                />
+              </el-form-item>
+              <el-form-item prop="Cashoutamount">
+                <el-input
+                  v-model.number="CashoutForm.Cashoutamount"
+                  placeholder="Enter Amount"
+                  type="number"
+                  class="phone-number-input"
+                />
+              </el-form-item>
               <el-button class="gold-bg" @click="openTransactionDialog('Cash-out')"
                 >Cash Out</el-button
               >
-            </form>
+            </el-form>
           </template>
         </TabsComponent>
       </div>
@@ -73,7 +91,7 @@
 import { ref } from 'vue';
 import HeaderComponent from '@/components/HeaderComponent-Latest.vue';
 import TabsComponent from '@/components/TabsComponent.vue';
-import { ElLoading } from 'element-plus';
+import { ElLoading, type FormInstance, type FormRules } from 'element-plus';
 import { useCreditStore, useDialogStore } from '@/stores';
 
 const imageSrc = ref(new URL('/src/assets/gcash-logo.png', import.meta.url).href);
@@ -108,24 +126,21 @@ const CashIn = async () => {
     background: 'rgba(0, 0, 0, 0.7)',
   });
 
-  if (!amount.value || !account_number.value) {
-    dialogStore.showDialog('error', 'Please fill in all fields');
-    loading.close();
-    return;
-  }
-
-  if (amount.value < 100) {
-    dialogStore.showDialog('error', 'Minimum cash-in is 100');
-    loading.close();
-    return;
-  }
-
-  setTimeout(() => {
-    creditStore.handleCashin(Number(amount.value), Number(account_number.value));
-    dialogStore.showDialog('success', 'Cash-in transaction completed successfully!');
-    resetTransactionFields();
-    loading.close();
-  }, 2000);
+  CashinFormRef.value?.validate((valid) => {
+    if (!valid) {
+      loading.close();
+      return;
+    }
+    setTimeout(() => {
+      creditStore.handleCashin(
+        Number(CashinForm.value.Cashinamount),
+        Number(CashinForm.value.account_number),
+      );
+      dialogStore.showDialog('success', 'Cash-in transaction completed successfully!');
+      resetTransactionFields();
+      loading.close();
+    }, 2000);
+  });
 };
 
 const CashOut = () => {
@@ -135,35 +150,75 @@ const CashOut = () => {
     background: 'rgba(0, 0, 0, 0.7)',
   });
 
-  if (!amount.value || !account_number.value) {
-    dialogStore.showDialog('error', 'Please fill in all fields');
+  if (Number(CashoutForm.value.Cashoutamount) > creditStore.getCurrentBalance) {
+    dialogStore.showDialog('error', 'Cash-out amount exceeds current balance!');
     loading.close();
-    return;
-  }
-
-  if (amount.value < 100) {
-    dialogStore.showDialog('error', 'Minimum cash-out is 100');
-    loading.close();
-    return;
-  }
-
-  if (amount.value > creditStore.getCurrentBalance) {
-    dialogStore.showDialog('error', 'Insufficient Balance');
-    loading.close();
-    return;
-  }
-
-  setTimeout(() => {
-    creditStore.handleCashout(Number(amount.value), Number(account_number.value));
-    dialogStore.showDialog('success', 'Cash-out t ransaction completed successfully!');
     resetTransactionFields();
-    loading.close();
-  }, 2000);
+    return;
+  }
+
+  CashoutFormRef.value?.validate((valid) => {
+    if (!valid) {
+      loading.close();
+      return;
+    }
+    setTimeout(() => {
+      creditStore.handleCashout(
+        Number(CashoutForm.value.Cashoutamount),
+        Number(CashoutForm.value.account_number),
+      );
+      dialogStore.showDialog('success', 'Cash-out t ransaction completed successfully!');
+      resetTransactionFields();
+      loading.close();
+    }, 2000);
+  });
 };
 
+const rules = <FormRules>{
+  account_number: [
+    { required: true, message: 'Please enter your account number', trigger: 'blur' },
+    { min: 11, max: 11, message: 'Account Number must be 11 digits', trigger: 'blur' },
+    {
+      pattern: /^09\d{9}$/,
+      message: 'Account Number must start with 09 and be 11 digits',
+      trigger: 'blur',
+    },
+  ],
+  Cashinamount: [
+    { required: true, message: 'Please enter an amount', trigger: 'blur' },
+    { type: 'number', min: 50, message: 'Minimum amount is 50', trigger: 'blur' },
+  ],
+  Cashoutamount: [
+    { required: true, message: 'Please enter an amount', trigger: 'blur' },
+    {
+      type: 'number',
+      max: creditStore.getCurrentBalance,
+      message: 'Amount exceeds current balance',
+      trigger: 'blur',
+    },
+    { type: 'number', min: 50, message: 'Minimum amount is 100', trigger: 'blur' },
+  ],
+};
+
+const CashinFormRef = ref<FormInstance>();
+const CashoutFormRef = ref<FormInstance>();
+const CashinForm = ref({
+  account_number: '',
+  Cashinamount: '',
+});
+
+const CashoutForm = ref({
+  account_number: '',
+  Cashoutamount: '',
+});
+
 const resetTransactionFields = () => {
-  account_number.value = null;
-  amount.value = null;
+  CashinFormRef.value?.resetFields();
+  CashoutFormRef.value?.resetFields();
+
+  // Form.value.account_number = '';
+  // Form.value.Cashinamount = '';
+  // Form.value.Cashoutamount = '';
 };
 </script>
 
@@ -212,7 +267,7 @@ const resetTransactionFields = () => {
   padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 2px;
 }
 
 .cancel-btn {
