@@ -1,3 +1,4 @@
+e
 <template>
   <div class="card-container" ref="target" @click="handleSelectCard(index)">
     <div
@@ -41,6 +42,7 @@ import { convertToReadableFormat } from '@/utils/convertMoney';
 import { useCreditStore, useDialogStore, useGameStore } from '@/stores';
 import gameLogic from '@/composables/useGameLogic';
 import distributeCardSound from '@/assets/audio/new-card-audio.mp3';
+import { StartGameStatus } from '@/models/enums';
 
 type Props = {
   index: number;
@@ -137,9 +139,9 @@ watch(
 watch(
   () => gameStore.getStartGame,
   (newValue) => {
-    if (newValue === 'START') {
+    if (newValue === StartGameStatus.start) {
       updateCardPosition(true);
-    } else if (newValue === 'DONE') {
+    } else if (newValue === StartGameStatus.done) {
       updateCardPosition(false);
       scaleRef.value?.classList.remove('scaleIn');
     }
@@ -148,7 +150,7 @@ watch(
 );
 
 watch([() => props.containerWidth, () => props.containerHeight], ([newWidth, newHeight]) => {
-  if (gameStore.getStartGame === 'START' && newWidth > 10 && newHeight > 10) {
+  if (gameStore.getStartGame === StartGameStatus.start && newWidth > 10 && newHeight > 10) {
     updateCardPosition(true);
   }
 });
@@ -162,7 +164,7 @@ onMounted(async () => {
   await nextTick();
 
   if (
-    gameStore.getStartGame === 'START' &&
+    gameStore.getStartGame === StartGameStatus.start &&
     props.containerWidth > 10 &&
     props.containerHeight > 10
   ) {

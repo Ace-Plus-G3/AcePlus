@@ -1,9 +1,10 @@
+import { GameStatus, StartGameStatus } from '@/models/enums';
 import type { TBots, TCardType, TGameHistory, TSelectedCard } from '@/models/type';
 import { defineStore } from 'pinia';
 
 type TState = {
-  start_game: 'PENDING' | 'START' | 'DONE';
-  game_status: 'PENDING' | 'WIN' | 'LOSE';
+  start_game: StartGameStatus;
+  game_status: GameStatus;
 
   background_music: number;
   card_music: number;
@@ -38,9 +39,8 @@ type TState = {
 
 export const useGameStore = defineStore('gameStore', {
   state: (): TState => ({
-    start_game: 'PENDING',
-    game_status: 'PENDING',
-
+    start_game: StartGameStatus.pending,
+    game_status: GameStatus.pending,
     background_music: 100,
     card_music: 100,
     wheel_music: 100,
@@ -119,11 +119,11 @@ export const useGameStore = defineStore('gameStore', {
       this.win_music = newValue;
     },
 
-    setStartGame(newValue: 'PENDING' | 'START' | 'DONE') {
+    setStartGame(newValue: StartGameStatus) {
       this.start_game = newValue;
     },
 
-    setGameStatus(newValue: 'PENDING' | 'WIN' | 'LOSE') {
+    setGameStatus(newValue: GameStatus) {
       this.game_status = newValue;
     },
 

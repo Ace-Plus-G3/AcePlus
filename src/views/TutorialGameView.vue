@@ -6,7 +6,7 @@
       <div
         class="game-container"
         ref="gameContainerRef"
-        :disabled="gameStore.getStartGame === 'START'"
+        :disabled="gameStore.getStartGame === StartGameStatus.start"
       >
         <el-image id="card-back" fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
         <CustomCardStatic
@@ -42,6 +42,7 @@ import TutorialComponent from '@/components/TutorialComponent.vue';
 import { useRoute } from 'vue-router';
 import { getRandomCards } from '@/utils/getRandomCards';
 import { Cards } from '@/models/constants';
+import { StartGameStatus } from '@/models/enums';
 
 const gameContainerRef = ref<HTMLElement | null>(null);
 const containerWidth = ref(0);

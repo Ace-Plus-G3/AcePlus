@@ -99,9 +99,6 @@ const imageSrc = ref(new URL('/src/assets/gcash-logo.png', import.meta.url).href
 const dialogStore = useDialogStore();
 const creditStore = useCreditStore();
 
-const account_number = ref<number | null>(null);
-const amount = ref<number | null>(null);
-
 const transactionType = ref<string>('');
 const transactionDialogVisible = ref(false);
 
@@ -215,10 +212,6 @@ const CashoutForm = ref({
 const resetTransactionFields = () => {
   CashinFormRef.value?.resetFields();
   CashoutFormRef.value?.resetFields();
-
-  // Form.value.account_number = '';
-  // Form.value.Cashinamount = '';
-  // Form.value.Cashoutamount = '';
 };
 </script>
 

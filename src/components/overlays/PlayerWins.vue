@@ -1,5 +1,5 @@
 <template>
-  <div class="overlay" v-if="gameStore.getGameStatus === 'WIN'">
+  <div class="overlay" v-if="gameStore.getGameStatus === GameStatus.win">
     <div class="win-overlay">
       <el-image :src="WIN_ICON" />
     </div>
@@ -7,10 +7,11 @@
 </template>
 
 <script setup lang="ts">
-import WIN_ICON from '@/assets/game/title_win.png'
-import { useGameStore } from '@/stores'
+import WIN_ICON from '@/assets/game/title_win.png';
+import { GameStatus } from '@/models/enums';
+import { useGameStore } from '@/stores';
 
-const gameStore = useGameStore()
+const gameStore = useGameStore();
 </script>
 
 <style scoped>
