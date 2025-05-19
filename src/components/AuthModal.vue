@@ -21,6 +21,9 @@
             <el-input
               :prefix-icon="Flag"
               v-model="loginForm.phoneNumber"
+              type="text"
+              maxlength="11"
+              show-word-limit
               autocomplete="off"
               placeholder="09xxxxxxxxx"
             />
@@ -53,6 +56,9 @@
             <el-input
               :prefix-icon="Flag"
               v-model="signupForm.phoneNumber"
+              type="text"
+              maxlength="11"
+              show-word-limit
               autocomplete="off"
               placeholder="09xxxxxxxxx"
             />
@@ -91,8 +97,8 @@ import { ref, watch, computed } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import { Flag } from '@element-plus/icons-vue';
 import { usePlayerStore } from '@/stores';
-import { showNotify } from '@/utils/notify';
 import type { TLogin, TSignup } from '@/models/type';
+import { showNotify } from '@/utils/notify';
 
 const store = usePlayerStore();
 
@@ -147,6 +153,16 @@ const rules = ref<FormRules>({
   phoneNumber: [
     { required: true, message: 'Please enter your mobile number', trigger: 'blur' },
     { min: 11, max: 11, message: 'Phone Number must be 11 digits', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (!/^\d+$/.test(value)) {
+          callback(new Error('Phone Number must contain only digits'));
+        } else {
+          callback();
+        }
+      },
+      trigger: 'blur',
+    },
   ],
   password: [
     { required: true, message: 'Please enter your password', trigger: 'blur' },
@@ -173,30 +189,17 @@ const isSignupFormValid = computed(() => {
   return signupForm.value.phoneNumber.trim() !== '' && signupForm.value.password.trim() !== '';
 });
 
-const signup = async () => {
-  if (isAgreeToTerms.value === false) {
+const signup = () => {
+  if (!isAgreeToTerms.value) {
     showNotify({
       title: 'Error!',
       message: 'Please agree to our Terms of Service.',
       type: 'error',
     });
-    return;
-  }
-  try {
-    await store.handleSignup({
+  } else {
+    store.handleSignup({
       formE1: signupFormRef.value,
       handleChangeTab,
-    });
-    showNotify({
-      title: 'Success!',
-      message: 'You have sign up successfully.',
-      type: 'success',
-    });
-  } catch (error) {
-    showNotify({
-      title: 'Error!',
-      message: `${error}`,
-      type: 'error',
     });
   }
 };
@@ -213,27 +216,13 @@ const isLoginFormValid = computed(() => {
   return loginForm.value.phoneNumber.trim() !== '' && loginForm.value.password.trim() !== '';
 });
 
-const login = async () => {
-  try {
-    await store.handleLogin({
-      formE1: loginFormRef.value,
-      handleCloseModal: () => {
-        dialogFormVisible.value = false;
-      },
-    });
-    showNotify({
-      title: 'Success!',
-      message: 'You have logged in successfully.',
-      type: 'success',
-    });
-  } catch (error) {
-    console.log(error);
-    showNotify({
-      title: 'Error!',
-      message: `${error}`,
-      type: 'error',
-    });
-  }
+const login = () => {
+  store.handleLogin({
+    formE1: loginFormRef.value,
+    handleCloseModal: () => {
+      dialogFormVisible.value = false;
+    },
+  });
 };
 </script>
 
@@ -299,7 +288,8 @@ const login = async () => {
 
 :deep(.el-button):hover {
   scale: none !important;
-  cursor: pointer;
+  background-color: rgb(223, 159, 22);
+  color: var(--primary-black);
 }
 
 .terms-of-service-container {
