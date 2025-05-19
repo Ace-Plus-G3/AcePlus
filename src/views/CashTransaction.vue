@@ -8,10 +8,15 @@
       <div class="cash-transaction-container">
         <TabsComponent>
           <template v-slot:cashin>
-            <el-form class="transaction-form" :rules="rules" :model="Form" ref="FormRef">
+            <el-form
+              class="transaction-form"
+              :rules="rules"
+              :model="CashinForm"
+              ref="CashinFormRef"
+            >
               <el-form-item prop="account_number">
                 <el-input
-                  v-model="Form.account_number"
+                  v-model="CashinForm.account_number"
                   placeholder="Enter Account Number"
                   type="number"
                   class="phone-number-input"
@@ -19,7 +24,7 @@
               </el-form-item>
               <el-form-item prop="Cashinamount">
                 <el-input
-                  v-model.number="Form.Cashinamount"
+                  v-model.number="CashinForm.Cashinamount"
                   placeholder="Enter Amount"
                   type="number"
                   class="amount-input"
@@ -31,10 +36,15 @@
             </el-form>
           </template>
           <template v-slot:cashout>
-            <el-form class="transaction-form" :rules="rules" :model="Form" ref="FormRef">
+            <el-form
+              class="transaction-form"
+              :rules="rules"
+              :model="CashoutForm"
+              ref="CashoutFormRef"
+            >
               <el-form-item prop="account_number">
                 <el-input
-                  v-model="Form.account_number"
+                  v-model="CashoutForm.account_number"
                   placeholder="Enter Account Number"
                   type="number"
                   class="phone-number-input"
@@ -42,7 +52,7 @@
               </el-form-item>
               <el-form-item prop="Cashoutamount">
                 <el-input
-                  v-model.number="Form.Cashoutamount"
+                  v-model.number="CashoutForm.Cashoutamount"
                   placeholder="Enter Amount"
                   type="number"
                   class="phone-number-input"
@@ -116,13 +126,16 @@ const CashIn = async () => {
     background: 'rgba(0, 0, 0, 0.7)',
   });
 
-  FormRef.value?.validate((valid) => {
+  CashinFormRef.value?.validate((valid) => {
     if (!valid) {
       loading.close();
       return;
     }
     setTimeout(() => {
-      creditStore.handleCashin(Number(Form.value.Cashinamount), Number(Form.value.account_number));
+      creditStore.handleCashin(
+        Number(CashinForm.value.Cashinamount),
+        Number(CashinForm.value.account_number),
+      );
       dialogStore.showDialog('success', 'Cash-in transaction completed successfully!');
       resetTransactionFields();
       loading.close();
@@ -137,22 +150,22 @@ const CashOut = () => {
     background: 'rgba(0, 0, 0, 0.7)',
   });
 
-  if (Number(Form.value.Cashoutamount) > creditStore.getCurrentBalance) {
+  if (Number(CashoutForm.value.Cashoutamount) > creditStore.getCurrentBalance) {
     dialogStore.showDialog('error', 'Cash-out amount exceeds current balance!');
     loading.close();
     resetTransactionFields();
     return;
   }
 
-  FormRef.value?.validate((valid) => {
+  CashoutFormRef.value?.validate((valid) => {
     if (!valid) {
       loading.close();
       return;
     }
     setTimeout(() => {
       creditStore.handleCashout(
-        Number(Form.value.Cashoutamount),
-        Number(Form.value.account_number),
+        Number(CashoutForm.value.Cashoutamount),
+        Number(CashoutForm.value.account_number),
       );
       dialogStore.showDialog('success', 'Cash-out t ransaction completed successfully!');
       resetTransactionFields();
@@ -187,18 +200,25 @@ const rules = <FormRules>{
   ],
 };
 
-const FormRef = ref<FormInstance>();
-const Form = ref({
+const CashinFormRef = ref<FormInstance>();
+const CashoutFormRef = ref<FormInstance>();
+const CashinForm = ref({
   account_number: '',
   Cashinamount: '',
+});
+
+const CashoutForm = ref({
+  account_number: '',
   Cashoutamount: '',
 });
 
 const resetTransactionFields = () => {
-  FormRef.value?.resetFields();
-  Form.value.account_number = '';
-  Form.value.Cashinamount = '';
-  Form.value.Cashoutamount = '';
+  CashinFormRef.value?.resetFields();
+  CashoutFormRef.value?.resetFields();
+
+  // Form.value.account_number = '';
+  // Form.value.Cashinamount = '';
+  // Form.value.Cashoutamount = '';
 };
 </script>
 
