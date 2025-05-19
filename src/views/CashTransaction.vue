@@ -31,23 +31,27 @@
             </el-form>
           </template>
           <template v-slot:cashout>
-            <form class="transaction-form">
-              <el-input
-                v-model="account_number"
-                placeholder="Enter Account Number"
-                type="number"
-                class="phone-number-input"
-              />
-              <el-input
-                v-model="amount"
-                placeholder="Enter Amount"
-                type="number"
-                class="phone-number-input"
-              />
+            <el-form class="transaction-form" :rules="rules" :model="Form" ref="FormRef">
+              <el-form-item prop="account_number">
+                <el-input
+                  v-model="Form.account_number"
+                  placeholder="Enter Account Number"
+                  type="number"
+                  class="phone-number-input"
+                />
+              </el-form-item>
+              <el-form-item prop="Cashoutamount">
+                <el-input
+                  v-model.number="Form.Cashoutamount"
+                  placeholder="Enter Amount"
+                  type="number"
+                  class="phone-number-input"
+                />
+              </el-form-item>
               <el-button class="gold-bg" @click="openTransactionDialog('Cash-out')"
                 >Cash Out</el-button
               >
-            </form>
+            </el-form>
           </template>
         </TabsComponent>
       </div>
@@ -133,30 +137,28 @@ const CashOut = () => {
     background: 'rgba(0, 0, 0, 0.7)',
   });
 
-  if (!amount.value || !account_number.value) {
-    dialogStore.showDialog('error', 'Please fill in all fields');
+  if (Number(Form.value.Cashoutamount) > creditStore.getCurrentBalance) {
+    dialogStore.showDialog('error', 'Cash-out amount exceeds current balance!');
     loading.close();
-    return;
-  }
-
-  if (amount.value < 100) {
-    dialogStore.showDialog('error', 'Minimum cash-out is 100');
-    loading.close();
-    return;
-  }
-
-  if (amount.value > creditStore.getCurrentBalance) {
-    dialogStore.showDialog('error', 'Insufficient Balance');
-    loading.close();
-    return;
-  }
-
-  setTimeout(() => {
-    creditStore.handleCashout(Number(amount.value), Number(account_number.value));
-    dialogStore.showDialog('success', 'Cash-out t ransaction completed successfully!');
     resetTransactionFields();
-    loading.close();
-  }, 2000);
+    return;
+  }
+
+  FormRef.value?.validate((valid) => {
+    if (!valid) {
+      loading.close();
+      return;
+    }
+    setTimeout(() => {
+      creditStore.handleCashout(
+        Number(Form.value.Cashoutamount),
+        Number(Form.value.account_number),
+      );
+      dialogStore.showDialog('success', 'Cash-out t ransaction completed successfully!');
+      resetTransactionFields();
+      loading.close();
+    }, 2000);
+  });
 };
 
 const rules = <FormRules>{
@@ -194,7 +196,9 @@ const Form = ref({
 
 const resetTransactionFields = () => {
   FormRef.value?.resetFields();
-  FormRef.value?.resetFields();
+  Form.value.account_number = '';
+  Form.value.Cashinamount = '';
+  Form.value.Cashoutamount = '';
 };
 </script>
 
