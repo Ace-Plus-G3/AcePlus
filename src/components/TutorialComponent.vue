@@ -3,7 +3,7 @@
     >Skip Tutorial
     <el-icon><DArrowRight /></el-icon>
   </el-button>
-  <el-tour v-model="open" :show-close="false" @finish="handleGotoGame">
+  <el-tour v-model="open" :show-close="false" @finish="handleFinishTutorial">
     <el-tour-step v-for="(step, index) in steps" :key="index" v-bind="step" />
   </el-tour>
 
@@ -58,6 +58,11 @@ const handleSkipTutorial = () => {
   open.value = false;
   isMessageOpen.value = true;
 };
+
+const handleFinishTutorial = () => {
+  open.value = false;
+  isMessageOpen.value = true;
+}
 
 const handleCloseDialog = () => {
   isMessageOpen.value = false;
