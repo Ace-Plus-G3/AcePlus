@@ -9,8 +9,8 @@
             <h3><span>₱</span> {{ formatCurrency(creditStore.getCurrentBalance) }}</h3>
           </div>
           <div class="right-amount">
-            <el-button @click="goToCashTransact" :icon="Plus">Cash In</el-button>
-            <el-button @click="goToCashTransact" :icon="Minus">Cash Out</el-button>
+            <el-button @click="goToCashTransact('cashin')" :icon="Plus">Cash In</el-button>
+            <el-button @click="goToCashTransact('cashout')" :icon="Minus">Cash Out</el-button>
           </div>
         </div>
       </div>
@@ -76,10 +76,11 @@ import moment from 'moment';
 import { Plus, Minus } from '@element-plus/icons-vue';
 import TabsComponent from '@/components/TabsComponent.vue';
 import { useRouter } from 'vue-router';
-import { useCreditStore } from '@/stores';
+import { useCreditStore, useDialogStore } from '@/stores';
 import { formatCurrency } from '@/utils/convertMoney';
 
 const creditStore = useCreditStore();
+const transactionStore = useDialogStore();
 
 const goToReciept = (transaction_id: string, transaction_type: 'cash-in' | 'cash-out') => {
   creditStore.setCurrentTransactionId(transaction_id);
@@ -95,8 +96,9 @@ const goToReciept = (transaction_id: string, transaction_type: 'cash-in' | 'cash
 
 const router = useRouter();
 
-const goToCashTransact = () => {
-  router.push({ name: 'cash-transaction' });
+const goToCashTransact = (type: 'cashin' | 'cashout') => {
+  transactionStore.setTransactionType(type);
+  router.push(`/cash-transaction`);
 };
 </script>
 
