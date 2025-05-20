@@ -71,38 +71,46 @@ const containerWidth = ref(0);
 const containerHeight = ref(0);
 
 const initializeGame = () => {
-  // gameLogic.cleanupAllIntervals();
-  // gameStore.setStartingIn(5);
-  // gameStore.setRevealCard(false);
-  // gameStore.setStartGame(StartGameStatus.pending);
-  // gameStore.setGameStatus(GameStatus.pending);
-  // gameStore.setFourCards([]);
-  // gameStore.setSelectedCards([]);
-  // gameStore.setAllBets([]);
-  // gameStore.setAllBots([]);
-  // gameStore.setTotalPlayers(0);
-
-  const cards = getRandomCards(Cards);
-  cards.forEach((item) => {
-    console.log(`${item.value}`);
-  });
-  gameStore.setFourCards(cards);
   gameStore.setStartGame(StartGameStatus.pending);
+  if (gameStore.getStartinIn > 0) {
+    gameLogic.cleanupAllIntervals();
+    gameStore.setStartingIn(5);
+    gameStore.setRevealCard(false);
+    gameStore.setStartGame(StartGameStatus.pending);
+    gameStore.setGameStatus(GameStatus.pending);
+    gameStore.setFourCards([]);
+    gameStore.setSelectedCards([]);
+    gameStore.setAllBets([]);
+    gameStore.setAllBots([]);
+    gameStore.setTotalPlayers(0);
 
-  const newIntervalId = setInterval(() => {
-    if (gameStore.getStartinIn > 0) {
-      gameStore.decreaseStartingIn();
-    } else {
-      gameLogic.setIntervalId(undefined);
+    const cards = getRandomCards(Cards);
+    cards.forEach((item) => {
+      console.log(`${item.value}`);
+    });
+    gameStore.setFourCards(cards);
+    gameStore.setStartGame(StartGameStatus.pending);
 
-      const timeoutId = setTimeout(() => {
-        gameStore.setStartGame(StartGameStatus.start);
-      }, 500);
-      gameLogic.addTimeout(timeoutId);
-    }
-  }, 1000);
+    const newIntervalId = setInterval(() => {
+      if (gameStore.getStartinIn > 0) {
+        gameStore.decreaseStartingIn();
+      } else {
+        gameLogic.setIntervalId(undefined);
 
-  gameLogic.setIntervalId(newIntervalId);
+        const timeoutId = setTimeout(() => {
+          gameStore.setStartGame(StartGameStatus.start);
+        }, 500);
+        gameLogic.addTimeout(timeoutId);
+      }
+    }, 1000);
+
+    gameLogic.setIntervalId(newIntervalId);
+  } else {
+    const timeoutId = setTimeout(() => {
+      gameStore.setStartGame(StartGameStatus.start);
+    }, 500);
+    gameLogic.addTimeout(timeoutId);
+  }
 };
 
 const resetGameState = () => {
@@ -280,7 +288,7 @@ const handleResetCard = () => {
   gameLogic.cleanupAllIntervals();
   gameStore.setTimer(5);
   gameStore.setRevealCard(false);
-  gameStore.setStartGame(StartGameStatus.pending);
+  gameStore.setStartGame(StartGameStatus.done);
   gameStore.setGameStatus(GameStatus.pending);
   gameStore.setFourCards([]);
   gameStore.setSelectedCards([]);
@@ -339,11 +347,12 @@ const updateContainerDimensions = async () => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateContainerDimensions);
   gameLogic.cleanupAll();
+  gameStore.setStartGame(StartGameStatus.pending);
 });
 
-onUnmounted(() => {
-  resetGameState();
-});
+// onUnmounted(() => {
+//   resetGameState();
+// });
 
 onMounted(async () => {
   window.addEventListener('resize', updateContainerDimensions);
@@ -359,7 +368,10 @@ watch(
       gameLogic.cleanupAllIntervals();
 
       const newGameTimeoutId = setTimeout(() => {
-        handleGenerateBots();
+        // if there currnt bots, dont generate
+        if (gameStore.getAllBots.length > 0) {
+          handleGenerateBots();
+        }
 
         const newIntervalId = setInterval(() => {
           if (gameStore.getTimer > 0) {
@@ -378,17 +390,19 @@ watch(
       }, 1500);
       gameLogic.addTimeout(distributeBotTimeout);
 
+      const resetDalay = gameStore.getTimer * 1000;
+      console.log(resetDalay);
       const resetGameTImeout = setTimeout(() => {
         console.log('11.5 secs done');
         handleCancelBet();
         getHighestCard();
         handleRevealCard();
-      }, 11500);
+      }, resetDalay + 1500);
       gameLogic.addTimeout(resetGameTImeout);
-
+      // gameStore.getTimer * 100 + 500  = 11500
       const resetCardTimeout = setTimeout(() => {
         handleResetCard();
-      }, 15500);
+      }, resetDalay + 5500);
       gameLogic.addTimeout(resetCardTimeout);
     }
   },

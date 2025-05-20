@@ -119,7 +119,7 @@ export const useGameStore = defineStore('gameStore', {
 
       // Arrays and Objects
       const allBots = JSON.parse(localStorage.getItem('allBots') || '[]');
-      const selectedCards = JSON.parse(localStorage.getItem('selectedCards') || '{}');
+      const selectedCards = JSON.parse(localStorage.getItem('selectedCards') || '[]');
       const four_random_cards = JSON.parse(localStorage.getItem('four_random_cards') || '[]');
       const currentSelectedCard = JSON.parse(localStorage.getItem('currentSelectedCard') || '{}');
       this.allBots = allBots;
