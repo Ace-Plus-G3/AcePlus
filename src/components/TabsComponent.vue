@@ -1,15 +1,16 @@
 <template>
-  <el-tabs v-model="activeName" class="demo-tabs" stretch>
-    <el-tab-pane label="Cash-In" name="first">
+  <el-tabs v-model="transactionStore.transactionType" class="demo-tabs" stretch>
+    <el-tab-pane label="Cash-In" name="cashin">
       <slot name="cashin"></slot>
     </el-tab-pane>
-    <el-tab-pane label="Cash-Out" name="second">
+    <el-tab-pane label="Cash-Out" name="cashout">
       <slot name="cashout"></slot>
     </el-tab-pane>
   </el-tabs>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-const activeName = ref('first')
+import { useDialogStore } from '@/stores';
+
+const transactionStore = useDialogStore();
 </script>
