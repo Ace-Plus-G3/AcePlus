@@ -19,14 +19,17 @@
         >
           <el-form-item prop="phoneNumber">
             <el-input
-              :prefix-icon="Flag"
               v-model="loginForm.phoneNumber"
               type="text"
               maxlength="11"
               show-word-limit
               autocomplete="off"
               placeholder="09xxxxxxxxx"
-            />
+            >
+              <template #prefix>
+                <img src="../assets/svg/flag.svg" style="width: 20px; height: 20px" />
+              </template>
+            </el-input>
           </el-form-item>
           <el-form-item prop="password">
             <el-input
@@ -54,14 +57,17 @@
         >
           <el-form-item prop="phoneNumber">
             <el-input
-              :prefix-icon="Flag"
               v-model="signupForm.phoneNumber"
               type="text"
               maxlength="11"
               show-word-limit
               autocomplete="off"
               placeholder="09xxxxxxxxx"
-            />
+            >
+              <template #prefix>
+                <img src="../assets/svg/flag.svg" style="width: 20px; height: 20px" />
+              </template>
+            </el-input>
           </el-form-item>
           <el-form-item prop="password">
             <el-input
