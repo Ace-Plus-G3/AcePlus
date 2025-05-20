@@ -31,7 +31,7 @@
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item prop="password">
+          <el-form-item prop="password" :rules="rules.loginPassword">
             <el-input
               v-model="loginForm.password"
               autocomplete="off"
@@ -69,7 +69,7 @@
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item prop="password">
+          <el-form-item prop="password" :rules="rules.signupPassword">
             <el-input
               type="password"
               v-model="signupForm.password"
@@ -178,9 +178,25 @@ const rules = ref<FormRules>({
       trigger: 'blur',
     },
   ],
-  password: [
+  signupPassword: [
     { required: true, message: 'Please enter your password', trigger: 'blur' },
     { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' },
+    {
+      validator: (rule, value, callback) => {
+        if (!/[A-Z]/.test(value)) {
+          callback(new Error('Password must contain at least one uppercase letter'));
+        } else if (!/[a-z]/.test(value)) {
+          callback(new Error('Password must contain at least one lowercase letter'));
+        } else if (!/\d/.test(value)) {
+          callback(new Error('Password must contain at least one digit'));
+        } else if (!/[^A-Za-z0-9]/.test(value)) {
+          callback(new Error('Password must contain at least one special character'));
+        } else {
+          callback();
+        }
+      },
+      trigger: 'blur',
+    },
   ],
   confirmpassword: [
     { required: true, message: 'Please confirm your password', trigger: 'blur' },
@@ -196,6 +212,7 @@ const rules = ref<FormRules>({
       trigger: 'blur',
     },
   ],
+  loginPassword: [{ required: true, message: 'Please enter your password', trigger: 'blur' }],
 });
 
 // handle Changing tabs
