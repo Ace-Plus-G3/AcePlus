@@ -18,7 +18,7 @@
       <div
         class="game-container"
         ref="gameContainerRef"
-        :disabled="gameStore.getStartGame === 'START'"
+        :disabled="gameStore.getStartGame === StartGameStatus.start"
       >
         <el-image id="card-back" fit="cover" :src="cardBack" alt="card_back_bg" class="card" />
         <BetWin
@@ -60,8 +60,9 @@ import { botNames, Cards } from '@/models/constants';
 import { useCreditStore, useGameStore } from '@/stores';
 import { formatCurrency } from '@/utils/convertMoney';
 import { getRandomCards } from '@/utils/getRandomCards';
-import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useElMessage } from '@/composables/useElMessage';
+import { GameStatus, StartGameStatus } from '@/models/enums';
 
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
@@ -70,59 +71,46 @@ const containerWidth = ref(0);
 const containerHeight = ref(0);
 
 const initializeGame = () => {
-  gameLogic.cleanupAllIntervals();
-  gameStore.setStartingIn(5);
-  gameStore.setRevealCard(false);
-  gameStore.setStartGame('PENDING');
-  gameStore.setGameStatus('PENDING');
-  gameStore.setFourCards([]);
-  gameStore.setSelectedCards([]);
-  gameStore.setAllBets([]);
-  gameStore.setAllBots([]);
-  gameStore.setTotalPlayers(0);
+  gameStore.setStartGame(StartGameStatus.pending);
+  if (gameStore.getStartinIn > 0) {
+    gameLogic.cleanupAllIntervals();
+    gameStore.setStartingIn(5);
+    gameStore.setRevealCard(false);
+    gameStore.setStartGame(StartGameStatus.pending);
+    gameStore.setGameStatus(GameStatus.pending);
+    gameStore.setFourCards([]);
+    gameStore.setSelectedCards([]);
+    gameStore.setAllBets([]);
+    gameStore.setAllBots([]);
+    gameStore.setTotalPlayers(0);
 
-  const cards = getRandomCards(Cards);
-  cards.forEach((item) => {
-    console.log(`${item.value}`);
-  });
-  gameStore.setFourCards(cards);
-  gameStore.setStartGame('PENDING');
+    const cards = getRandomCards(Cards);
+    cards.forEach((item) => {
+      console.log(`${item.value}`);
+    });
+    gameStore.setFourCards(cards);
+    gameStore.setStartGame(StartGameStatus.pending);
 
-  const newIntervalId = setInterval(() => {
-    if (gameStore.getStartinIn > 0) {
-      gameStore.decreaseStartingIn();
-    } else {
-      gameLogic.setIntervalId(undefined);
+    const newIntervalId = setInterval(() => {
+      if (gameStore.getStartinIn > 0) {
+        gameStore.decreaseStartingIn();
+      } else {
+        gameLogic.setIntervalId(undefined);
 
-      const timeoutId = setTimeout(() => {
-        gameStore.setStartGame('START');
-      }, 500);
-      gameLogic.addTimeout(timeoutId);
-    }
-  }, 1000);
+        const timeoutId = setTimeout(() => {
+          gameStore.setStartGame(StartGameStatus.start);
+        }, 500);
+        gameLogic.addTimeout(timeoutId);
+      }
+    }, 1000);
 
-  gameLogic.setIntervalId(newIntervalId);
-};
-
-const resetGameState = () => {
-  gameLogic.setIntervalId(undefined);
-  gameLogic.setResetCountdownId(undefined);
-  gameLogic.clearAllTimeouts();
-
-  // Reset all game state
-  gameStore.setStartingIn(5);
-  gameStore.setTimer(10);
-  gameStore.setRevealCard(false);
-  gameStore.setStartGame('PENDING');
-  gameStore.setGameStatus('PENDING');
-  gameStore.setFourCards([]);
-  gameStore.setSelectedCards([]);
-  gameStore.setAllBets([]);
-  gameStore.setAllBots([]);
-  gameStore.setTotalPlayers(0);
-  gameStore.setCurrentSelectedCard(null);
-  gameStore.setDrawer(false);
-  gameStore.setShowSpinTheWheel(false);
+    gameLogic.setIntervalId(newIntervalId);
+  } else {
+    const timeoutId = setTimeout(() => {
+      gameStore.setStartGame(StartGameStatus.start);
+    }, 500);
+    gameLogic.addTimeout(timeoutId);
+  }
 };
 
 const handleGenerateBots = () => {
@@ -188,12 +176,12 @@ const getHighestCard = () => {
     const hasLuckyCard = selectedCards.some((card) => card.value === 1);
 
     if (hasLuckyCard) {
-      gameStore.setGameStatus('WIN');
+      gameStore.setGameStatus(GameStatus.win);
       return;
     }
 
     const hasHighestCard = selectedCards.some((card) => card.value === highestCard.value);
-    gameStore.setGameStatus(hasHighestCard ? 'WIN' : 'LOSE');
+    gameStore.setGameStatus(hasHighestCard ? GameStatus.win : GameStatus.lose);
   }, 500);
   gameLogic.addTimeout(timeoutId);
   return highestCard;
@@ -224,7 +212,15 @@ const handleRevealCard = () => {
     // item is highest card (and not the lucky ace card)
     if (item.value === highestCard.value && luckyCardIndex < 0) {
       console.log('highest!');
-      const win = item.betAmount * (item.randomMultiplier ?? 2);
+
+      let win = 0;
+      if (item.randomMultiplier) {
+        // If there's multiplier, the return should be the bet amount multiplied by the multiplier
+        win = item.betAmount + item.betAmount * item.randomMultiplier;
+      } else {
+        // Just multiply by 2
+        win = item.betAmount * 2;
+      }
 
       const winBannerDelay = setTimeout(() => {
         gameStore.setBetOnCard(win);
@@ -271,8 +267,8 @@ const handleResetCard = () => {
   gameLogic.cleanupAllIntervals();
   gameStore.setTimer(5);
   gameStore.setRevealCard(false);
-  gameStore.setStartGame('DONE');
-  gameStore.setGameStatus('PENDING');
+  gameStore.setStartGame(StartGameStatus.done);
+  gameStore.setGameStatus(GameStatus.pending);
   gameStore.setFourCards([]);
   gameStore.setSelectedCards([]);
   gameStore.setAllBets([]);
@@ -302,7 +298,7 @@ const handleResetCard = () => {
   const resetTimer = setTimeout(() => {
     gameLogic.cleanupAllIntervals();
     gameStore.setTimer(10);
-    gameStore.setStartGame('START');
+    gameStore.setStartGame(StartGameStatus.start);
   }, 7000);
   gameLogic.addTimeout(resetTimer);
 };
@@ -330,11 +326,12 @@ const updateContainerDimensions = async () => {
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateContainerDimensions);
   gameLogic.cleanupAll();
+  gameStore.setStartGame(StartGameStatus.pending);
 });
 
-onUnmounted(() => {
-  resetGameState();
-});
+// onUnmounted(() => {
+//   resetGameState();
+// });
 
 onMounted(async () => {
   window.addEventListener('resize', updateContainerDimensions);
@@ -346,11 +343,14 @@ onMounted(async () => {
 watch(
   () => gameStore.getStartGame,
   (newValue) => {
-    if (newValue === 'START') {
+    if (newValue === StartGameStatus.start) {
       gameLogic.cleanupAllIntervals();
 
       const newGameTimeoutId = setTimeout(() => {
-        handleGenerateBots();
+        // if there currnt bots, dont generate
+        if (gameStore.getAllBots.length <= 0) {
+          handleGenerateBots();
+        }
 
         const newIntervalId = setInterval(() => {
           if (gameStore.getTimer > 0) {
@@ -369,17 +369,18 @@ watch(
       }, 1500);
       gameLogic.addTimeout(distributeBotTimeout);
 
+      const resetDalay = gameStore.getTimer * 1000;
       const resetGameTImeout = setTimeout(() => {
-        console.log('11.5 secs done');
+        console.log(`${(resetDalay + 1500) / 1000} secs done`);
         handleCancelBet();
         getHighestCard();
         handleRevealCard();
-      }, 11500);
+      }, resetDalay + 1500);
       gameLogic.addTimeout(resetGameTImeout);
-
+      // gameStore.getTimer * 100 + 500  = 11500
       const resetCardTimeout = setTimeout(() => {
         handleResetCard();
-      }, 15500);
+      }, resetDalay + 5500);
       gameLogic.addTimeout(resetCardTimeout);
     }
   },

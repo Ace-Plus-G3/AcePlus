@@ -10,13 +10,15 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useCreditStore, useDialogStore, usePlayerStore } from './stores';
+import { useCreditStore, useDialogStore, useGameStore, usePlayerStore } from './stores';
 const creditStore = useCreditStore();
 const playerStore = usePlayerStore();
 const dialogStore = useDialogStore();
+const gameStore = useGameStore();
 
 onMounted(() => {
   playerStore.handlePersistLogin();
   creditStore.handlePersistCredits();
+  gameStore.handleFetchLocalStorage();
 });
 </script>

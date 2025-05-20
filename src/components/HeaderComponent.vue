@@ -43,15 +43,18 @@
 
 <script setup lang="ts">
 import Logo from '@/assets/logo_new.png';
-import { usePlayerStore } from '@/stores';
+import { useGameStore, usePlayerStore } from '@/stores';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Wallet from '../assets/svg/wallet_svg.vue';
 import AuthModal from './AuthModal.vue';
 import MusicButton from './MusicButton.vue';
 import { showNotify } from '@/utils/notify';
+import { GameStatus, StartGameStatus } from '@/models/enums';
 
 const playerStore = usePlayerStore();
+const gameStore = useGameStore();
+
 const router = useRouter();
 const isModalVisible = ref(false);
 const activeTabValue = ref<string>('Signup-Tab');
@@ -76,6 +79,16 @@ const confirmLogout = () => {
     type: 'success',
   });
   console.log('Logged out');
+  gameStore.setStartingIn(5);
+  gameStore.setTimer(10);
+  gameStore.setStartGame(StartGameStatus.pending);
+  gameStore.setGameStatus(GameStatus.pending);
+  gameStore.setAllBots([]);
+  gameStore.setSelectedCards([]);
+  gameStore.setFourCards([]);
+  gameStore.setCurrentSelectedCard(null);
+  gameStore.setBetOnAce(0);
+  gameStore.setBetOnCard(0);
 };
 </script>
 
