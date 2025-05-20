@@ -71,16 +71,16 @@ const containerWidth = ref(0);
 const containerHeight = ref(0);
 
 const initializeGame = () => {
-  gameLogic.cleanupAllIntervals();
-  gameStore.setStartingIn(5);
-  gameStore.setRevealCard(false);
-  gameStore.setStartGame(StartGameStatus.pending);
-  gameStore.setGameStatus(GameStatus.pending);
-  gameStore.setFourCards([]);
-  gameStore.setSelectedCards([]);
-  gameStore.setAllBets([]);
-  gameStore.setAllBots([]);
-  gameStore.setTotalPlayers(0);
+  // gameLogic.cleanupAllIntervals();
+  // gameStore.setStartingIn(5);
+  // gameStore.setRevealCard(false);
+  // gameStore.setStartGame(StartGameStatus.pending);
+  // gameStore.setGameStatus(GameStatus.pending);
+  // gameStore.setFourCards([]);
+  // gameStore.setSelectedCards([]);
+  // gameStore.setAllBets([]);
+  // gameStore.setAllBots([]);
+  // gameStore.setTotalPlayers(0);
 
   const cards = getRandomCards(Cards);
   cards.forEach((item) => {

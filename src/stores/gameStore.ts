@@ -39,27 +39,28 @@ type TState = {
 
 export const useGameStore = defineStore('gameStore', {
   state: (): TState => ({
-    start_game: StartGameStatus.pending,
-    game_status: GameStatus.pending,
     background_music: 100,
     card_music: 100,
     wheel_music: 100,
     win_music: 100,
 
-    selectedCards: [],
-    four_random_cards: [],
-    currentSelectedCard: null,
+    start_game: StartGameStatus.pending, // persist - DONE
+    game_status: GameStatus.pending, // persist - DONE
+
+    timer: 10, // persist - DONE
+    startingIn: 5, // persist - DONE
+
+    allBots: [], // persist - DONE
+    selectedCards: [], // persist - DONE
+    four_random_cards: [], // persist - DONE
+    currentSelectedCard: null, // persist - DONE
+
+    betOnAce: 0, // persist - DONE
+    betOnCard: 0, // persist - DONE
 
     allBets: [],
-    allBots: [],
-
-    timer: 10,
-    betOnAce: 0,
-    betOnCard: 0,
-    startingIn: 5,
     totalPlayers: 0,
     accumulatedJackpot: 0,
-
     revealCards: false,
     showBetDrawer: false,
     showSpinTheWheel: false,
@@ -103,6 +104,36 @@ export const useGameStore = defineStore('gameStore', {
     getShowHistoryDrawer: (state) => state.showHistoryDrawer,
   },
   actions: {
+    handleFetchLocalStorage() {
+      // Timers
+      const startingIn = JSON.parse(localStorage.getItem('startingIn') || '5');
+      const timer = JSON.parse(localStorage.getItem('timer') || '10');
+      this.startingIn = startingIn;
+      this.timer = timer;
+
+      // Enums Status
+      const start_game = localStorage.getItem('start_game') as StartGameStatus;
+      const game_status = localStorage.getItem('game_status') as GameStatus;
+      this.start_game = start_game;
+      this.game_status = game_status;
+
+      // Arrays and Objects
+      const allBots = JSON.parse(localStorage.getItem('allBots') || '[]');
+      const selectedCards = JSON.parse(localStorage.getItem('selectedCards') || '{}');
+      const four_random_cards = JSON.parse(localStorage.getItem('four_random_cards') || '[]');
+      const currentSelectedCard = JSON.parse(localStorage.getItem('currentSelectedCard') || '{}');
+      this.allBots = allBots;
+      this.selectedCards = selectedCards;
+      this.four_random_cards = four_random_cards;
+      this.currentSelectedCard = currentSelectedCard;
+
+      // Numbers State
+      const betOnAce = JSON.parse(localStorage.getItem('betOnAce') || '0');
+      const betOnCard = JSON.parse(localStorage.getItem('betOnCard') || '0');
+      this.betOnAce = betOnAce;
+      this.betOnCard = betOnCard;
+    },
+
     setBackgroundMusic(newValue: number) {
       this.background_music = newValue;
     },
@@ -121,22 +152,27 @@ export const useGameStore = defineStore('gameStore', {
 
     setStartGame(newValue: StartGameStatus) {
       this.start_game = newValue;
+      localStorage.setItem('start_game', this.start_game);
     },
 
     setGameStatus(newValue: GameStatus) {
       this.game_status = newValue;
+      localStorage.setItem('game_status', this.game_status);
     },
 
     setFourCards(newValue: TCardType[]) {
       this.four_random_cards = newValue;
+      localStorage.setItem('four_random_cards', JSON.stringify(this.four_random_cards));
     },
 
     setSelectedCards(newValue: TSelectedCard[]) {
       this.selectedCards = newValue;
+      localStorage.setItem('selectedCards', JSON.stringify(this.selectedCards));
     },
 
     setCurrentSelectedCard(newValue: { index: number; card: TCardType } | null) {
       this.currentSelectedCard = newValue;
+      localStorage.setItem('currentSelectedCard', JSON.stringify(this.currentSelectedCard));
     },
 
     setAllBets(newAllBets: string[]) {
@@ -145,30 +181,37 @@ export const useGameStore = defineStore('gameStore', {
 
     setAllBots(newAllBots: TBots[]) {
       this.allBots = newAllBots;
+      localStorage.setItem('allBots', JSON.stringify(this.allBots));
     },
 
     setStartingIn(newValue: number) {
       this.startingIn = newValue;
+      localStorage.setItem('startingIn', String(this.startingIn));
     },
 
     decreaseStartingIn() {
       this.startingIn -= 1;
+      localStorage.setItem('startingIn', String(this.startingIn));
     },
 
     setTimer(newValue: number) {
       this.timer = newValue;
+      localStorage.setItem('timer', String(this.timer));
     },
 
     decreaseTimer() {
       this.timer -= 1;
+      localStorage.setItem('timer', String(this.timer));
     },
 
     setBetOnAce(newValue: number) {
       this.betOnAce = newValue;
+      localStorage.setItem('betOnAce', String(this.betOnAce));
     },
 
     setBetOnCard(newValue: number) {
       this.betOnCard = newValue;
+      localStorage.setItem('betOnCard', String(this.betOnCard));
     },
 
     setShowSpinTheWheel(newValue: boolean) {
