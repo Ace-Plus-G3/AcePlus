@@ -6,7 +6,7 @@
         <el-image :src="Star" class="star" />
         <h1>ACE+</h1>
         <h5>Banker Game Plus</h5>
-        <p>But on highest card and win up to billions</p>
+        <p>Bet on highest card and win up to billions</p>
         <div v-if="!playerStore.getToken" class="btn-container">
           <el-button class="gold-bg" @click="openModal('Login-Tab')">Play Now!</el-button>
           <el-button class="gold-bg" @click="openSettings">Settings</el-button>
