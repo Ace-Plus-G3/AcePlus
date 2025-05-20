@@ -7,6 +7,7 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="openSettings">Settings</el-dropdown-item>
+              <el-dropdown-item @click="openTutorial">Tutorial</el-dropdown-item>
               <el-dropdown-item @click="router.push('/')">Leave</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -55,6 +56,10 @@ const handleCloseSettings = () => {
 
 const openSettings = () => {
   showSettings.value = true;
+};
+
+const openTutorial = () => {
+  router.push({ name: 'tutorial', query: { tutorial: 'true' } });
 };
 
 onMounted(() => {
