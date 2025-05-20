@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <el-container class="main-container">
     <el-card style="width: 700px">
       <template #header>
         <div class="card-header">
@@ -44,18 +44,25 @@
       </ol>
       <template #footer>By playing, you accept these simple rules. Have fun!</template>
     </el-card>
-  </div>
+  </el-container>
 </template>
 
 <script setup lang="ts"></script>
 
 <style scoped>
 .main-container {
-  width: 100%;
+  position: relative;
   height: 100dvh;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  background-image: url('@/assets/homepage_bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 0;
+  margin: 0;
 }
 
 .terms-list {
