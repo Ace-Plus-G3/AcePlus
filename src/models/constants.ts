@@ -63,7 +63,7 @@ export const Cards: Array<TCardType> = [
   },
   {
     value: 0,
-    url: new URL('@/assets/cards/front/card_0.png', import.meta.url).href,
+    url: new URL('@/assets/cards/front/card_00.png', import.meta.url).href,
     playerCount: 0,
     totalBet: 0,
   },
