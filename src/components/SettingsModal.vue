@@ -8,7 +8,7 @@
     :before-close="closeModal"
     style="background-color: var(--primary-black); padding: 30px"
   >
-    <el-text size="large" class="gold-text">Sounds & Musics</el-text>
+    <el-text size="large" class="gold-text">Audio Settings</el-text>
     <el-row :gutter="20" style="margin-top: 1em">
       <el-col :span="24">
         <el-text size="small" class="gold-text">Background Music</el-text>
