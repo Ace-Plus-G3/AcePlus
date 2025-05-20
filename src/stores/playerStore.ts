@@ -131,17 +131,20 @@ export const usePlayerStore = defineStore('playerStore', {
         await formE1.validate();
 
         const formData = formE1.$props.model;
+
         if (!formData) return;
 
         const players = localStorage.getItem('players');
-        if (!players) throw new Error('Players not found');
+
+        if (!players) throw new Error('Login failed! No players found. Please sign up first.');
 
         const foundPlayer: TUser = JSON.parse(players).find(
           (item: TUser) =>
             item.phoneNumber === formData.phoneNumber && item.password === formData.password,
         );
 
-        if (!foundPlayer) throw new Error('Player not found');
+        if (!foundPlayer)
+          throw new Error('Login failed! Please check your phone number or password.');
 
         this.setToken(foundPlayer.user_id);
         this.setUser({
