@@ -110,7 +110,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import { Flag } from '@element-plus/icons-vue';
 import { usePlayerStore } from '@/stores';
 import type { TLogin, TSignup } from '@/models/type';
 import { showNotify } from '@/utils/notify';

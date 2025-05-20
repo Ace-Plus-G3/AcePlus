@@ -60,7 +60,7 @@ import { botNames, Cards } from '@/models/constants';
 import { useCreditStore, useGameStore } from '@/stores';
 import { formatCurrency } from '@/utils/convertMoney';
 import { getRandomCards } from '@/utils/getRandomCards';
-import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useElMessage } from '@/composables/useElMessage';
 import { GameStatus, StartGameStatus } from '@/models/enums';
 
@@ -111,27 +111,6 @@ const initializeGame = () => {
     }, 500);
     gameLogic.addTimeout(timeoutId);
   }
-};
-
-const resetGameState = () => {
-  gameLogic.setIntervalId(undefined);
-  gameLogic.setResetCountdownId(undefined);
-  gameLogic.clearAllTimeouts();
-
-  // Reset all game state
-  gameStore.setStartingIn(5);
-  gameStore.setTimer(10);
-  gameStore.setRevealCard(false);
-  gameStore.setStartGame(StartGameStatus.pending);
-  gameStore.setGameStatus(GameStatus.pending);
-  gameStore.setFourCards([]);
-  gameStore.setSelectedCards([]);
-  gameStore.setAllBets([]);
-  gameStore.setAllBots([]);
-  gameStore.setTotalPlayers(0);
-  gameStore.setCurrentSelectedCard(null);
-  gameStore.setDrawer(false);
-  gameStore.setShowSpinTheWheel(false);
 };
 
 const handleGenerateBots = () => {
@@ -369,7 +348,7 @@ watch(
 
       const newGameTimeoutId = setTimeout(() => {
         // if there currnt bots, dont generate
-        if (gameStore.getAllBots.length > 0) {
+        if (gameStore.getAllBots.length <= 0) {
           handleGenerateBots();
         }
 
@@ -391,9 +370,8 @@ watch(
       gameLogic.addTimeout(distributeBotTimeout);
 
       const resetDalay = gameStore.getTimer * 1000;
-      console.log(resetDalay);
       const resetGameTImeout = setTimeout(() => {
-        console.log('11.5 secs done');
+        console.log(`${(resetDalay + 1500) / 1000} secs done`);
         handleCancelBet();
         getHighestCard();
         handleRevealCard();
