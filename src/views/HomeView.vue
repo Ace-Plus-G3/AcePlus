@@ -3,7 +3,7 @@
     <HeaderComponent />
     <div class="main-container" style="">
       <div class="title-container">
-        <el-image :src="Star" class="star" />
+        <el-image :src="Star" class="star" draggable="false" />
         <h1>ACE+</h1>
         <h5>Banker Game Plus</h5>
         <p>Bet on highest card and win up to billions</p>
@@ -18,10 +18,10 @@
         </div>
       </div>
       <div ref="wheelRef" class="wheel">
-        <el-image :src="defaultWheel" fit="cover" />
+        <el-image :src="defaultWheel" fit="cover" draggable="false" />
       </div>
       <div ref="jackpotWheelRef" class="jackpotWheel">
-        <el-image :src="jackpotWheel" fit="cover" />
+        <el-image :src="jackpotWheel" fit="cover" draggable="false" />
       </div>
       <CardHomeView v-for="item in 5" :key="item" :index="item" />
     </div>
