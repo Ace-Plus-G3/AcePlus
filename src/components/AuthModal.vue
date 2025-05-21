@@ -163,8 +163,7 @@ const handleClose = (done: () => void) => {
 
 const rules = ref<FormRules>({
   phoneNumber: [
-    { required: true, message: 'Please enter your mobile number', trigger: 'blur' },
-    { min: 11, max: 11, message: 'Phone Number must be 11 digits', trigger: 'blur' },
+    { required: true, message: 'Please enter your mobile number', trigger: 'change' },
     {
       validator: (rule, value, callback) => {
         if (!/^\d+$/.test(value)) {
@@ -173,12 +172,13 @@ const rules = ref<FormRules>({
           callback();
         }
       },
-      trigger: 'blur',
+      trigger: 'change',
     },
+    { min: 11, max: 11, message: 'Phone Number must be 11 digits', trigger: 'change' },
   ],
   signupPassword: [
     { required: true, message: 'Please enter your password', trigger: 'blur' },
-    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' },
+    { min: 6, message: 'Password must be at least 6 characters', trigger: 'change' },
     {
       validator: (rule, value, callback) => {
         if (!/[A-Z]/.test(value)) {
@@ -193,7 +193,7 @@ const rules = ref<FormRules>({
           callback();
         }
       },
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   confirmpassword: [
@@ -207,7 +207,7 @@ const rules = ref<FormRules>({
         }
       },
       message: 'Passwords do not match',
-      trigger: 'blur',
+      trigger: 'change',
     },
   ],
   loginPassword: [{ required: true, message: 'Please enter your password', trigger: 'blur' }],
