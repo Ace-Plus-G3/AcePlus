@@ -1,7 +1,7 @@
 <template>
   <el-header>
     <div class="logo-container">
-      <el-image :src="Logo" class="logo" />
+      <el-image :src="Logo" class="logo" draggable="false" />
       <h3 class="logo-text">ACE+</h3>
     </div>
     <el-row style="display: flex; align-items: center; gap: 1em">
