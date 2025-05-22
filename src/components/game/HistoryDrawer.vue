@@ -22,15 +22,16 @@
               flex-direction: column;
               justify-content: start;
               align-items: start;
+              gap: 5px;
             "
           >
             <el-text size="small" style="width: 100%; text-align: start; font-size: 10px">{{
-              moment(item.date).format('h:mm a')
+              `ID: ${item.game_id}`
             }}</el-text>
             <el-text
               class="status-text"
               size="large"
-              style="font-size: 24px; letter-spacing: 6px"
+              style="width: 100%; text-align: start; font-size: 24px; letter-spacing: 6px"
               :class="{
                 green: item.type === 'WIN',
                 red: item.type === 'LOSE',
@@ -38,20 +39,36 @@
               >{{ item.type }}</el-text
             >
             <el-text size="small" style="width: 100%; text-align: start; font-size: 12px">{{
-              `₱ ${convertToReadableFormat(item.betValue)}`
+              `Bet: ₱ ${convertToReadableFormat(item.betValue)}`
             }}</el-text>
           </span>
-          <el-text
-            class="amount-text"
-            style="font-size: 24px; letter-spacing: 4px"
-            :class="{
-              green: item.type === 'WIN',
-              red: item.type === 'LOSE',
-            }"
-            >{{
-              `${item.type === 'WIN' ? '+' : '-'} ₱${convertToReadableFormat(item.amount)}`
-            }}</el-text
+          <span
+            style="
+              display: flex;
+              flex-direction: column;
+              justify-content: end;
+              align-items: end;
+              gap: 5px;
+            "
           >
+            <el-text size="small" style="width: 100%; text-align: end; font-size: 10px">{{
+              moment(item.date).format('LLL')
+            }}</el-text>
+            <el-text
+              class="amount-text"
+              style="width: 100%; text-align: end; font-size: 24px; letter-spacing: 4px"
+              :class="{
+                green: item.type === 'WIN',
+                red: item.type === 'LOSE',
+              }"
+              >{{
+                `${item.type === 'WIN' ? '+' : '-'} ₱${convertToReadableFormat(item.amount)}`
+              }}</el-text
+            >
+            <el-text size="small" style="width: 100%; text-align: end; font-size: 12px">{{
+              `Wallet: ₱ ${convertToReadableFormat(item.wallet)}`
+            }}</el-text>
+          </span>
         </el-row>
       </div>
     </div>
@@ -245,6 +262,8 @@ const handleCloseDrawer = () => {
   .status-text,
   .amount-text {
     font-size: 20px !important;
+    text-align: left !important;
+    width: 100%;
   }
 }
 

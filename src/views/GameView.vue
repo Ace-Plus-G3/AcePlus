@@ -232,10 +232,12 @@ const handleRevealCard = () => {
       gameStore.setAllBets(updatedBets);
       creditStore.setCurrentBalance(creditStore.getCurrentBalance + win);
       gameStore.setGameHistory({
+        game_id: String(Math.random() * 10),
         betValue: item.betAmount,
         amount: win,
         type: 'WIN',
         date: new Date(),
+        wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
       });
     }
 
@@ -253,6 +255,8 @@ const handleRevealCard = () => {
         amount: item.betAmount,
         type: 'LOSE',
         date: new Date(),
+        game_id: String(Math.random() * 10),
+        wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
       });
     }
   });

@@ -126,6 +126,8 @@ const spinWheel = () => {
         betValue: gameStore.getBetOnAce,
         date: new Date(),
         type: 'WIN',
+        wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
+        betValue: item.betAmount,
       });
       gameStore.setAccumulatedJackpot(0);
     } else {
@@ -139,6 +141,8 @@ const spinWheel = () => {
         betValue: gameStore.getBetOnAce,
         date: new Date(),
         type: 'WIN',
+        wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
+        betValue: item.betAmount,
       });
 
       source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier;

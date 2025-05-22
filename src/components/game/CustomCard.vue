@@ -1,4 +1,3 @@
-e
 <template>
   <div class="card-container" ref="target" @click="handleSelectCard(index)">
     <div

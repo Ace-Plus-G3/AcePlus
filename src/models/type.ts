@@ -94,8 +94,10 @@ export type THomeCards = {
 };
 
 export type TGameHistory = {
+  game_id: string;
   betValue: number;
   amount: number;
   type: 'WIN' | 'LOSE';
   date: Date;
+  wallet: string;
 };
