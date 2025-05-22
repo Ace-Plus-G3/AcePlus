@@ -142,17 +142,26 @@ onMounted(() => {
   }
 }
 
-@media screen and (max-width: 1024px) and (max-height: 600px) {
+@media screen and (max-width: 1024px) and (max-height: 600px),
+  screen and (max-width: 1280px) and (max-height: 800px) {
   .card-container {
     height: 340px;
     width: 220px;
   }
 }
 
-/* @media screen and (max-width: 1280px) and (max-height: 800px) {
+@media screen and (height: 1368px) {
+  .card-container {
+    bottom: -7%;
+    height: 600px;
+    width: 380px;
+  }
+}
+
+@media screen and (height: 800px) {
   .card-container {
     height: 490px;
     width: 320px;
   }
-} */
+}
 </style>
