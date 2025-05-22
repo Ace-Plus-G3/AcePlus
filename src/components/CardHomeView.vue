@@ -141,4 +141,18 @@ onMounted(() => {
     height: 360px;
   }
 }
+
+@media screen and (max-width: 1024px) and (max-height: 600px) {
+  .card-container {
+    height: 340px;
+    width: 220px;
+  }
+}
+
+/* @media screen and (max-width: 1280px) and (max-height: 800px) {
+  .card-container {
+    height: 490px;
+    width: 320px;
+  }
+} */
 </style>

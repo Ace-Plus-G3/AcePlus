@@ -5,7 +5,7 @@
       <div class="title-container">
         <el-image :src="Star" class="star" draggable="false" />
         <h1>ACE+</h1>
-        <h5>Banker Game Plus</h5>
+        <h5 class="sub-title">Banker Game Plus</h5>
         <p>Bet on highest card and win up to billions</p>
         <div v-if="!playerStore.getToken" class="btn-container">
           <el-button class="gold-bg" @click="openModal('Login-Tab')">Play Now!</el-button>
@@ -274,4 +274,28 @@ onMounted(() => {
     padding-top: 0em;
   }
 }
+
+@media screen and (max-width: 1024px) and (max-height: 800px) {
+  .wheel,
+  .jackpotWheel {
+    width: 400px;
+    height: 400px;
+  }
+  .title-container {
+    z-index: 2000;
+  }
+
+  .title-container h1 {
+    font-size: 5em;
+  }
+  .title-container h5 {
+    font-size: 2em;
+  }
+}
+
+/* @media screen and (max-width: 1280px) and (max-height: 800px) {
+  .title-container h1 {
+    font-size: 6em;
+  }
+} */
 </style>
