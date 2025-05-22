@@ -63,6 +63,7 @@ import { getRandomCards } from '@/utils/getRandomCards';
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useElMessage } from '@/composables/useElMessage';
 import { GameStatus, StartGameStatus } from '@/models/enums';
+import { v4 as uuidv4 } from 'uuid';
 
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
@@ -232,10 +233,12 @@ const handleRevealCard = () => {
       gameStore.setAllBets(updatedBets);
       creditStore.setCurrentBalance(creditStore.getCurrentBalance + win);
       gameStore.setGameHistory({
+        game_id: uuidv4(),
         betValue: item.betAmount,
         amount: win,
         type: 'WIN',
         date: new Date(),
+        wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
       });
     }
 
@@ -253,6 +256,8 @@ const handleRevealCard = () => {
         amount: item.betAmount,
         type: 'LOSE',
         date: new Date(),
+        game_id: uuidv4(),
+        wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
       });
     }
   });

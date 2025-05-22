@@ -33,6 +33,7 @@ import { useTransition } from '@vueuse/core';
 import spinSound from '@/assets/audio/sample6_wheel.mp3';
 import winSound from '@/assets/audio/sample1_spin_price.mp3';
 import { formatCurrency } from '@/utils/convertMoney';
+import { v4 as uuidv4 } from 'uuid';
 
 // images
 import Wheel from '@/assets/jackpot_wheel.png';
@@ -126,6 +127,8 @@ const spinWheel = () => {
         betValue: gameStore.getBetOnAce,
         date: new Date(),
         type: 'WIN',
+        wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
+        game_id: uuidv4(),
       });
       gameStore.setAccumulatedJackpot(0);
     } else {
@@ -139,6 +142,8 @@ const spinWheel = () => {
         betValue: gameStore.getBetOnAce,
         date: new Date(),
         type: 'WIN',
+        wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
+        game_id: uuidv4(),
       });
 
       source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier;
