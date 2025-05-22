@@ -26,7 +26,7 @@
             "
           >
             <el-text size="small" style="width: 100%; text-align: start; font-size: 10px">{{
-              `ID: ${item.game_id}`
+              `ID: ${item.game_id.split('-')[0]}`
             }}</el-text>
             <el-text
               class="status-text"
