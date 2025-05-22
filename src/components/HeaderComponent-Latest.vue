@@ -42,6 +42,7 @@ const goToTransact = () => {
 
 .text {
   display: flex;
+  font-family: 'Lemon', sans-serif;
 }
 
 .text h3 {
