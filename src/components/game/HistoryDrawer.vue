@@ -66,7 +66,7 @@
               }}</el-text
             >
             <el-text size="small" style="width: 100%; text-align: end; font-size: 12px">{{
-              `Wallet: ₱ ${convertToReadableFormat(item.wallet)}`
+              `Wallet: ₱ ${item.wallet}`
             }}</el-text>
           </span>
         </el-row>
