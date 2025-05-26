@@ -56,7 +56,7 @@ import WinBanner from '@/components/game/WinBanner.vue';
 import JackpotWheel from '@/components/JackpotWheel.vue';
 import SpinTheWheel from '@/components/SpinTheWheel.vue';
 import gameLogic from '@/composables/useGameLogic';
-import { botNames, Cards } from '@/models/constants';
+import { botNames, Cards, WIN_TAX_RATE } from '@/models/constants';
 import { useCreditStore, useGameStore } from '@/stores';
 import { formatCurrency } from '@/utils/convertMoney';
 import { getRandomCards } from '@/utils/getRandomCards';
@@ -192,71 +192,77 @@ const handleRevealCard = () => {
   gameStore.setRevealCard(true);
 
   const cards = gameStore.getFourCards;
-  if (cards.length === 0) return null;
+  if (cards.length === 0) return;
 
   const highestCard = cards.reduce((max, curr) => (curr.value > max.value ? curr : max));
   const selectedCards = gameStore.getSelectedCards;
   const luckyCardIndex = selectedCards.findIndex((card) => card.value === 1);
+  const luckyCard = selectedCards[luckyCardIndex];
 
   selectedCards.forEach((item) => {
-    const luckyCard = selectedCards[luckyCardIndex];
+    const isLuckyAce = luckyCardIndex >= 0 && item.value === luckyCard.value;
+    const isHighestCard = item.value === highestCard.value;
 
-    // item is lucky ace card
-    if (luckyCardIndex >= 0 && item.value === luckyCard.value) {
-      const updateSpinTheWheelTimeoutId = setTimeout(() => {
+    if (isLuckyAce) {
+      const timeoutId = setTimeout(() => {
         gameStore.setBetOnAce(item.betAmount);
         gameStore.setShowSpinTheWheel(true);
       }, 1000);
-      gameLogic.addTimeout(updateSpinTheWheelTimeoutId);
+      gameLogic.addTimeout(timeoutId);
     }
 
-    // item is highest card (and not the lucky ace card)
-    if (item.value === highestCard.value && luckyCardIndex < 0) {
-      console.log('highest!');
+    if (isHighestCard && !isLuckyAce) {
+      const grossWin = item.betAmount * (item.randomMultiplier ? 1 + item.randomMultiplier : 2);
+      const taxAmount = grossWin * WIN_TAX_RATE;
+      const netWin = grossWin - taxAmount;
 
-      let win = 0;
-      if (item.randomMultiplier) {
-        // If there's multiplier, the return should be the bet amount multiplied by the multiplier
-        win = item.betAmount + item.betAmount * item.randomMultiplier;
-      } else {
-        // Just multiply by 2
-        win = item.betAmount * 2;
-      }
+      console.log(`Betamount:${item.betAmount}`);
+      console.log(`taxAmount:${taxAmount}`);
+      console.log(`NetWin:${netWin}`);
 
       const winBannerDelay = setTimeout(() => {
-        gameStore.setBetOnCard(win);
+        gameStore.setBetOnCard(netWin);
         gameStore.setWinBanner(true);
       }, 1000);
       gameLogic.addTimeout(winBannerDelay);
 
-      const updatedBets = [...gameStore.getAllBets, `+${formatCurrency(win)}`];
+      const updatedBets = [...gameStore.getAllBets, `+${formatCurrency(netWin)}`];
       gameStore.setAllBets(updatedBets);
-      creditStore.setCurrentBalance(creditStore.getCurrentBalance + win);
+      creditStore.setCurrentBalance(creditStore.getCurrentBalance + netWin);
+
       gameStore.setGameHistory({
         game_id: uuidv4(),
         betValue: item.betAmount,
-        amount: win,
+        amount: netWin,
         type: 'WIN',
         date: new Date(),
         wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
       });
     }
 
-    // player loses
-    if (
-      item.value !== highestCard.value &&
-      (luckyCardIndex < 0 || item.value !== luckyCard?.value)
-    ) {
+    if (!isHighestCard && !isLuckyAce) {
       const updatedBets = [...gameStore.getAllBets, `-${formatCurrency(item.betAmount)}`];
       gameStore.setAllBets(updatedBets);
-      // creditStore.setCurrentBalance(creditStore.getCurrentBalance - item.betAmount);
-      useElMessage().error(`You lose ₱${String(formatCurrency(item.betAmount))}!`, true);
+      useElMessage().error(`You lose ₱${formatCurrency(item.betAmount)}!`, true);
+
       gameStore.setGameHistory({
+        game_id: uuidv4(),
         betValue: item.betAmount,
         amount: item.betAmount,
         type: 'LOSE',
         date: new Date(),
+        wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
+      });
+    }
+
+    // edge case: player bets on the highest card but lucky ace exists
+    if (isHighestCard && luckyCardIndex >= 0 && !isLuckyAce) {
+      gameStore.setGameHistory({
         game_id: uuidv4(),
+        betValue: item.betAmount,
+        amount: item.betAmount,
+        type: 'LOSE',
+        date: new Date(),
         wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
       });
     }
