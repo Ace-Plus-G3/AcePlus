@@ -5,7 +5,7 @@
       <el-image fit="cover" :src="vfxLight" class="light-1" />
       <el-image fit="cover" :src="vfxLight" class="light-2" />
       <div class="text-container">
-        <el-text class="text">+{{ outputValue }}</el-text>
+        <el-text class="text">+{{ outputValue.toFixed(2) }}</el-text>
       </div>
       <el-text class="close-text" @click="handleClose"> Click here to close </el-text>
     </div>

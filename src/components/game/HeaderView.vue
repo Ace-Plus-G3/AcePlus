@@ -13,18 +13,16 @@
           </template>
         </el-dropdown>
         <div id="jackpot-container" class="jackpot-container">
-          <el-text class="jackpot-amount">
-            {{ formatCurrency(outputValue) }}
-          </el-text>
+          <el-text class="jackpot-amount"> ₱ {{ formatCurrency(outputValue) }} </el-text>
           <div class="jackpot-text-container">
             <img :src="JackpotText" class="jackpot-text" alt="" />
           </div>
         </div>
         <MusicButton />
         <div class="chip-amount" @click="router.push({ name: 'transaction-history' })">
-          <el-text class="chip-amount-text" style="color: white" size="small">{{
-            formatCurrency(creditStore.getCurrentBalance)
-          }}</el-text>
+          <el-text class="chip-amount-text" style="color: white" size="small"
+            >₱ {{ formatCurrency(creditStore.getCurrentBalance) }}</el-text
+          >
         </div>
       </div>
     </div>
