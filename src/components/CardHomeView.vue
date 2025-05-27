@@ -161,7 +161,6 @@ onMounted(() => {
 @media screen and (height: 800px) {
   .card-container {
     height: 490px;
-    width: 320px;
   }
 }
 </style>

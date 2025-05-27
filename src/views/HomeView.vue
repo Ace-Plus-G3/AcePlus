@@ -448,4 +448,20 @@ onMounted(() => {
     height: 530px;
   }
 }
+
+@media screen and (min-width: 375px) and (max-height: 848px) {
+  .el-button {
+    width: 100px;
+    height: 40px;
+    font-size: 0.8em;
+  }
+}
+
+@media screen and (min-width: 320px) and (min-height: 848px) {
+  .el-button {
+    width: 90px;
+    height: 35px;
+    font-size: 0.7em;
+  }
+}
 </style>
