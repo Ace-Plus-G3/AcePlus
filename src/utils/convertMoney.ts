@@ -1,12 +1,10 @@
 export const convertToReadableFormat = (value: number): string => {
   const format = (num: number, suffix: string, forceDecimal = false) => {
     const hasDecimal = forceDecimal || num % 1 !== 0;
-    return (
-      num.toLocaleString('en-US', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: hasDecimal ? 2 : 0,
-      }) + suffix
-    );
+    return num.toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: hasDecimal ? 2 : 0,
+    });
   };
   if (value >= 1_000_000_000) {
     return format(value / 1_000_000_000, 'B');
@@ -28,7 +26,7 @@ export const formatCurrency = (value: number) => {
   const hasDecimal = value % 1 !== 0;
 
   return value.toLocaleString('en-US', {
-    minimumFractionDigits: hasDecimal ? 1 : 0,
-    maximumFractionDigits: hasDecimal ? 1 : 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
 };

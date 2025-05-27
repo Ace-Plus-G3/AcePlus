@@ -6,7 +6,7 @@
           <div class="text-container">
             <span class="title gold-text">Bets:</span>
             <el-text class="total-bet-text gold-text">
-              {{ formatCurrency(outputValue) }}
+              ₱ {{ formatCurrency(outputValue) }}
             </el-text>
           </div>
           <div class="text-container">

@@ -21,7 +21,7 @@
         <MusicButton />
         <div class="chip-amount" @click="router.push({ name: 'transaction-history' })">
           <el-text class="chip-amount-text" style="color: white" size="small"
-            >₱ {{ convertToReadableFormat(creditStore.getCurrentBalance) }}</el-text
+            >₱ {{ formatCurrency(creditStore.getCurrentBalance) }}</el-text
           >
         </div>
       </div>
