@@ -212,28 +212,32 @@ const handleRevealCard = () => {
     }
 
     if (isHighestCard && !isLuckyAce) {
-      const grossWin = item.betAmount * (item.randomMultiplier ? 1 + item.randomMultiplier : 2);
-      const taxAmount = grossWin * WIN_TAX_RATE;
-      const netWin = grossWin - taxAmount;
+      const grossWin = item.betAmount * (item.randomMultiplier ?? 1);
+      const taxAmount = parseFloat((grossWin * WIN_TAX_RATE).toFixed(2));
+      const netWin = parseFloat((grossWin - taxAmount).toFixed(2));
+      const balikTaya = parseFloat((item.betAmount + netWin).toFixed(2));
 
-      console.log(`Betamount:${item.betAmount}`);
-      console.log(`taxAmount:${taxAmount}`);
-      console.log(`NetWin:${netWin}`);
+      console.log(`Bet Amount: ${item.betAmount}`);
+      console.log(`Multiplier: ${item.randomMultiplier}`);
+      console.log(`Gross Win: ${grossWin}`);
+      console.log(`Tax Amount: ${taxAmount}`);
+      console.log(`Net Win: ${netWin}`);
+      console.log(`Balik Taya: ${balikTaya}`);
 
       const winBannerDelay = setTimeout(() => {
-        gameStore.setBetOnCard(netWin);
+        gameStore.setBetOnCard(balikTaya);
         gameStore.setWinBanner(true);
       }, 1000);
       gameLogic.addTimeout(winBannerDelay);
 
-      const updatedBets = [...gameStore.getAllBets, `+${formatCurrency(netWin)}`];
+      const updatedBets = [...gameStore.getAllBets, `+${formatCurrency(balikTaya)}`];
       gameStore.setAllBets(updatedBets);
-      creditStore.setCurrentBalance(creditStore.getCurrentBalance + netWin);
+      creditStore.setCurrentBalance(creditStore.getCurrentBalance + balikTaya);
 
       gameStore.setGameHistory({
         game_id: uuidv4(),
         betValue: item.betAmount,
-        amount: netWin,
+        amount: balikTaya,
         type: 'WIN',
         date: new Date(),
         wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,

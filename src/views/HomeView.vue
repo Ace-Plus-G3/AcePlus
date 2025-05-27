@@ -32,7 +32,7 @@
   </el-container>
 
   <div>
-    <AuthModal v-model="isModalVisible" :active-tab-value="activeTabValue" />
+    <AuthModal v-model="playerStore.isModalVisible" :active-tab-value="playerStore.activeTab" />
     <SettingsModal :show-settings="showSettings" @handle-close="handleCloseSettings" />
   </div>
 </template>
@@ -47,15 +47,14 @@ import HeaderComponent from '@/components/HeaderComponent.vue';
 import { usePlayerStore } from '@/stores';
 import { useMotion } from '@vueuse/motion';
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import SettingsModal from '@/components/SettingsModal.vue';
 
 const playerStore = usePlayerStore();
 const router = useRouter();
+const route = useRoute();
 const wheelRef = ref<HTMLElement>();
 const jackpotWheelRef = ref<HTMLElement>();
-const isModalVisible = ref(false);
-const activeTabValue = ref<string>('Login-Tab');
 const showSettings = ref<boolean>(false);
 
 const openSettings = () => {
@@ -67,8 +66,8 @@ const handleCloseSettings = () => {
 };
 
 const openModal = (tab: string) => {
-  activeTabValue.value = tab;
-  isModalVisible.value = true;
+  playerStore.setActiveTab(tab as 'Signup-Tab' | 'Login-Tab');
+  playerStore.setIsModalVisible(true);
 };
 
 const gotoGame = () => {
@@ -88,6 +87,11 @@ const openTutorial = () => {
 };
 
 onMounted(() => {
+  if (route.query.from === 'signup') {
+    openModal('Signup-Tab');
+
+    router.replace({ path: '/', query: {} });
+  }
   useMotion(wheelRef, {
     initial: {
       scale: 0,

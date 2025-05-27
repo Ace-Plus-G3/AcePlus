@@ -1,22 +1,49 @@
 import type { TLoginParams, TSignupParams, TUser } from '@/models/type';
 import { defineStore } from 'pinia';
 import { useCreditStore } from './creditStore';
-
 import { showNotify } from '@/utils/notify';
-
 import { v4 as uuidv4 } from 'uuid';
 
+type PlayerStoreProps = {
+  user: TUser | null;
+  token: string | null;
+  players: TUser[];
+  activeTab: 'Signup-Tab' | 'Login-Tab';
+  isModalVisible: boolean;
+};
+
 export const usePlayerStore = defineStore('playerStore', {
-  state: () => ({
-    user: null as TUser | null,
-    token: null as string | null,
-    players: [] as TUser[],
+  state: (): PlayerStoreProps => ({
+    user: null,
+    token: null,
+    players: [],
+    activeTab: 'Signup-Tab',
+    isModalVisible: false,
   }),
   getters: {
     getUser: (state) => state.user,
     getPlayers: (state) => state.players,
     getToken: (state) => state.token,
     isNewUser: (state) => state.user?.isNewUser || false,
+    getActiveTab: (state) => {
+      const storedTab = localStorage.getItem('activeTab');
+      const validTabs = ['Signup-Tab', 'Login-Tab'] as const;
+
+      if (storedTab && validTabs.includes(storedTab as (typeof validTabs)[number])) {
+        return storedTab as 'Signup-Tab' | 'Login-Tab';
+      }
+
+      return state.activeTab;
+    },
+    getIsModalVisible: (state) => {
+      const storedValue = localStorage.getItem('isModalVisible');
+      try {
+        const parsed = storedValue ? JSON.parse(storedValue) : null;
+        return typeof parsed === 'boolean' ? parsed : state.isModalVisible;
+      } catch {
+        return state.isModalVisible;
+      }
+    },
   },
   actions: {
     setUser(newUser: TUser | null) {
@@ -27,6 +54,14 @@ export const usePlayerStore = defineStore('playerStore', {
     },
     setToken(newToken: string | null) {
       this.token = newToken;
+    },
+    setActiveTab(val: 'Signup-Tab' | 'Login-Tab') {
+      this.activeTab = val;
+      localStorage.setItem('activeTab', this.activeTab);
+    },
+    setIsModalVisible(val: boolean) {
+      this.isModalVisible = val;
+      localStorage.setItem('isModalVisible', JSON.stringify(this.isModalVisible));
     },
     updateIsNewUser(userId: string, isNewUser: boolean) {
       if (this.user && this.user.user_id === userId) {
@@ -195,34 +230,52 @@ export const usePlayerStore = defineStore('playerStore', {
         }
       }
     },
-    async handleLogout() {
+    handleLogout() {
       this.setUser(null);
       this.setToken(null);
       this.setPlayers([]);
 
-      localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('activeTab');
+      localStorage.removeItem('isModalVisible');
     },
     handlePersistLogin() {
       const userToken = localStorage.getItem('token');
-
-      if (!userToken) {
-        console.log('Token not  found!');
-        return false;
-      }
-
-      // Fetch all players in local storage
       const foundUser = localStorage.getItem('user');
-      if (!foundUser) {
-        console.log('Player not found!');
+      const storedTab = localStorage.getItem('activeTab');
+      const storedModalVisible = localStorage.getItem('isModalVisible');
+
+      if (!userToken || !foundUser) {
+        console.log('Token or user not found!');
         return false;
       }
 
-      this.setUser(JSON.parse(foundUser));
-      this.setUser(JSON.parse(foundUser));
-      this.setToken(JSON.parse(foundUser).user_id);
-      console.log('Persists!');
-      return true;
+      try {
+        const parsedUser = JSON.parse(foundUser);
+        const parsedModalVisible = storedModalVisible ? JSON.parse(storedModalVisible) : false;
+
+        // Validate and set user and token
+        this.setUser(parsedUser);
+        this.setToken(parsedUser.user_id);
+
+        // Set modal visibility
+        this.setIsModalVisible(
+          typeof parsedModalVisible === 'boolean' ? parsedModalVisible : false,
+        );
+
+        // Set active tab if it's a valid value
+        const validTabs = ['Signup-Tab', 'Login-Tab'] as const;
+        if (storedTab && validTabs.includes(storedTab as (typeof validTabs)[number])) {
+          this.setActiveTab(storedTab as 'Signup-Tab' | 'Login-Tab');
+        }
+
+        console.log('Persisted user, token, modal, and active tab from localStorage.');
+        return true;
+      } catch (err) {
+        console.error('Error while persisting login:', err);
+        return false;
+      }
     },
   },
 });
