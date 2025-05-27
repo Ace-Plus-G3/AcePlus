@@ -183,8 +183,10 @@ export const probabilityRate = {
   multipliersRate: 1, // 30% chance of multipliers appear on cards
   bokyaRate: 0.2, // 20% chance of bokya
   BonusRate: 0.4, // 20% chance of bonus
-  JackpotRate: 0.01, // 0.01% chance of jackpot
+  JackpotRate: 0.01, // 0.1% chance of jackpot
 };
+
+export const WIN_TAX_RATE = 0.05;
 
 export const HomeCards: Array<THomeCards> = [
   { value: 2, url: new URL('@/assets/cards/front/card_2.png', import.meta.url).href },
