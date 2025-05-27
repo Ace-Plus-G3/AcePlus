@@ -5,11 +5,13 @@
       <div class="title-container">
         <el-image :src="Star" class="star" draggable="false" />
         <h1>ACE+</h1>
-        <h5>Banker Game Plus</h5>
+        <h5 class="sub-title">Banker Game Plus</h5>
         <p>Bet on highest card and win up to billions</p>
+      </div>
+      <div class="button-container">
         <div v-if="!playerStore.getToken" class="btn-container">
-          <el-button class="gold-bg" @click="openModal('Login-Tab')">Play Now!</el-button>
-          <el-button class="gold-bg" @click="openSettings">Settings</el-button>
+          <el-button class="gold-bg btns" @click="openModal('Login-Tab')">Play Now!</el-button>
+          <el-button class="gold-bg btns" @click="openSettings">Settings</el-button>
         </div>
         <div v-if="playerStore.getToken" class="btn-container">
           <el-button class="gold-bg btn" @click="gotoGame">Play Now!</el-button>
@@ -17,11 +19,13 @@
           <el-button class="gold-bg btn" @click="openSettings">Settings</el-button>
         </div>
       </div>
-      <div ref="wheelRef" class="wheel">
-        <el-image :src="defaultWheel" fit="cover" draggable="false" />
-      </div>
-      <div ref="jackpotWheelRef" class="jackpotWheel">
-        <el-image :src="jackpotWheel" fit="cover" draggable="false" />
+      <div class="wheel-container">
+        <div ref="wheelRef" class="wheel">
+          <el-image :src="defaultWheel" fit="cover" draggable="false" />
+        </div>
+        <div ref="jackpotWheelRef" class="jackpotWheel">
+          <el-image :src="jackpotWheel" fit="cover" draggable="false" />
+        </div>
       </div>
       <CardHomeView v-for="item in 5" :key="item" :index="item" />
     </div>
@@ -185,6 +189,8 @@ onMounted(() => {
 }
 .btn-container {
   padding-top: 7%;
+  position: relative;
+  z-index: 9999;
 }
 .star {
   position: absolute;
@@ -276,6 +282,190 @@ onMounted(() => {
 @media screen and (max-width: 1360px) {
   .main-container {
     padding-top: 0em;
+  }
+}
+
+@media screen and (max-width: 1024px) and (max-height: 600px),
+  screen and (max-width: 1280px) and (max-height: 800px) {
+  .wheel,
+  .jackpotWheel {
+    width: 400px;
+    height: 400px;
+  }
+  .title-container {
+    z-index: 2000;
+  }
+
+  .title-container h1 {
+    font-size: 5em;
+  }
+  .title-container h5 {
+    font-size: 2em;
+  }
+}
+
+@media screen and (max-width: 412px) and (max-height: 914px) {
+  .btn-container {
+    gap: 2em;
+  }
+
+  .main-container {
+    gap: 60px;
+  }
+
+  .el-button {
+    width: 180px;
+    height: 50px;
+  }
+
+  .title-container h1 {
+    font-size: 6em !important;
+  }
+
+  .star {
+    top: -40%;
+    left: -25%;
+  }
+}
+
+/* @media screen and (height: 1368px) {
+  .wheel {
+    left: -20%;
+  }
+} */
+
+@media screen and (height: 1368px) {
+  .wheel,
+  .jackpotWheel {
+    width: 700px;
+  }
+  .wheel {
+    left: -25%;
+    bottom: 20%;
+  }
+
+  .jackpotWheel {
+    right: -20%;
+    bottom: 20%;
+  }
+  .el-button {
+    width: 200px;
+    height: 50px;
+  }
+}
+
+@media screen and (max-width: 768px) and (max-height: 1024px) {
+  .wheel {
+    width: 600px;
+    height: 600px;
+  }
+
+  .card-container {
+    width: 320px;
+    height: 500px;
+    bottom: -4%;
+  }
+}
+
+@media screen and (max-width: 412px) and (max-height: 915px) {
+  .card-container {
+    width: 260px;
+    height: 400px;
+  }
+
+  .btn-container {
+    gap: 25px;
+    margin-top: 10px;
+  }
+}
+
+@media screen and (max-width: 320px) and (max-height: 48px) {
+  .title-container h1 {
+    font-size: 20px !important;
+  }
+}
+
+@media screen and (max-width: 360px) and (max-height: 740px),
+  screen and (max-width: 390px) and (max-height: 844px) {
+  .btn-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .el-button {
+    width: 100px;
+    height: 30px;
+    font-size: 0.7em;
+  }
+
+  .main-container {
+    gap: 20px;
+  }
+}
+
+@media screen and (max-width: 414px) and (max-height: 896px) {
+  .btn-container {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .main-container {
+    gap: 30px;
+  }
+
+  .card-container {
+    bottom: -10%;
+  }
+
+  .wheel {
+    top: 25%;
+  }
+}
+
+@media screen and (max-width: 425px) and (max-height: 848px) {
+  .btn-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .main-container {
+    gap: 30px;
+  }
+
+  .card-container {
+    bottom: -15%;
+  }
+  .wheel {
+    top: 24%;
+  }
+}
+
+@media screen and (height: 800px) {
+  .title-container h1 {
+    font-size: 6em;
+  }
+  .wheel,
+  .jackpotWheel {
+    width: 530px;
+    height: 530px;
+  }
+}
+
+@media screen and (min-width: 375px) and (max-height: 848px) {
+  .el-button {
+    width: 100px;
+    height: 40px;
+    font-size: 0.8em;
+  }
+}
+
+@media screen and (min-width: 320px) and (min-height: 848px) {
+  .el-button {
+    width: 90px;
+    height: 35px;
+    font-size: 0.7em;
   }
 }
 </style>
