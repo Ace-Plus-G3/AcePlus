@@ -97,7 +97,7 @@ onMounted(() => {
 <style scoped>
 .card-container {
   position: absolute;
-  bottom: -15%;
+  bottom: -10%;
   padding: 0;
   margin: 0;
   width: 350px;
@@ -136,17 +136,25 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 480px) {
+  /* .card-container { */
+  /*   width: 200px; */
+  /*   height: 360px; */
+  /* } */
+}
+
+@media screen and (max-width: 1280px) and (max-height: 800px) {
   .card-container {
-    width: 200px;
-    height: 360px;
+    /* height: 600px; */
+    /* width: 320px; */
+    bottom: -40%;
   }
 }
 
-@media screen and (max-width: 1024px) and (max-height: 600px),
-  screen and (max-width: 1280px) and (max-height: 800px) {
+@media screen and (max-width: 1024px) and (max-height: 600px) {
   .card-container {
-    height: 340px;
-    width: 220px;
+    height: 420px;
+    width: 240px;
+    bottom: -40%;
   }
 }
 

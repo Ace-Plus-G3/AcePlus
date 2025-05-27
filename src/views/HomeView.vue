@@ -6,7 +6,7 @@
         <el-image :src="Star" class="star" draggable="false" />
         <h1>ACE+</h1>
         <h5 class="sub-title">Banker Game Plus</h5>
-        <p>Bet on highest card and win up to billions</p>
+        <p>Bet on th highest card and win up to billions</p>
       </div>
       <div class="button-container">
         <div v-if="!playerStore.getToken" class="btn-container">
@@ -89,9 +89,9 @@ const openTutorial = () => {
 onMounted(() => {
   if (route.query.from === 'signup') {
     openModal('Signup-Tab');
-
     router.replace({ path: '/', query: {} });
   }
+
   useMotion(wheelRef, {
     initial: {
       scale: 0,
@@ -160,7 +160,7 @@ onMounted(() => {
   justify-content: start;
 }
 .title-container {
-  z-index: 100;
+  z-index: 9999;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -191,6 +191,8 @@ onMounted(() => {
   padding-top: 7%;
   position: relative;
   z-index: 9999;
+  display: flex;
+  gap: 5px;
 }
 .star {
   position: absolute;
@@ -286,7 +288,7 @@ onMounted(() => {
 }
 
 @media screen and (max-width: 1024px) and (max-height: 600px),
-  screen and (max-width: 1280px) and (max-height: 800px) {
+  screen and (max-width: 1280px) and (max-height: 700px) {
   .wheel,
   .jackpotWheel {
     width: 400px;
@@ -304,7 +306,7 @@ onMounted(() => {
   }
 }
 
-@media screen and (max-width: 412px) and (max-height: 914px) {
+@media screen and (max-height: 914px) {
   .btn-container {
     gap: 2em;
   }
@@ -316,6 +318,7 @@ onMounted(() => {
   .el-button {
     width: 180px;
     height: 50px;
+    margin: 0;
   }
 
   .title-container h1 {
@@ -351,13 +354,14 @@ onMounted(() => {
   .el-button {
     width: 200px;
     height: 50px;
+    margin: 0;
   }
 }
 
 @media screen and (max-width: 768px) and (max-height: 1024px) {
   .wheel {
-    width: 600px;
-    height: 600px;
+    width: 500px;
+    height: 500px;
   }
 
   .card-container {
@@ -376,6 +380,7 @@ onMounted(() => {
   .btn-container {
     gap: 25px;
     margin-top: 10px;
+    margin-left: 0 !important;
   }
 }
 
@@ -397,6 +402,7 @@ onMounted(() => {
     width: 100px;
     height: 30px;
     font-size: 0.7em;
+    margin: 0;
   }
 
   .main-container {
@@ -408,6 +414,7 @@ onMounted(() => {
   .btn-container {
     display: flex;
     flex-direction: row;
+    margin: 0;
   }
 
   .main-container {
@@ -428,6 +435,7 @@ onMounted(() => {
     display: flex;
     flex-direction: row;
     gap: 10px;
+    margin: 0;
   }
 
   .main-container {
@@ -458,14 +466,16 @@ onMounted(() => {
     width: 100px;
     height: 40px;
     font-size: 0.8em;
+    margin: 0;
   }
 }
 
 @media screen and (min-width: 320px) and (min-height: 848px) {
   .el-button {
-    width: 90px;
-    height: 35px;
-    font-size: 0.7em;
+    width: 120px;
+    height: 50px;
+    /* font-size: 1em; */
+    margin: 0;
   }
 }
 </style>

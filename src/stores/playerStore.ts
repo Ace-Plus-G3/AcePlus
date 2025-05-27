@@ -244,7 +244,7 @@ export const usePlayerStore = defineStore('playerStore', {
       const userToken = localStorage.getItem('token');
       const foundUser = localStorage.getItem('user');
       const storedTab = localStorage.getItem('activeTab');
-      const storedModalVisible = localStorage.getItem('isModalVisible');
+      // const storedModalVisible = localStorage.getItem('isModalVisible');
 
       if (!userToken || !foundUser) {
         console.log('Token or user not found!');
@@ -253,16 +253,16 @@ export const usePlayerStore = defineStore('playerStore', {
 
       try {
         const parsedUser = JSON.parse(foundUser);
-        const parsedModalVisible = storedModalVisible ? JSON.parse(storedModalVisible) : false;
+        // const parsedModalVisible = storedModalVisible ? JSON.parse(storedModalVisible) : false;
 
         // Validate and set user and token
         this.setUser(parsedUser);
         this.setToken(parsedUser.user_id);
 
         // Set modal visibility
-        this.setIsModalVisible(
-          typeof parsedModalVisible === 'boolean' ? parsedModalVisible : false,
-        );
+        // this.setIsModalVisible(
+        //   typeof parsedModalVisible === 'boolean' ? parsedModalVisible : false,
+        // );
 
         // Set active tab if it's a valid value
         const validTabs = ['Signup-Tab', 'Login-Tab'] as const;
@@ -270,7 +270,6 @@ export const usePlayerStore = defineStore('playerStore', {
           this.setActiveTab(storedTab as 'Signup-Tab' | 'Login-Tab');
         }
 
-        console.log('Persisted user, token, modal, and active tab from localStorage.');
         return true;
       } catch (err) {
         console.error('Error while persisting login:', err);
