@@ -25,7 +25,6 @@
   </el-header>
 
   <div>
-    <AuthModal v-model="isModalVisible" :active-tab-value="activeTabValue" />
     <el-dialog
       v-model="logoutDialogVisible"
       title="Confirm Logout"
@@ -47,23 +46,18 @@ import { useGameStore, usePlayerStore } from '@/stores';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Wallet from '../assets/svg/wallet_svg.vue';
-import AuthModal from './AuthModal.vue';
 import MusicButton from './MusicButton.vue';
 import { showNotify } from '@/utils/notify';
 import { GameStatus, StartGameStatus } from '@/models/enums';
 
-const playerStore = usePlayerStore();
-const gameStore = useGameStore();
-
 const router = useRouter();
-const isModalVisible = ref(false);
-const activeTabValue = ref<string>('Signup-Tab');
-
+const gameStore = useGameStore();
+const playerStore = usePlayerStore();
 const logoutDialogVisible = ref(false);
 
-const openModal = (tab: string) => {
-  activeTabValue.value = tab;
-  isModalVisible.value = true;
+const openModal = (tab: 'Signup-Tab' | 'Login-Tab') => {
+  playerStore.setActiveTab(tab);
+  playerStore.setIsModalVisible(true);
 };
 
 const goToWallet = () => {
@@ -71,14 +65,13 @@ const goToWallet = () => {
 };
 
 const confirmLogout = () => {
-  logoutDialogVisible.value = false;
   playerStore.handleLogout();
+  logoutDialogVisible.value = false;
   showNotify({
     title: 'Success!',
     message: 'You have logout successfully.',
     type: 'success',
   });
-  console.log('Logged out');
   gameStore.setStartingIn(5);
   gameStore.setTimer(10);
   gameStore.setStartGame(StartGameStatus.pending);
@@ -110,8 +103,6 @@ const confirmLogout = () => {
   width: 80px;
   height: 80px;
   flex: 1;
-  /* flex-shrink: 0; */
-  /* flex-grow: 0; */
 }
 
 :deep(.el-button) {

@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-import { probabilityRate, wheelDeg } from '@/models/constants';
+import { probabilityRate, wheelDeg, WIN_TAX_RATE } from '@/models/constants';
 import type { TSpinWheel } from '@/models/type';
 import { useCreditStore, useGameStore } from '@/stores';
 import { useTransition } from '@vueuse/core';
@@ -56,7 +56,6 @@ const outputValue = useTransition(source, { duration: 3000 });
 const spinAudio = new Audio(spinSound);
 const winAudio = new Audio(winSound);
 
-// Cleanup function to prevent memory leaks
 const cleanup = () => {
   if (autoSpinTimeout.value) {
     clearTimeout(autoSpinTimeout.value);
@@ -88,10 +87,10 @@ const spinWheel = () => {
   const randomValue = Math.random();
 
   if (randomValue < probabilityRate.bokyaRate) {
-    // 30% chance of "bokya" appearing
+    // nth chance of "bokya" appearing
     selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 1) || wheelDeg[7];
   } else if (randomValue >= probabilityRate.bokyaRate && randomValue < probabilityRate.BonusRate) {
-    // 30% chance of "bonus" appearing
+    // nth chance of "bonus" appearing
     selectedSlice.value = wheelDeg.find((slice) => slice.multiplier === 6) || wheelDeg[3];
   } else {
     // For other outcomes
@@ -126,18 +125,25 @@ const spinWheel = () => {
 
         // Update user's balance
         if (multiplierWin.value) {
-          creditStore.setCurrentBalance(
-            creditStore.getCurrentBalance + gameStore.getBetOnAce * multiplierWin.value.multiplier,
-          );
+          const grossWin = gameStore.getBetOnAce * multiplierWin.value.multiplier;
+          const taxAmount = grossWin * WIN_TAX_RATE;
+          const netWin = grossWin - taxAmount;
+
+          console.log(`BetOnAce: ${gameStore.getBetOnAce}`);
+          console.log(`grossWin: ${grossWin}`);
+          console.log(`taxAmount: ${taxAmount}`);
+          console.log(`NetWin: ${netWin}`);
+
+          creditStore.setCurrentBalance(creditStore.getCurrentBalance + netWin);
           gameStore.setGameHistory({
-            amount: gameStore.getBetOnAce * multiplierWin.value.multiplier,
+            amount: netWin,
             betValue: gameStore.getBetOnAce,
             date: new Date(),
             type: 'WIN',
             wallet: `${formatCurrency(creditStore.getCurrentBalance)}`,
             game_id: uuidv4(),
           });
-          source.value = gameStore.getBetOnAce * multiplierWin.value.multiplier;
+          source.value = netWin;
         }
       }
     }
