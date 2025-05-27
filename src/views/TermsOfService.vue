@@ -3,7 +3,7 @@
     <el-card style="width: 700px">
       <template #header>
         <div class="card-header">
-          <span><router-link to="/">Back</router-link></span>
+          <span><el-link href="/?from=signup">Back</el-link></span>
         </div>
       </template>
       <h4>Ace+ - Terms of Service</h4>

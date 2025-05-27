@@ -92,7 +92,9 @@
               <el-checkbox v-model="isAgreeToTerms"> </el-checkbox>
               <p>
                 Agree to Terms of Service
-                <el-link type="primary" href="/terms-of-service"> View Terms of Service </el-link>
+                <el-link type="primary" href="/terms-of-service?from=signup">
+                  View Terms of Service
+                </el-link>
               </p>
             </div>
             <el-button @click="signup()" :disabled="!isSignupFormValid" style="width: 100%">
