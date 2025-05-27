@@ -26,7 +26,7 @@ export const formatCurrency = (value: number) => {
   const hasDecimal = value % 1 !== 0;
 
   return value.toLocaleString('en-US', {
-    minimumFractionDigits: hasDecimal ? 2 : 0,
-    maximumFractionDigits: hasDecimal ? 2 : 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   });
 };

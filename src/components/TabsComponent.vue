@@ -14,3 +14,17 @@ import { useDialogStore } from '@/stores';
 
 const transactionStore = useDialogStore();
 </script>
+
+<style scoped>
+:deep(.el-tabs__item) {
+  font-family: 'Lemon', sans-serif;
+}
+
+:deep(.el-tabs__item):hover {
+  color: gray;
+}
+
+:deep(.is-active):hover {
+  color: none;
+}
+</style>
