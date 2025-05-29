@@ -16,6 +16,7 @@
             </el-text>
           </div>
         </div>
+
         <el-button @click="gameStore.setShowGameHistoryDrawer(true)" class="gold-bg history-btn"
           >Show History</el-button
         >
@@ -29,6 +30,7 @@ import { useGameStore } from '@/stores';
 import { formatCurrency } from '@/utils/convertMoney.ts';
 import { useTransition } from '@vueuse/core';
 import { ref, watch } from 'vue';
+import { useCreditStore } from '@/stores';
 
 const gameStore = useGameStore();
 
@@ -37,6 +39,8 @@ const outputValue = useTransition(source, { duration: 300 });
 
 const totalPlayersCount = ref(0);
 const totalPlayersCountValue = useTransition(totalPlayersCount, { duration: 300 });
+
+const creditStore = useCreditStore();
 
 watch(
   [() => gameStore.getTotalPlayers, () => (gameStore.getSelectedCards.length > 0 ? 1 : 0)],
@@ -76,7 +80,7 @@ watch(
 
   .el-footer-bottom-bar {
     max-width: 800px;
-    min-width: 350px;
+    min-width: 320px;
     width: 100%;
     aspect-ratio: 8.88 / 1;
     position: relative;
@@ -172,6 +176,14 @@ watch(
 @media screen and (max-width: 425px) {
   .el-footer-image {
     padding: 0 15px !important;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .history-btn {
+    width: 80px;
+    height: 20px;
+    font-size: 0.5em;
   }
 }
 </style>

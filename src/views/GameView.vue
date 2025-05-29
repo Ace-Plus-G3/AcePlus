@@ -38,7 +38,11 @@
         />
       </div>
     </el-main>
-
+    <div class="wallet-amount-container" style="padding-bottom: 30px">
+      <el-text class="chip-amount-text" style="color: white" size="large"
+        >Balance: ₱{{ formatCurrency(creditStore.getCurrentBalance) }}</el-text
+      >
+    </div>
     <FooterView />
     <BetDrawer />
     <HistoryDrawer />

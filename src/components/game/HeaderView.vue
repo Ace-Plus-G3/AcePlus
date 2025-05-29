@@ -18,12 +18,10 @@
             <img :src="JackpotText" class="jackpot-text" alt="" />
           </div>
         </div>
+
         <MusicButton />
-        <div class="chip-amount" @click="router.push({ name: 'transaction-history' })">
-          <el-text class="chip-amount-text" style="color: white" size="small"
-            >₱ {{ formatCurrency(creditStore.getCurrentBalance) }}</el-text
-          >
-        </div>
+        <el-button class="walletBtn" link @click="router.push({ name: 'transaction-history' })">
+        </el-button>
       </div>
     </div>
     <SettingsModal :show-settings="showSettings" @handle-close="handleCloseSettings" />
@@ -39,6 +37,8 @@ import { useTransition } from '@vueuse/core';
 import { onMounted, ref, watch } from 'vue';
 import MusicButton from '../MusicButton.vue';
 import SettingsModal from '../SettingsModal.vue';
+import MenuSvg from '@/assets/svg/menu_svg.vue';
+import Wallet from '@/assets/svg/wallet_svg.vue';
 
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
@@ -75,6 +75,20 @@ watch(
 </script>
 
 <style scoped>
+.walletBtn {
+  width: 40px;
+  height: 70px;
+  background-image: url('@/assets/svg/wallet.svg');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.walletBtn:hover {
+  scale: 1.1;
+  cursor: pointer;
+}
+
 .el-header {
   width: 100%;
   padding: 0 !important;
@@ -87,7 +101,7 @@ watch(
 
   .el-header-top-bar {
     max-width: 800px;
-    min-width: 350px;
+    min-width: 320px;
     width: 100%;
     aspect-ratio: 8.88 / 1;
     position: relative;
@@ -116,18 +130,23 @@ watch(
     z-index: 2;
 
     .chip-amount {
-      background-image: url('@/assets/coins/chip_amount.png');
+      background-image: url('@/assets/svg/wallet.svg');
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
 
-      width: 120px;
-      height: 40px;
+      width: 40px;
+      height: 30px;
 
       display: flex;
       align-items: center;
       justify-content: center;
 
+      cursor: pointer;
+    }
+
+    .chip-amount:hover {
+      scale: 1.1;
       cursor: pointer;
     }
 
@@ -190,11 +209,6 @@ watch(
 }
 
 @media screen and (max-width: 768px) {
-  .jackpot-text {
-    top: 103%;
-    right: 38%;
-  }
-
   .jackpot-text img {
     width: 140px !important;
     height: 30px !important;
@@ -217,6 +231,7 @@ watch(
 
   .jackpot-text-container {
     top: 110% !important;
+    right: 38% !important;
   }
 }
 
@@ -259,7 +274,7 @@ watch(
   }
 
   .chip-amount-text {
-    font-size: 8px !important;
+    font-size: 6px !important;
   }
 
   .jackpot-text-container {
@@ -269,6 +284,44 @@ watch(
 
   .jackpot-text {
     width: 96px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .jackpot-text-container {
+    top: 110% !important;
+    right: 38% !important;
+  }
+}
+
+@media screen and (max-width: 1440px) {
+  .jackpot-text-container {
+    top: 110% !important;
+    right: 38% !important;
+  }
+}
+
+@media screen and (max-width: 2560px) {
+  .jackpot-text-container {
+    top: 110% !important;
+    right: 38% !important;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .wallet-amount-container {
+    margin-left: 4px;
+    display: flex;
+    width: auto;
+  }
+  .walletBtn {
+    width: 20px;
+    height: 40px;
+  }
+
+  .jackpot-text-container {
+    top: 120% !important;
+    right: 33% !important;
   }
 }
 </style>
