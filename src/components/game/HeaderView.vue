@@ -8,9 +8,6 @@
             <el-dropdown-menu>
               <el-dropdown-item @click="openSettings">Settings</el-dropdown-item>
               <el-dropdown-item @click="openTutorial">Tutorial</el-dropdown-item>
-              <el-dropdown-item @click="router.push({ name: 'transaction-history' })"
-                >Wallet</el-dropdown-item
-              >
               <el-dropdown-item @click="router.push('/')">Leave</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -21,24 +18,10 @@
             <img :src="JackpotText" class="jackpot-text" alt="" />
           </div>
         </div>
-        <div class="wallet-amount-container">
-          <el-text class="chip-amount-text" style="color: white" size="small"
-            >Balance: ₱{{ formatCurrency(creditStore.getCurrentBalance) }}</el-text
-          >
-        </div>
-        <!-- <MusicButton /> -->
-        <!-- <button
-          id="leave-btn"
-          class="wallet-btn leave-btn gold-bg"
-          @click="router.push({ name: 'transaction-history' })"
-        >
-          Wallet
-        </button> -->
-        <!-- <div class="chip-amount" @click="router.push({ name: 'transaction-history' })">
-          <el-text class="chip-amount-text" style="color: white" size="small"
-            >₱ {{ formatCurrency(creditStore.getCurrentBalance) }}</el-text
-          >
-        </div> -->
+
+        <MusicButton />
+        <el-button class="walletBtn" link @click="router.push({ name: 'transaction-history' })">
+        </el-button>
       </div>
     </div>
     <SettingsModal :show-settings="showSettings" @handle-close="handleCloseSettings" />
@@ -55,6 +38,7 @@ import { onMounted, ref, watch } from 'vue';
 import MusicButton from '../MusicButton.vue';
 import SettingsModal from '../SettingsModal.vue';
 import MenuSvg from '@/assets/svg/menu_svg.vue';
+import Wallet from '@/assets/svg/wallet_svg.vue';
 
 const gameStore = useGameStore();
 const creditStore = useCreditStore();
@@ -91,6 +75,20 @@ watch(
 </script>
 
 <style scoped>
+.walletBtn {
+  width: 40px;
+  height: 70px;
+  background-image: url('@/assets/svg/wallet.svg');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.walletBtn:hover {
+  scale: 1.1;
+  cursor: pointer;
+}
+
 .el-header {
   width: 100%;
   padding: 0 !important;
@@ -145,8 +143,6 @@ watch(
       justify-content: center;
 
       cursor: pointer;
-    }
-    .wallet-btn {
     }
 
     .chip-amount:hover {
@@ -317,6 +313,15 @@ watch(
     margin-left: 4px;
     display: flex;
     width: auto;
+  }
+  .walletBtn {
+    width: 20px;
+    height: 40px;
+  }
+
+  .jackpot-text-container {
+    top: 120% !important;
+    right: 33% !important;
   }
 }
 </style>

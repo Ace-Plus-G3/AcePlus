@@ -178,4 +178,12 @@ watch(
     padding: 0 15px !important;
   }
 }
+
+@media screen and (max-width: 320px) {
+  .history-btn {
+    width: 80px;
+    height: 20px;
+    font-size: 0.5em;
+  }
+}
 </style>
